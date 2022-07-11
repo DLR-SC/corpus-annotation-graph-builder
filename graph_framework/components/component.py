@@ -1,12 +1,14 @@
 from datetime import datetime
 
+from ..utils.config import Config, configuration
+
 from ..graph.nodes import *
+from ..graph.base_graph import *
 from pyArango.database import Database
 from pyArango.graph import Graph
 from pyArango.collection import Document
 import re
 from typing import Any
-
 
 class Component(object):
     """The class from witch all more specialized components must derive."""
@@ -24,19 +26,19 @@ class Component(object):
     _base_edge_definitions = []
     _description = "No description"
     _name = "Component"
-    #TODO: make graph name configurable
-    def __init__(self, database: Database, graph_name):
-        self.database = database
-        self.graph_name=graph_name
-        if self.database.hasGraph(graph_name):
-            self.graph = self.database.graphs[graph_name]
+    # TODO: make graph name configurable
+
+    def __init__(self, conf: Config = None):
+        if conf is None:
+            conf = configuration(use_global_conf=True)
+        self.database = conf.db
+        self.graph_name = conf.graph
+        if self.database.hasGraph(self.graph_name):
+            self.graph = self.database.graphs[self.graph_name]
         else:
-            if not self.database.hasCollection('GenericNode'):
-                self.database.createCollection('GenericNode')
-            if not self.database.hasCollection('GenericEdge'):
-                self.database.createCollection('GenericEdge')
-            self.graph: Graph = self.database.createGraph(
-                graph_name)
+            #Removed creation of generic node/edge, why where they here?
+            self.graph: InsightsNetGraph = self.database.createGraph(
+                self.graph_name)
 
         # Setup graph structure
         for ed in (self._edge_definitions+self._base_edge_definitions):
