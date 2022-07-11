@@ -3,6 +3,7 @@ from datetime import datetime
 from ..utils.config import Config, configuration
 
 from ..graph.nodes import *
+from ..graph.relations import *
 from ..graph.base_graph import *
 from pyArango.database import Database
 from pyArango.graph import Graph
@@ -36,8 +37,11 @@ class Component(object):
         if self.database.hasGraph(self.graph_name):
             self.graph = self.database.graphs[self.graph_name]
         else:
-            #Removed creation of generic node/edge, why where they here?
-            self.graph: InsightsNetGraph = self.database.createGraph(
+            if not self.database.hasCollection('GenericNode'):
+                self.database.createCollection('GenericNode')
+            if not self.database.hasCollection('GenericEdge'):
+                self.database.createCollection('GenericEdge')
+            self.graph: BaseGraph = self.database.createGraph(
                 self.graph_name)
 
         # Setup graph structure
