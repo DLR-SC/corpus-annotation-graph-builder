@@ -7,7 +7,7 @@ from .relations import *
 
 import json
 
-class BaseGraph(Graph):
+class InsightsNetGraph(Graph):
 
     _edgeDefinitions = [EdgeDefinition('GenericEdge', fromCollections=['GenericNode'], toCollections=['GenericNode'])]
     _orphanedCollections = []

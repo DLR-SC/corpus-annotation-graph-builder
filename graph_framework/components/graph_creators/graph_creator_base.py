@@ -5,7 +5,9 @@ from pyArango.collection import Document, Collection
 
 from pyArango.theExceptions import CreationError, DocumentNotFoundError
 
-from ...utils import * 
+from ...utils.config import Config
+
+from ...utils import *
 from ..component import Component
 from datetime import datetime
 import re
@@ -49,8 +51,8 @@ class GraphCreatorBase(ABC, Component):
         }
     ]
 
-    def __init__(self, corpus_file_or_dir, database):
-        super().__init__(database)
+    def __init__(self, corpus_file_or_dir, conf: Config=None):
+        super().__init__(conf)
         self.corpus_file_or_dir = corpus_file_or_dir
         self.now = datetime.now()
 
@@ -78,7 +80,6 @@ class GraphCreatorBase(ABC, Component):
         else:
             vert = self.graph.createVertex(collectionName, data)
         return vert
-
 
     def upsert_link(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}):
         from_key = re.sub("/", "-", from_doc._id)
@@ -112,7 +113,8 @@ class GraphCreatorBase(ABC, Component):
             "text": text,
             "timestamp": self.now
         }
-        key = self._get_doc_key(GraphCreatorBase._TEXT_NODE_NAME, {"text": text})
+        key = self._get_doc_key(
+            GraphCreatorBase._TEXT_NODE_NAME, {"text": text})
         if key is not None:
             dict_["_key"] = key
 
@@ -127,7 +129,8 @@ class GraphCreatorBase(ABC, Component):
             "timestamp": self.now
         }
 
-        key = self._get_doc_key(GraphCreatorBase._IMAGE_NODE_NAME, {"url": url})
+        key = self._get_doc_key(
+            GraphCreatorBase._IMAGE_NODE_NAME, {"url": url})
         if key is not None:
             dict_["_key"] = key
         img = self.upsert_vert(
@@ -154,7 +157,8 @@ class GraphCreatorBase(ABC, Component):
             "timestamp": self.now
         }
 
-        key = self._get_doc_key(GraphCreatorBase._WEB_RESOURCE_NODE_NAME, {"url": url})
+        key = self._get_doc_key(
+            GraphCreatorBase._WEB_RESOURCE_NODE_NAME, {"url": url})
 
         if key is not None:
             dict_["_key"] = key
@@ -162,4 +166,3 @@ class GraphCreatorBase(ABC, Component):
         web_resource = self.upsert_vert(
             GraphCreatorBase._WEB_RESOURCE_NODE_NAME, dict_)
         return web_resource
-

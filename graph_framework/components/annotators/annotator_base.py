@@ -3,11 +3,11 @@ from datetime import datetime
 
 from ..component import Component
 
-
+from ...utils.config import Config
 class AnnotatorBase(ABC, Component):
 
-    def __init__(self, database, query, run=False,params={}):
-        super().__init__(database)
+    def __init__(self, query, run=False,params={}, conf: Config=None):
+        super().__init__(conf)
         self.query = query
         self.now = datetime.now()
         self.params={}
