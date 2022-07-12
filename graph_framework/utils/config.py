@@ -1,4 +1,3 @@
-
 import dataclasses
 from os import getenv
 from pyArango.connection import *
@@ -7,11 +6,11 @@ from arango import ArangoClient
 
 @dataclasses.dataclass
 class Config:
-    url: str | None = "http://127.0.0.1:8529"
-    user: str | None = "root"
-    password: str | None = ""
-    database: str | None = "InsightsNet"
-    graph: str | None = "InsightsNetGraph"
+    url: "str | None" = "http://127.0.0.1:8529"
+    user: "str | None" = "root"
+    password: "str | None" = ""
+    database: "str | None" = "_system"
+    graph: "str | None" = "GenericGraph"
     autoconnect: bool = True
 
     def __post_init__(self):
@@ -43,11 +42,14 @@ class Config:
                                                password=self.password)
 
 
-def configuration(url: str | None = "http://127.0.0.1:8529",
-                  user: str | None = "root",
-                  password: str | None = "",
-                  database: str | None = "InsightsNet",
-                  graph: str | None = "InsightsNetGraph", connect=True, use_global_conf=False) -> Config:
+global_conf = None
+
+
+def configuration(url: "str | None" = "http://127.0.0.1:8529",
+                  user: "str | None" = "root",
+                  password: "str | None" = "",
+                  database: "str | None" = "_system",
+                  graph: "str | None" = "GenericGraph", connect=True, use_global_conf=False) -> Config:
     global global_conf
     if use_global_conf:
         if global_conf is not None:

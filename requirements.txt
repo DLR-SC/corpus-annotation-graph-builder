@@ -1,1 +1,3 @@
+arango==0.2.1
+dataclasses==0.8
 pyArango==2.0.1
