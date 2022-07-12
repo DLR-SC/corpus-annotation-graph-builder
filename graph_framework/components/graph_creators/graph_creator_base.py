@@ -1,14 +1,16 @@
 import logging
 from abc import ABC, abstractmethod
 from typing import Any
+
+from graph_framework.utils.utils import encode_name
 from pyArango.collection import Document, Collection
 
 from pyArango.theExceptions import CreationError, DocumentNotFoundError
 
-from ...utils.config import Config
+from graph_framework.utils.config import Config
 
-from ...utils import *
-from ..component import Component
+from graph_framework.utils import utils
+from graph_framework.components.component import Component
 from datetime import datetime
 import re
 
