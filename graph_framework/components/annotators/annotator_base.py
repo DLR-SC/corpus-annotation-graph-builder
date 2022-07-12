@@ -14,6 +14,8 @@ class AnnotatorBase(ABC, Component):
         if run:
             self.update_graph(self.now)
 
+    def fetch_annotator_data(self):
+        return self.database.AQLQuery(self.query, rawResults=True).response['result']
 
 
     @abstractmethod
