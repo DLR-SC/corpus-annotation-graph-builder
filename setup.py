@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='graph_framework',
-    version='0.1.0',
+    version='0.2.0',
     description='This is a general framework to create arango db graphs',
     # url='',
     author='DLR',
@@ -12,5 +12,7 @@ setup(
               'graph_framework.components',
               'graph_framework.graph',
               'graph_framework.utils'],
-    install_requires=['pyArango'],
+    install_requires=['pyArango',
+                      "arango",
+                      ],
 )

@@ -1,2 +1,0 @@
-pyArango==2.0.1
-python-arango==7.4.1
