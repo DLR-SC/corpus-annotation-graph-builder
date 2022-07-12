@@ -13,6 +13,5 @@ setup(
               'graph_framework.graph',
               'graph_framework.utils'],
     install_requires=['pyArango',
-                      "arango",
                       ],
 )
