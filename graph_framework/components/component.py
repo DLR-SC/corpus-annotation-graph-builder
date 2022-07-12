@@ -11,6 +11,7 @@ from pyArango.collection import Document
 import re
 from typing import Any
 
+
 class Component(object):
     """The class from witch all more specialized components must derive."""
 
@@ -27,11 +28,10 @@ class Component(object):
     _base_edge_definitions = []
     _description = "No description"
     _name = "Component"
-    # TODO: make graph name configurable
-
     def __init__(self, conf: Config = None):
         if conf is None:
             conf = configuration(use_global_conf=True)
+        self.conf = conf
         self.database = conf.db
         self.graph_name = conf.graph
         if self.database.hasGraph(self.graph_name):
@@ -43,6 +43,7 @@ class Component(object):
                 self.database.createCollection('GenericEdge')
             self.graph: BaseGraph = self.database.createGraph(
                 self.graph_name)
+        self.arango_db = conf.arango_db
 
         # Setup graph structure
         for ed in (self._edge_definitions+self._base_edge_definitions):

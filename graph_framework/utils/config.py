@@ -2,6 +2,7 @@
 import dataclasses
 from os import getenv
 from pyArango.connection import *
+from arango import ArangoClient
 
 
 @dataclasses.dataclass
@@ -30,11 +31,16 @@ class Config:
     def __connect(self):
         self.db: Database = None
         self.__connection = Connection(self.url, self.user, self.password)
+        self.arango_client = ArangoClient(self.url)
         if self.__connection.hasDatabase(self.database):
             self.db = self.__connection[self.database]
         else:
             self.db: Database = self.__connection.createDatabase(
                 self.database)
+
+        self.arango_db = self.arango_client.db(name=self.database,
+                                               username=self.user,
+                                               password=self.password)
 
 
 def configuration(url: str | None = "http://127.0.0.1:8529",
