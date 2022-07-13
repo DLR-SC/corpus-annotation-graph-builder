@@ -11,11 +11,11 @@ This package is in early developement stages - to use/update it, clone the repos
 pip install -e .
 ```
 
-This will allow you to use the main package `graph_frameworks` from any python script.
+This will allow you to use the module `graph_frameworks` from any python script locally.
 
 ## Usage
 
 See sample projects:
-- [InsighstNet](https://gitlab.dlr.de/insightsnet/inisightsnet_code/-/tree/main/insightsnet_graphs)
+- [InsighstNet Graphs](https://gitlab.dlr.de/insightsnet/inisightsnet_code/-/tree/main/insightsnet_graphs)
 - [PangeaKG]()
 
