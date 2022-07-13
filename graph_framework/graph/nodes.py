@@ -40,11 +40,6 @@ class ImageNode(GenericOOSNode):
         **GenericOOSNode._fields
     }
 
-    def __init__(self, database, jsonData):
-        super().__init__(database, jsonData)
-        # TODO: see above
-        #self.ensurePersistentIndex(["url"], unique=True)
-
 
 class DataNode(GenericOOSNode):
     _fields = {
@@ -59,12 +54,6 @@ class TextNode(GenericOOSNode):
         **GenericOOSNode._fields
     }
 
-    def __init__(self, database, jsonData):
-        super().__init__(database, jsonData)
-        #TODO @Roxanne: please do not modify general nodes to specific application, move this code to a special node
-        #self.ensureFulltextIndex(["text"])
-        #self.ensureHashIndex(["text"], unique=True)
-
 
 class Author(GenericOOSNode):
     _fields = {
@@ -72,10 +61,6 @@ class Author(GenericOOSNode):
         **GenericOOSNode._fields
     }
 
-    def __init__(self, database, jsonData):
-        super().__init__(database, jsonData)
-        #TODO: see above
-        #self.ensurePersistentIndex(["name"], unique=True)
 
 
 class KeyTerm(GenericOOSNode):
@@ -92,44 +77,9 @@ class AbstractNode(GenericOOSNode):
     }
 
 
-"""OOS NODES RELEVANT FOR WIKIPEDIA CORPUS"""
-
-
-class WikiArticle(GenericOOSNode):
-    _fields = {
-        "name": Field(),
-        "lang": Field(),
-        "is_popular": Field(),
-        "is_important": Field(),
-        **GenericOOSNode._fields
-    }
-
-
-class WikiArticleRevision(GenericOOSNode):
-    _fields = {
-        'rev_id': Field(),
-        'rev_timestamp': Field(),
-        **GenericOOSNode._fields
-    }
-
-
-class WikiArticleSection(GenericOOSNode):
-    _fields = {
-        'name': Field(),
-        **GenericOOSNode._fields
-    }
-
-
-"""OOS NODES RELEVANT FOR WIKIPEDIA CORPUS"""
-
-
 class WebResource(GenericOOSNode):
     _fields = {
         'url': Field(),
         **GenericOOSNode._fields
     }
 
-    def __init__(self, database, jsonData):
-        super().__init__(database, jsonData)
-        #TODO: see..
-        #self.ensurePersistentIndex(["url"], unique=True)
