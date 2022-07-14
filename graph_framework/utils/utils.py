@@ -1,6 +1,7 @@
 import hashlib
 import json
 import urllib
+from re import sub
 
 def get_hash_from_str(str):
     hashing_func = hashlib.sha256
@@ -23,3 +24,25 @@ def encode_name(name):
 
 def to_dictionary(obj):
     return json.loads(json.dumps(obj, default=lambda o: vars(o)))
+
+def camel_case(s):
+  s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
+  return ''.join([s[0].lower(), s[1:]])
+
+def filter_dic(obj, fields):
+    dict_ = to_dictionary(obj)
+    dict_ = {k: v for k, v in dict_.items() if k in fields and v is not None}
+    return dict_
+
+def camel_nest_dic(dict_):
+    res = {}
+    for k, v in dict_.items():
+        # Check if value is of dict type
+        if isinstance(v, dict):
+            res[camel_case(k)] = camel_nest_dic(v)
+        else:
+            # If value is not dict type then yield the value
+            if v is not None:
+                res[camel_case(k)] =v
+    return res
+

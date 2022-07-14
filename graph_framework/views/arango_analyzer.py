@@ -1,4 +1,5 @@
 from graph_framework.utils import utils
+from arango import ArangoClient
 
 
 class EdgeNGram(object):
@@ -29,12 +30,12 @@ class ArangoAnalyzer():
     _MANDATORY_FIELDS = ['name', 'type', 'features']
 
     FIELDS = {
-        _TYPE_IDENTITY : _MANDATORY_FIELDS,
-        _TYPE_TEXT: _MANDATORY_FIELDS + ['local', 'case', 'stopwords', 'accent', 'stemming', 'edge_n_gram'],
-        _TYPE_NGRAM: _MANDATORY_FIELDS + ['min', 'max', 'preserve_original',
-                                               'start_marker', 'end_marker', 'stem_type'],
-        _TYPE_STEM: _MANDATORY_FIELDS + ['local'],
-        _TYPE_DELIMITER: _MANDATORY_FIELDS + ['delimiter'],
+        _TYPE_IDENTITY : [],
+        _TYPE_TEXT: ['locale', 'case', 'stopwords', 'accent', 'stemming', 'edge_ngram'],
+        _TYPE_NGRAM: ['min', 'max', 'preserve_original',
+                      'start_marker', 'end_marker', 'stem_type'],
+        _TYPE_STEM: ['locale'],
+        _TYPE_DELIMITER: ['delimiter'],
     }
 
     def __init__(self, name= "sample_analyzer", type = _TYPE_IDENTITY):
@@ -45,12 +46,12 @@ class ArangoAnalyzer():
 
         ## Properties - loaded based on type
         # TEXT
-        self.local = "en" # text, stem, norm
+        self.locale = "en" # text, stem, norm
         self.case = "lower" # text,  norm
         self.stopwords = []
         self.accent = False # text,  norm
         self.stemming = True
-        self.edge_n_gram = EdgeNGram(min =2, max = 5, preserve_original = False)
+        self.edge_ngram = None #
         # type: delimiter
         self.delimiter = ','
 
@@ -62,8 +63,6 @@ class ArangoAnalyzer():
         self.end_marker = ""
         self.stem_type = ArangoAnalyzer._STEM_TYPE_BINARY
 
-
-
     def set_features(self, frequency= True, norm=True, position = True):
         features = []
         if frequency: features.append("frequency")
@@ -71,46 +70,48 @@ class ArangoAnalyzer():
         if position: features.append("position")
         self.features = features
 
-    def list_type_fields(self):
+    def set_edge_ngrams(self, min =2, max = 5, preserve_original = False):
+        self.edge_ngram =  EdgeNGram(min =min, max = max, preserve_original = preserve_original)
+
+    def get_type_fields(self):
         return ArangoAnalyzer.FIELDS[self.type]
 
-    def summary(self):
+    def get_properties(self):
         keep = ArangoAnalyzer.FIELDS[self.type]
-        dict_ = utils.to_dictionary(self)
-        result ={k:v for k,v in dict_.items() if k in keep}
-        #result ={k:vars(v) for k,v in dict_.items() if isinstance(v, EdgeNGram)}
+        result =utils.camel_nest_dic(utils.filter_dic(self,keep))
         return result
+
+    def summary(self):
+        keep = ArangoAnalyzer._MANDATORY_FIELDS + ArangoAnalyzer.FIELDS[self.type]
+        result =utils.camel_nest_dic(utils.filter_dic(self,keep))
+        return result
+
+    def create(self, database):
+        database.create_analyzer(self.name,
+                        self.type,
+                        self.get_properties(),
+                                 self.features)
+
 
 
 ## TEST REMOVE THIS TO ANOTHER PLACE
 def main():
-    aa = ArangoAnalyzer()
-    print("\n################")
-    print(aa.type)
-    print(aa.list_type_fields())
-    print(aa.summary())
+    client = ArangoClient()
 
-    b = ArangoAnalyzer()
+    # Connect to "test" database as root user.
+    db = client.db('InsightsNet', username='root', password='')
+
+    b = ArangoAnalyzer("TheText2")
     b.type = ArangoAnalyzer._TYPE_TEXT
+    b.set_edge_ngrams(min=2, max=5, preserve_original=True)
     print("\n################")
 
     print(b.type)
-    print(b.list_type_fields())
+    print(b.get_type_fields())
     print(b.summary())
+    print(b.get_properties())
 
-    deli = ArangoAnalyzer()
-    deli.type = ArangoAnalyzer._TYPE_DELIMITER
-    print("\n################")
-    print(deli.type)
-    print(deli.list_type_fields())
-    print(deli.summary())
-
-    ngram = ArangoAnalyzer()
-    ngram.type = ArangoAnalyzer._TYPE_NGRAM
-    print("\n################")
-    print(ngram.type)
-    print(ngram.list_type_fields())
-    print(ngram.summary())
+    b.create(db)
 
 if __name__ == "__main__":
     main()
