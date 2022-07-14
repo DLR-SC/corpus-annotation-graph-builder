@@ -1,4 +1,5 @@
 import hashlib
+import json
 import urllib
 
 def get_hash_from_str(str):
@@ -19,3 +20,6 @@ def encode_name(name):
     enc_n = urllib.parse.quote_plus(name)
     enc_n = enc_n.replace("~", "%7E")
     return enc_n.replace("%", ")@(")
+
+def to_dictionary(obj):
+    return json.loads(json.dumps(obj, default=lambda o: vars(o)))
