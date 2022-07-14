@@ -22,24 +22,29 @@ def encode_name(name):
     enc_n = enc_n.replace("~", "%7E")
     return enc_n.replace("%", ")@(")
 
-def to_dictionary(obj):
+
+def to_dictionary(obj: object) -> dict:
     return json.loads(json.dumps(obj, default=lambda o: vars(o)))
 
-def camel_case(s):
-  s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
-  return ''.join([s[0].lower(), s[1:]])
 
-def filter_dic(obj, fields):
+def camel_case(s) -> str:
+    # source: https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-96.php
+    s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
+    return ''.join([s[0].lower(), s[1:]])
+
+
+def filter_dic(obj, fields=None) -> dict:
     dict_ = to_dictionary(obj)
-    dict_ = {k: v for k, v in dict_.items() if k in fields and v is not None}
+    dict_ = {k: v for k, v in dict_.items() if ((fields is None or k in fields) and v is not None)}
     return dict_
 
-def camel_nest_dic(dict_):
+
+def camel_nest_dict(dict_) -> dict:
     res = {}
     for k, v in dict_.items():
         # Check if value is of dict type
         if isinstance(v, dict):
-            res[camel_case(k)] = camel_nest_dic(v)
+            res[camel_case(k)] = camel_nest_dict(v)
         else:
             # If value is not dict type then yield the value
             if v is not None:

@@ -1,5 +1,9 @@
+import logging
+
+from arango.database import StandardDatabase
 from graph_framework.utils import utils
 from arango import ArangoClient
+from nltk.corpus import stopwords
 
 
 class EdgeNGram(object):
@@ -10,11 +14,19 @@ class EdgeNGram(object):
         self.preserve_original = preserve_original
 
     def summary(self):
-        return vars(self)
+        result = utils.camel_nest_dict(utils.filter_dic(self))
+        return result
 
 
 class ArangoAnalyzer():
-    ### CONBSTANTS - the main types of arango analyzer
+
+    #################
+    ### CONSTANTS ###
+    #################
+
+    ######################################
+    ### Main types of arango analyzer ###
+    #####################################
     _TYPE_IDENTITY = "identity"
     _TYPE_TEXT = "text"
     _TYPE_NGRAM ="ngram"
@@ -64,6 +76,13 @@ class ArangoAnalyzer():
         self.stem_type = ArangoAnalyzer._STEM_TYPE_BINARY
 
     def set_features(self, frequency= True, norm=True, position = True):
+        '''
+        Sets which features to return - It is set to have all three features: frequency, norm and position
+        :param frequency: bool
+        :param norm: bool
+        :param position: bool
+        :return:
+        '''
         features = []
         if frequency: features.append("frequency")
         if norm: features.append("norm")
@@ -73,20 +92,40 @@ class ArangoAnalyzer():
     def set_edge_ngrams(self, min =2, max = 5, preserve_original = False):
         self.edge_ngram =  EdgeNGram(min =min, max = max, preserve_original = preserve_original)
 
-    def get_type_fields(self):
+
+    def set_stopwords(self, language = "english", custom_stopwords= [], include_default = True):
+        logging.info('The default stopword list is loaded from NLTK - if you get an error, run `nltk.download('
+                     '"stopwords")`')
+        if include_default:
+            self.stopwords = stopwords.words(language)
+
+        if len(custom_stopwords) > 0:
+            self.stopwords.extend(custom_stopwords)
+
+
+    #############
+    ## Getters ##
+    #############
+
+    def get_type_fields(self) -> []:
+        '''
+        Gets the list of fields needed and set for the Analyzer based on the Type
+
+        :return: list of fields
+        '''
         return ArangoAnalyzer.FIELDS[self.type]
 
-    def get_properties(self):
+    def get_properties(self) -> dict:
         keep = ArangoAnalyzer.FIELDS[self.type]
-        result =utils.camel_nest_dic(utils.filter_dic(self,keep))
+        result =utils.camel_nest_dict(utils.filter_dic(self,keep))
         return result
 
-    def summary(self):
+    def summary(self) -> dict:
         keep = ArangoAnalyzer._MANDATORY_FIELDS + ArangoAnalyzer.FIELDS[self.type]
-        result =utils.camel_nest_dic(utils.filter_dic(self,keep))
+        result =utils.camel_nest_dict(utils.filter_dic(self,keep))
         return result
 
-    def create(self, database):
+    def create(self, database: StandardDatabase):
         database.create_analyzer(self.name,
                         self.type,
                         self.get_properties(),
@@ -101,17 +140,15 @@ def main():
     # Connect to "test" database as root user.
     db = client.db('InsightsNet', username='root', password='')
 
-    b = ArangoAnalyzer("TheText2")
+    b = ArangoAnalyzer("TheText_STOP")
+    b.set_stopwords(language="english", custom_stopwords=['added', 'YOUPPPPPYYY'], include_default=False)
     b.type = ArangoAnalyzer._TYPE_TEXT
-    b.set_edge_ngrams(min=2, max=5, preserve_original=True)
+    #b.set_edge_ngrams(min=2, max=5, preserve_original=True)
     print("\n################")
-
-    print(b.type)
-    print(b.get_type_fields())
-    print(b.summary())
     print(b.get_properties())
 
-    b.create(db)
+    print(utils.filter_dic(EdgeNGram(), ['min']))
+    #b.create(db)
 
 if __name__ == "__main__":
     main()
