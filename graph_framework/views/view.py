@@ -1,13 +1,11 @@
-#import logging
-
+import logging
 from arango import ViewGetError, ArangoClient
-
-#logging.basicConfig(level = logging.DEBUG)
 
 from dataclasses import dataclass, field
 from typing import List, ClassVar
 from arango.database import StandardDatabase
 from graph_framework.utils import utils
+from graph_framework.views.link import Link, AnalyzerList, Field
 
 
 @dataclass()
@@ -29,29 +27,46 @@ class ViewProperties():
     writebuffer_active: int  = 0
     writebuffer_max_size: int  = 33554432
 
-@dataclass
-class SortingField:
-    name: str
-    asc: bool = True
+
 
 @dataclass
 class View():
     name:str
     view_type:str = "arangosearch"
-    properties: ViewProperties = field(default_factory = lambda: ViewProperties())
-    links: dict = field(default_factory = lambda: {})
-    primary_sort : List = field(default_factory = lambda: [SortingField])
-    stored_values: List = field(default_factory = lambda: [])
+    properties: ViewProperties = field(default_factory = lambda:ViewProperties())
+    links: List[Link] = field(default_factory = lambda:[])
+    primary_sort : List = field(default_factory = lambda:[])
+    stored_values: List = field(default_factory = lambda:[])
 
     _MANDATORY_FIELDS:ClassVar = ["name", "view_type"]
 
+    def add_primary_sort(self, field_name:str, asc:bool):
+        self.primary_sort.append({"field": field_name, "asc": asc})
+
+    def add_stored_value(self, fields:[], compression ="lz4"):
+        for field_name in fields:
+            self.stored_values.append({"fields": [field_name], "compression": compression})
+
+    def add_link(self, link: Link):
+        self.links.append(link)
+
+    def get_links_dict(self):
+        dict_ = {}
+        for l in self.links:
+            dict_.update(l.summary())
+        return dict_
+
     def get_properties(self) -> dict:
-        keep = View._MANDATORY_FIELDS
-        result = utils.camel_nest_dict(utils.filter_dic(self, keep))
+        mandatory_fields = View._MANDATORY_FIELDS
+        result = utils.camel_nest_dict(utils.filter_dic(self))
+        result["links"] = self.get_links_dict()
+        for mandatory in mandatory_fields:
+            del result[utils.camel_case(mandatory)]
         return result
 
     def summary(self) -> dict:
         result = utils.camel_nest_dict(utils.filter_dic(self))
+        result["links"] = self.get_links_dict()
         return result
 
     def create(self, database: StandardDatabase):
@@ -62,13 +77,32 @@ class View():
 
 ## TEST REMOVE THIS TO ANOTHER PLACE
 def main():
+    # Connect to "test" database as root user.
     client = ArangoClient()
 
-    # Connect to "test" database as root user.
-    db = client.db('InsightsNet', username='root', password='p3yqy8I0dHkpOrZs')
+    db = client.db('InsightsNet', username='root', password='')
+    link = Link(name="TextNode")
+    linkAnalyzers = AnalyzerList(["identity"])
+    link.analyzers = linkAnalyzers
 
-    basicView = View('basic_view')
-    print(basicView.get_properties())
-    basicView.create(db)
+    # fields
+    field1 = Field("text", AnalyzerList(["text_en", "invalid_analyzer"]))
+    print(field1.analyzers)
+    field1.analyzers.filter_invalid_analyzers(db, verbose=1)
+    print(field1.analyzers)
 
-    print(db.view('basic_view'))
+    link.add_field(field1)
+    logging.info(link.get_fields_dict())
+
+    view = View('basic_view_linked_withprops',
+                view_type="arangosearch")
+    view.add_link(link)
+    view.add_primary_sort("text", asc = False)
+    #
+    view.add_stored_value(["text", "timestamp"], compression="lz4")
+
+    logging.info(view.summary())
+    view.create(db)
+
+if __name__ == "__main__":
+    main()
