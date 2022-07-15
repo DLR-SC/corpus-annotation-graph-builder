@@ -24,14 +24,70 @@ The arango view wrapper has classes that facilitates the creation of arango view
 
 #### create an analyzer
 
+The analyzer class, loads the required attributes of an analyzer based on its type. The supported types are:
+* _TYPE_IDENTITY -> "identity", **attributes to set:** None
+* _TYPE_TEXT -> "text", **attributes to set:** 'locale', 'case', 'stopwords', 'accent', 'stemming', 'edge_ngram'
+* _TYPE_NGRAM -> "ngram", **attributes to set:**  'min', 'max', 'preserve_original', 'start_marker', 'end_marker', 'stem_type'
+* _TYPE_STEM -> "stem", **attributes to set:** locale
+* _TYPE_DELIMITE -> "delimiter", **attributes to set:** delimiter
+
 ```python
 from graph_framework.view_wrapper.arango_analyzer import ArangoAnalyzer
 
-analyzer = ArangoAnalyzer("sample_analyzer")
-analyzer.set_stopwords(language="english", custom_stopwords=['hello'], include_default=True)
-analyzer.type = ArangoAnalyzer._TYPE_TEXT
 
-analyzercreate(db)
+
+analyzer = ArangoAnalyzer("sample_analyzer")
+analyzer.type = ArangoAnalyzer._TYPE_TEXT
+analyzer.set_stopwords(language="english", custom_stopwords=['hello'], include_default=False)
+
+print(analyzer.get_type_fields())
+## Returns: ['locale', 'case', 'stopwords', 'accent', 'stemming', 'edge_ngram']
+
+analyzer.set_features(frequency=True, norm=True, position=True) # by defaults, all the features are set to True
+
+analyzer.set_edge_ngrams(EdgeNGram(min=2,
+                            max=4,
+                            preserve_original=False))
+print(analyzer.summary())
+```
+The summary returns the dictionary used to create the Analyzer:
+
+```python
+{
+    "name": "sample_analyzer",
+    "type": "text",
+    "features": [
+        "frequency",
+        "norm",
+        "position"
+    ],
+    "locale": "en",
+    "case": "lower",
+    "stopwords": [
+        "hello"
+    ],
+    "accent": False,
+    "stemming": True,
+    "edgeNgram": {
+        "min": {
+            "min": 2,
+            "max": 4,
+            "preserveOriginal": False
+        },
+        "max": 5,
+        "preserveOriginal": False
+    }
+}
+```
+
+The the analyzer can simply be created:
+
+```python
+
+## Create 
+client = ArangoClient()
+database = client.db('_System', username='root', password='root')
+analyzer.create(database)
 ```
 ## Usage
 
