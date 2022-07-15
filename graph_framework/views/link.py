@@ -22,5 +22,4 @@ class Link():
     def add_field(self, field):
         self.fields.append(field)
 
-    def __get__(self):
-        return vars(self)
+

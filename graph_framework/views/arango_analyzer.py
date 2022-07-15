@@ -1,24 +1,53 @@
 import logging
-
+import logging
+logging.basicConfig(level = logging.INFO)
+from dataclasses import dataclass, field
 from arango.database import StandardDatabase
 from graph_framework.utils import utils
-from arango import ArangoClient
+from arango import ArangoClient,  AnalyzerGetError
 from nltk.corpus import stopwords
+from typing import List, ClassVar
 
 
-class EdgeNGram(object):
-
-    def __init__(self, min = 2, max=4, preserve_original = False):
-        self.min = min
-        self.max = max
-        self.preserve_original = preserve_original
+@dataclass
+class EdgeNGram:
+    min: int = 2
+    max: int = 4
+    preserve_original: bool = True
 
     def summary(self):
         result = utils.camel_nest_dict(utils.filter_dic(self))
         return result
 
 
+@dataclass
 class ArangoAnalyzer():
+    #####################
+    ### Instance Vars ###
+    #####################
+    name: str
+    type:str = "identity"
+    features: List = field(default_factory=lambda: ["frequency", "norm", "position"])
+
+    ## Properties - loaded based on type
+    # TEXT
+    locale: str = "en"  # text, stem, norm
+    case: str = "lower"  # text,  norm
+    stopwords: List = field(default_factory=lambda: [])
+    accent: bool = False  # text,  norm
+    stemming: bool = True
+    edge_ngram: "EdgeNGram | None" = None  #
+    # type: delimiter
+    delimiter: str = ','
+
+    # type ngram
+    min: int = 2
+    max: int= 5
+    preserve_original: bool = False
+    start_marker: str = ""
+    end_marker: str = ""
+    stem_type: str = field(default_factory=lambda:ArangoAnalyzer._STEM_TYPE_BINARY)
+
 
     #################
     ### CONSTANTS ###
@@ -27,21 +56,20 @@ class ArangoAnalyzer():
     ######################################
     ### Main types of arango analyzer ###
     #####################################
-    _TYPE_IDENTITY = "identity"
-    _TYPE_TEXT = "text"
-    _TYPE_NGRAM ="ngram"
-    _TYPE_STEM = "stem"
-    _TYPE_NORM = "norm"
-    _TYPE_DELIMITER ="delimiter"
+    _TYPE_IDENTITY: ClassVar = "identity"
+    _TYPE_TEXT: ClassVar = "text"
+    _TYPE_NGRAM: ClassVar ="ngram"
+    _TYPE_STEM: ClassVar = "stem"
+    _TYPE_NORM: ClassVar = "norm"
+    _TYPE_DELIMITER: ClassVar ="delimiter"
 
     # For type Stem - there are 2 stem types
-    _STEM_TYPE_BINARY = "binary"
-    _STEM_TYPE_UTF8 = "utf8"
+    _STEM_TYPE_BINARY: ClassVar = "binary"
+    _STEM_TYPE_UTF8: ClassVar = "utf8"
 
+    _MANDATORY_FIELDS: ClassVar = ['name', 'type', 'features']
 
-    _MANDATORY_FIELDS = ['name', 'type', 'features']
-
-    FIELDS = {
+    FIELDS: ClassVar = {
         _TYPE_IDENTITY : [],
         _TYPE_TEXT: ['locale', 'case', 'stopwords', 'accent', 'stemming', 'edge_ngram'],
         _TYPE_NGRAM: ['min', 'max', 'preserve_original',
@@ -50,31 +78,9 @@ class ArangoAnalyzer():
         _TYPE_DELIMITER: ['delimiter'],
     }
 
-    def __init__(self, name= "sample_analyzer", type = _TYPE_IDENTITY):
-
-        self.name = name
-        self.type = type
-        self.features = ["frequency", "norm", "position"]
-
-        ## Properties - loaded based on type
-        # TEXT
-        self.locale = "en" # text, stem, norm
-        self.case = "lower" # text,  norm
-        self.stopwords = []
-        self.accent = False # text,  norm
-        self.stemming = True
-        self.edge_ngram = None #
-        # type: delimiter
-        self.delimiter = ','
-
-        # type ngram
-        self.min = 2
-        self.max = 5
-        self.preserve_original = False
-        self.start_marker = ""
-        self.end_marker = ""
-        self.stem_type = ArangoAnalyzer._STEM_TYPE_BINARY
-
+    #############
+    ## Setters ##
+    #############
     def set_features(self, frequency= True, norm=True, position = True):
         '''
         Sets which features to return - It is set to have all three features: frequency, norm and position
@@ -106,7 +112,6 @@ class ArangoAnalyzer():
     #############
     ## Getters ##
     #############
-
     def get_type_fields(self) -> []:
         '''
         Gets the list of fields needed and set for the Analyzer based on the Type
@@ -125,11 +130,21 @@ class ArangoAnalyzer():
         result =utils.camel_nest_dict(utils.filter_dic(self,keep))
         return result
 
+
     def create(self, database: StandardDatabase):
-        database.create_analyzer(self.name,
-                        self.type,
-                        self.get_properties(),
-                                 self.features)
+        result = {}
+        try:
+            info = database.analyzer(self.name)
+            logging.error("Analyzer {} already exists with the following info: {}".format(self.name, info))
+            logging.error("You can delete it first using *database.delete_analyzer({})* and that create".format(self.name))
+        except AnalyzerGetError:
+            result = database.create_analyzer(self.name,
+                                              self.type,
+                                              self.get_properties(),
+                                              self.features)
+            logging.info("Analyzer was created!")
+        return result
+
 
 
 
@@ -138,17 +153,15 @@ def main():
     client = ArangoClient()
 
     # Connect to "test" database as root user.
-    db = client.db('InsightsNet', username='root', password='')
+    db = client.db('InsightsNet', username='root', password='p3yqy8I0dHkpOrZs')
 
-    b = ArangoAnalyzer("TheText_STOP")
-    b.set_stopwords(language="english", custom_stopwords=['added', 'YOUPPPPPYYY'], include_default=False)
+    b = ArangoAnalyzer("TheText_STOP_new")
+    b.set_stopwords(language="english", custom_stopwords=['added', 'YOUPPPPPYYY'], include_default=True)
     b.type = ArangoAnalyzer._TYPE_TEXT
-    #b.set_edge_ngrams(min=2, max=5, preserve_original=True)
-    print("\n################")
-    print(b.get_properties())
 
-    print(utils.filter_dic(EdgeNGram(), ['min']))
-    #b.create(db)
+    b.create(db)
+
+    #print(db.analyzer('TheText_STOP_newas'))
 
 if __name__ == "__main__":
     main()
