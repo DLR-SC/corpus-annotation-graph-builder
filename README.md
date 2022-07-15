@@ -32,9 +32,7 @@ The analyzer class, loads the required attributes of an analyzer based on its ty
 * _TYPE_DELIMITE -> "delimiter", **attributes to set:** delimiter
 
 ```python
-from graph_framework.view_wrapper.arango_analyzer import ArangoAnalyzer
-
-
+from graph_framework.view_wrapper.arango_analyzer import ArangoAnalyzer, EdgeNGram
 
 analyzer = ArangoAnalyzer("sample_analyzer")
 analyzer.type = ArangoAnalyzer._TYPE_TEXT
@@ -44,7 +42,6 @@ print(analyzer.get_type_fields())
 ## Returns: ['locale', 'case', 'stopwords', 'accent', 'stemming', 'edge_ngram']
 
 analyzer.set_features(frequency=True, norm=True, position=True) # by defaults, all the features are set to True
-
 analyzer.set_edge_ngrams(EdgeNGram(min=2,
                             max=4,
                             preserve_original=False))
@@ -89,6 +86,9 @@ client = ArangoClient()
 database = client.db('_System', username='root', password='root')
 analyzer.create(database)
 ```
+
+#### create a view
+
 ## Usage
 
 See sample projects for graph creation:
