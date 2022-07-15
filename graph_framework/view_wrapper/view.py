@@ -5,23 +5,27 @@ from dataclasses import dataclass, field
 from typing import List, ClassVar
 from arango.database import StandardDatabase
 from graph_framework.utils import utils
-from graph_framework.views.link import Link, AnalyzerList, Field
+from graph_framework.view_wrapper.link import Link, AnalyzerList, Field
 
 
 @dataclass()
 class ViewProperties():
+    '''
+    Contains the default properties for arango views
+    '''
     cleanupIntervalStep: int =0
     ## Default arango db values
     cleanup_interval_step: int  = 0
     commit_interval_msec: int  = 1000
     consolidation_interval_msec: int  = 0
-    # self.consolidation_policy = {
-    # type = "tier",
-    # segments_min = 1,
-    # segments_max = 10,
-    # segments_bytes_max = 5368709120,
-    # segments_bytes_floor = 2097152,
-    # min_score = 0}
+    consolidation_policy:dict  = field(default_factory = lambda:{
+        "type": "tier",
+        "segments_min": 1,
+        "segments_max": 10,
+        "segments_bytes_max": 5368709120,
+        "segments_bytes_floor": 2097152,
+        "min_score": 0
+    })
     primary_sort_compression: str = "lz4"
     writebuffer_idle : int = 64
     writebuffer_active: int  = 0
@@ -75,34 +79,13 @@ class View():
                                       self.get_properties())
         return result
 
-## TEST REMOVE THIS TO ANOTHER PLACE
-def main():
-    # Connect to "test" database as root user.
-    client = ArangoClient()
-
-    db = client.db('InsightsNet', username='root', password='')
-    link = Link(name="TextNode")
-    linkAnalyzers = AnalyzerList(["identity"])
-    link.analyzers = linkAnalyzers
-
-    # fields
-    field1 = Field("text", AnalyzerList(["text_en", "invalid_analyzer"]))
-    print(field1.analyzers)
-    field1.analyzers.filter_invalid_analyzers(db, verbose=1)
-    print(field1.analyzers)
-
-    link.add_field(field1)
-    logging.info(link.get_fields_dict())
-
-    view = View('basic_view_linked_withprops',
-                view_type="arangosearch")
-    view.add_link(link)
-    view.add_primary_sort("text", asc = False)
-    #
-    view.add_stored_value(["text", "timestamp"], compression="lz4")
-
-    logging.info(view.summary())
-    view.create(db)
-
-if __name__ == "__main__":
-    main()
+    def create_or_update(self, database: StandardDatabase):
+        try:
+            database.view(self.name)
+            result = database.update_view(self.name,
+                                 self.get_properties())
+        except ViewGetError:
+            result = database.create_view(self.name,
+                                          self.view_type,
+                                          self.get_properties())
+        return result

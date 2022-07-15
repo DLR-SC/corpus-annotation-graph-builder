@@ -147,21 +147,26 @@ class ArangoAnalyzer():
 
 
 
+@dataclass
+class AnalyzerList:
+    analyzerList: List = field(default_factory=lambda:[])  # ["text_en"]
 
-## TEST REMOVE THIS TO ANOTHER PLACE
-def main():
-    client = ArangoClient()
+    def get_invalid_analyzers(self, database: StandardDatabase, verbose=0):
+        invalid_analyzer = []
+        for analyzer in self.analyzerList:
+            try:
+                info = database.analyzer(analyzer)
+                if verbose == 1:
+                    print(info)
+            except AnalyzerGetError:
+                invalid_analyzer.append(analyzer)
+        return invalid_analyzer
 
-    # Connect to "test" database as root user.
-    db = client.db('InsightsNet', username='root', password='p3yqy8I0dHkpOrZs')
+    def filter_invalid_analyzers(self, database: StandardDatabase, verbose:int=0):
+        invalid_analyzer = self.get_invalid_analyzers(database)
+        if verbose == 1:
+            if len(invalid_analyzer) > 0 :
+                logging.warning("Filtered out the following invalid analyzers: "+ str(invalid_analyzer))
+        self.analyzerList = [a for a in self.analyzerList if a not in invalid_analyzer]
 
-    b = ArangoAnalyzer("TheText_STOP_new")
-    b.set_stopwords(language="english", custom_stopwords=['added', 'YOUPPPPPYYY'], include_default=True)
-    b.type = ArangoAnalyzer._TYPE_TEXT
 
-    b.create(db)
-
-    #print(db.analyzer('TheText_STOP_newas'))
-
-if __name__ == "__main__":
-    main()
