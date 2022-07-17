@@ -1,10 +1,10 @@
 import logging
-import logging
-logging.basicConfig(level = logging.INFO)
 from dataclasses import dataclass, field
 from arango.database import StandardDatabase
-from graph_framework.utils import utils
-from arango import ArangoClient,  AnalyzerGetError
+
+from .. import logger
+from ..utils import utils
+from arango import AnalyzerGetError
 from nltk.corpus import stopwords
 from typing import List, ClassVar
 
@@ -100,7 +100,7 @@ class ArangoAnalyzer():
 
 
     def set_stopwords(self, language = "english", custom_stopwords= [], include_default = True):
-        logging.info('The default stopword list is loaded from NLTK - if you get an error, run `nltk.download('
+        logger.info('The default stopword list is loaded from NLTK - if you get an error, run `nltk.download('
                      '"stopwords")`')
         if include_default:
             self.stopwords = stopwords.words(language)
@@ -122,12 +122,12 @@ class ArangoAnalyzer():
 
     def get_properties(self) -> dict:
         keep = ArangoAnalyzer.FIELDS[self.type]
-        result =utils.camel_nest_dict(utils.filter_dic(self,keep))
+        result = utils.camel_nest_dict(utils.filter_dic(self, keep))
         return result
 
     def summary(self) -> dict:
         keep = ArangoAnalyzer._MANDATORY_FIELDS + ArangoAnalyzer.FIELDS[self.type]
-        result =utils.camel_nest_dict(utils.filter_dic(self,keep))
+        result = utils.camel_nest_dict(utils.filter_dic(self, keep))
         return result
 
 
@@ -135,14 +135,14 @@ class ArangoAnalyzer():
         result = {}
         try:
             info = database.analyzer(self.name)
-            logging.error("Analyzer {} already exists with the following info: {}".format(self.name, info))
-            logging.error("You can delete it first using *database.delete_analyzer({})* and that create".format(self.name))
+            logger.error("Analyzer {} already exists with the following info: {}".format(self.name, info))
+            logger.error("You can delete it first using *database.delete_analyzer({})* and that create".format(self.name))
         except AnalyzerGetError:
             result = database.create_analyzer(self.name,
                                               self.type,
                                               self.get_properties(),
                                               self.features)
-            logging.info("Analyzer was created!")
+            logger.info("Analyzer was created!")
         return result
 
 
@@ -157,7 +157,7 @@ class AnalyzerList:
             try:
                 info = database.analyzer(analyzer)
                 if verbose == 1:
-                    print(info)
+                    logger.info(info)
             except AnalyzerGetError:
                 invalid_analyzer.append(analyzer)
         return invalid_analyzer
@@ -166,7 +166,7 @@ class AnalyzerList:
         invalid_analyzer = self.get_invalid_analyzers(database)
         if verbose == 1:
             if len(invalid_analyzer) > 0 :
-                logging.warning("Filtered out the following invalid analyzers: "+ str(invalid_analyzer))
+                logger.warning("Filtered out the following invalid analyzers: "+ str(invalid_analyzer))
         self.analyzerList = [a for a in self.analyzerList if a not in invalid_analyzer]
 
 

@@ -7,7 +7,7 @@ Corpus Analytics Graph serves as a base framework to create an ArangoDB graphs a
 
 This package is in early developement stages - to use/update it, clone the repository, and go to the root folder and then run
 
-```python
+```
 pip install -e .
 ```
 
@@ -32,7 +32,7 @@ The analyzer class, loads the required attributes of an analyzer based on its ty
 * _TYPE_DELIMITE -> "delimiter", **attributes to set:** delimiter
 
 ```python
-from graph_framework.view_wrapper.arango_analyzer import ArangoAnalyzer, EdgeNGram
+from cag.view_wrapper.arango_analyzer import ArangoAnalyzer, EdgeNGram
 
 analyzer = ArangoAnalyzer("sample_analyzer")
 analyzer.type = ArangoAnalyzer._TYPE_TEXT
@@ -82,6 +82,8 @@ The the analyzer can simply be created:
 ```python
 
 ## Create 
+from arango import ArangoClient
+
 client = ArangoClient()
 database = client.db('_System', username='root', password='root')
 analyzer.create(database)
@@ -93,5 +95,5 @@ analyzer.create(database)
 
 See sample projects for graph creation:
 - [InsighstNet Graphs](https://gitlab.dlr.de/insightsnet/inisightsnet_code/-/tree/main/insightsnet_graphs)
-- [PangeaKG]()
+- [Pangea KG]()
 

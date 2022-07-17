@@ -1,11 +1,10 @@
-import logging
-from arango import ViewGetError, ArangoClient
+from arango import ViewGetError
 
 from dataclasses import dataclass, field
 from typing import List, ClassVar
 from arango.database import StandardDatabase
-from graph_framework.utils import utils
-from graph_framework.view_wrapper.link import Link, AnalyzerList, Field
+from ..utils import utils
+from ..view_wrapper.link import Link
 
 
 @dataclass()

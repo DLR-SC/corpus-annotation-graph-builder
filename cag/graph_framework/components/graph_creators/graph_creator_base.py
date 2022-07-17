@@ -1,15 +1,11 @@
-import logging
 from abc import ABC, abstractmethod
-from typing import Any
 
-from graph_framework.utils.utils import encode_name
+from cag import logger
+from cag.utils.utils import encode_name
 from pyArango.collection import Document, Collection
 
-from pyArango.theExceptions import CreationError, DocumentNotFoundError
+from cag.utils.config import Config
 
-from graph_framework.utils.config import Config
-
-from graph_framework.utils import utils
 from graph_framework.components.component import Component
 from datetime import datetime
 import re
@@ -80,7 +76,12 @@ class GraphCreatorBase(ABC, Component):
             vert.save()
             return coll[data['_key']]
         else:
-            vert = self.graph.createVertex(collectionName, data)
+            try:
+                vert = self.graph.createVertex(collectionName, data)
+            except:
+                logger.exception("Ane exception was thrown while creating the vertex/edge {}"
+                                 "with the following data: {}".format(collectionName, str(data)))
+                vert = None
         return vert
 
     def upsert_link(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}):

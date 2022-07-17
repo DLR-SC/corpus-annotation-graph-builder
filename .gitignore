@@ -5,7 +5,8 @@ __pycache__/
 .Python
 __pypackages__/
 
-
+# ignore logs
+corpus-analytics-logs
 
 # data files
 data/wiki_pages/*

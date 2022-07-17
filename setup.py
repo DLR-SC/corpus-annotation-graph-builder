@@ -1,19 +1,29 @@
 from setuptools import setup
 
 setup(
-    name='graph_framework',
-    version='0.4.0',
+    name='cag',
+    version='0.5.0',
     description='This is a general framework to create arango db graphs',
     # url='',
     author='DLR',
     author_email='tobias.hecking@dlr.de',
     license='MIT',
-    packages=['graph_framework',
-              'graph_framework.components',
-              'graph_framework.graph',
-              'graph_framework.utils'],
+    packages=['cag.graph_framework',
+              'cag.graph_framework.components',
+              'cag.graph_framework.graph',
+              'cag.utils',
+              'cag.view_wrapper'],
     install_requires=['pyArango',
                       'python-arango',
                       'nltk'
                       ],
+    classifiers=[
+          'Development Status :: 2 - Pre-Alpha',
+          'Intended Audience :: Science/Research',
+          'License :: OSI Approved :: MIT License',
+          'Programming Language :: Python',
+      ],
+      zip_safe=False,
+
+
 )

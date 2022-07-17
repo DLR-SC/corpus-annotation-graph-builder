@@ -1,15 +1,13 @@
 from datetime import datetime
 
-from ..utils.config import Config, configuration
+from cag.utils.config import Config, configuration
 
-from ..graph.nodes import *
-from ..graph.relations import *
 from ..graph.base_graph import *
-from pyArango.database import Database
-from pyArango.graph import Graph
 from pyArango.collection import Document
 import re
 from typing import Any
+
+from ... import logger
 
 
 class Component(object):
@@ -60,7 +58,12 @@ class Component(object):
             vert.save()
             return coll[data['_key']]
         else:
-            vert = self.graph.createVertex(collectionName, data)
+            try:
+                vert = self.graph.createVertex(collectionName, data)
+            except:
+                logger.exception("Ane exception was thrown while creating the vertex/edge {}"
+                                 "with the following data: {}".format(collectionName, str(data)))
+                vert = None
         return vert
 
     def upsert_link(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id=""):

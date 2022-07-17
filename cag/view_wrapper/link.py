@@ -1,9 +1,8 @@
 import logging
 
-from graph_framework.utils import utils
-from graph_framework.view_wrapper.arango_analyzer import AnalyzerList
+from ..utils import utils
+from ..view_wrapper.arango_analyzer import AnalyzerList
 
-logging.basicConfig(level = logging.DEBUG)
 
 from dataclasses import field, dataclass
 from typing import List

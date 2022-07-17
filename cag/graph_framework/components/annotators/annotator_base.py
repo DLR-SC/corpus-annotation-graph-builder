@@ -3,7 +3,7 @@ from datetime import datetime
 
 from ..component import Component
 
-from ...utils.config import Config
+from cag.utils.config import Config
 class AnnotatorBase(ABC, Component):
 
     def __init__(self, query, run=False,params={}, conf: Config=None):
