@@ -22,7 +22,8 @@ This will allow you to use the module `graph_frameworks` from any python script 
 
 The arango view wrapper has classes that facilitates the creation of arango view and all its properties and components.
 
-#### create an analyzer
+The ful example can be found in the [main.py](main.py)
+#### Create an analyzer
 
 The analyzer class, loads the required attributes of an analyzer based on its type. The supported types are:
 * _TYPE_IDENTITY -> "identity", **attributes to set:** None
@@ -50,6 +51,7 @@ print(analyzer.summary())
 The summary returns the dictionary used to create the Analyzer:
 
 ```python
+OUTPUT:
 {
     "name": "sample_analyzer",
     "type": "text",
@@ -89,9 +91,119 @@ database = client.db('_System', username='root', password='root')
 analyzer.create(database)
 ```
 
-#### create a view
+#### Create a *link* with *fields*
 
-## Usage
+```python
+    # Create Link - a view can hvae 0 to * links
+    link = Link(name="TextNode") # Name of a collection in the database
+    linkAnalyzers = AnalyzerList(["identity"])
+    link.analyzers = linkAnalyzers
+
+    # A link can have 0..* fields
+    # for the *text* field in the *textNode* collection, add the analyzers below
+    field = Field("text", AnalyzerList(["text_en", "invalid_analyzer", "analyzer_sample"])) # text_en is a predifined analyzer from arango
+    
+    # filters out the analyzer that are not defined in the database
+    field.analyzers.filter_invalid_analyzers(db, verbose=1) 
+    print("current analyzers after filtering invalid ones: ", field.analyzers)
+```
+
+        OUTPUT: current analyzers after filtering invalid ones:  AnalyzerList(analyzerList=['text_en', 'analyzer_sample'])
+
+```python
+    link.add_field(field)
+
+    ## Show the dict format of all the fields in a link
+    print(link.get_fields_dict())
+   
+
+```
+
+
+        OUTPUT: {'text': {'analyzers': ['text_en', 'analyzer_sample']}}
+
+#### Create the *View*
+
+```python
+
+    view = View('sample_view',
+                view_type="arangosearch")
+    ## add the link (can have 0 or 1 link)
+    view.add_link(link)
+
+    ## can have 0..* primary sort
+    view.add_primary_sort("text", asc = False)
+    view.add_stored_value(["text", "timestamp"], compression="lz4")
+
+    print("Prints the *view* as a dict:", view.summary())
+
+```
+!!! Note: The links might need few minutes to be created and to show in ArangoDB.
+
+```
+OUTPUT:
+    {
+    "name": "sample_view",
+    "viewType": "arangosearch",
+    "properties": {
+        "cleanupintervalstep": 0,
+        "cleanupIntervalStep": 0,
+        "commitIntervalMsec": 1000,
+        "consolidationIntervalMsec": 0,
+        "consolidationPolicy": {
+            "type": "tier",
+            "segmentsMin": 1,
+            "segmentsMax": 10,
+            "segmentsBytesMax": 5368709120,
+            "segmentsBytesFloor": 2097152,
+            "minScore": 0
+        },
+        "primarySortCompression": "lz4",
+        "writebufferIdle": 64,
+        "writebufferActive": 0,
+        "writebufferMaxSize": 33554432
+    },
+    "links": {
+        "TextNode": {
+            "analyzers": [
+                "identity"
+            ],
+            "fields": {
+                "text": {
+                    "analyzers": [
+                        "text_en",
+                        "analyzer_sample"
+                    ]
+                }
+            },
+            "includeAllFields": False,
+            "trackListPositions": False,
+            "inBackground": False
+        }
+    },
+    "primarySort": [
+        {
+            "field": "text",
+            "asc": False
+        }
+    ],
+    "storedValues": [
+        {
+            "fields": [
+                "text"
+            ],
+            "compression": "lz4"
+        },
+        {
+            "fields": [
+                "timestamp"
+            ],
+            "compression": "lz4"
+        }
+    ]
+}
+```
+## Graph Usage
 
 See sample projects for graph creation:
 - [InsighstNet Graphs](https://gitlab.dlr.de/insightsnet/inisightsnet_code/-/tree/main/insightsnet_graphs)
