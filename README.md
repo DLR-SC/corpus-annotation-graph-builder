@@ -22,8 +22,11 @@ This will allow you to use the module `graph_frameworks` from any python script 
 
 The arango view wrapper has classes that facilitates the creation of arango view and all its properties and components.
 
-The ful example can be found in the [main.py](main.py)
+The full example can be found in the [main.py](main.py)
 #### Create an analyzer
+
+([source](https://www.arangodb.com/docs/stable/analyzers.html)):
+> The valid attributes/values for the properties are dependant on what type is used. For example, the delimiter type needs to know the desired delimiting character(s), whereas the text type takes a locale, stop-words and more.
 
 The analyzer class, loads the required attributes of an analyzer based on its type. The supported types are:
 * _TYPE_IDENTITY -> "identity", **attributes to set:** None
@@ -50,34 +53,35 @@ print(analyzer.summary())
 ```
 The summary returns the dictionary used to create the Analyzer:
 
-```python
-OUTPUT:
-{
-    "name": "sample_analyzer",
-    "type": "text",
-    "features": [
-        "frequency",
-        "norm",
-        "position"
-    ],
-    "locale": "en",
-    "case": "lower",
-    "stopwords": [
-        "hello"
-    ],
-    "accent": False,
-    "stemming": True,
-    "edgeNgram": {
-        "min": {
-            "min": 2,
-            "max": 4,
+<details><summary>OUTPUT - Click to expand</summary>
+
+    {
+        "name": "sample_analyzer",
+        "type": "text",
+        "features": [
+            "frequency",
+            "norm",
+            "position"
+        ],
+        "locale": "en",
+        "case": "lower",
+        "stopwords": [
+            "hello"
+        ],
+        "accent": False,
+        "stemming": True,
+        "edgeNgram": {
+            "min": {
+                "min": 2,
+                "max": 4,
+                "preserveOriginal": False
+            },
+            "max": 5,
             "preserveOriginal": False
-        },
-        "max": 5,
-        "preserveOriginal": False
+        }
     }
-}
-```
+
+</details>
 
 The the analyzer can simply be created:
 
@@ -107,8 +111,10 @@ analyzer.create(database)
     field.analyzers.filter_invalid_analyzers(db, verbose=1) 
     print("current analyzers after filtering invalid ones: ", field.analyzers)
 ```
+<details><summary>OUTPUT - Click to expand</summary>
 
-        OUTPUT: current analyzers after filtering invalid ones:  AnalyzerList(analyzerList=['text_en', 'analyzer_sample'])
+    current analyzers after filtering invalid ones:  AnalyzerList(analyzerList=['text_en', 'analyzer_sample'])  
+</details>
 
 ```python
     link.add_field(field)
@@ -140,69 +146,70 @@ analyzer.create(database)
 ```
 !!! Note: The links might need few minutes to be created and to show in ArangoDB.
 
-```
-OUTPUT:
+<details><summary>OUTPUT - Click to expand</summary>
+
     {
-    "name": "sample_view",
-    "viewType": "arangosearch",
-    "properties": {
-        "cleanupintervalstep": 0,
-        "cleanupIntervalStep": 0,
-        "commitIntervalMsec": 1000,
-        "consolidationIntervalMsec": 0,
-        "consolidationPolicy": {
-            "type": "tier",
-            "segmentsMin": 1,
-            "segmentsMax": 10,
-            "segmentsBytesMax": 5368709120,
-            "segmentsBytesFloor": 2097152,
-            "minScore": 0
-        },
-        "primarySortCompression": "lz4",
-        "writebufferIdle": 64,
-        "writebufferActive": 0,
-        "writebufferMaxSize": 33554432
-    },
-    "links": {
-        "TextNode": {
-            "analyzers": [
-                "identity"
-            ],
-            "fields": {
-                "text": {
-                    "analyzers": [
-                        "text_en",
-                        "analyzer_sample"
-                    ]
-                }
+        "name": "sample_view",
+        "viewType": "arangosearch",
+        "properties": {
+            "cleanupintervalstep": 0,
+            "cleanupIntervalStep": 0,
+            "commitIntervalMsec": 1000,
+            "consolidationIntervalMsec": 0,
+            "consolidationPolicy": {
+                "type": "tier",
+                "segmentsMin": 1,
+                "segmentsMax": 10,
+                "segmentsBytesMax": 5368709120,
+                "segmentsBytesFloor": 2097152,
+                "minScore": 0
             },
-            "includeAllFields": False,
-            "trackListPositions": False,
-            "inBackground": False
-        }
-    },
-    "primarySort": [
-        {
-            "field": "text",
-            "asc": False
-        }
-    ],
-    "storedValues": [
-        {
-            "fields": [
-                "text"
-            ],
-            "compression": "lz4"
+            "primarySortCompression": "lz4",
+            "writebufferIdle": 64,
+            "writebufferActive": 0,
+            "writebufferMaxSize": 33554432
         },
-        {
-            "fields": [
-                "timestamp"
-            ],
-            "compression": "lz4"
-        }
-    ]
-}
-```
+        "links": {
+            "TextNode": {
+                "analyzers": [
+                    "identity"
+                ],
+                "fields": {
+                    "text": {
+                        "analyzers": [
+                            "text_en",
+                            "analyzer_sample"
+                        ]
+                    }
+                },
+                "includeAllFields": False,
+                "trackListPositions": False,
+                "inBackground": False
+            }
+        },
+        "primarySort": [
+            {
+                "field": "text",
+                "asc": False
+            }
+        ],
+        "storedValues": [
+            {
+                "fields": [
+                    "text"
+                ],
+                "compression": "lz4"
+            },
+            {
+                "fields": [
+                    "timestamp"
+                ],
+                "compression": "lz4"
+            }
+        ]
+    }
+</details>
+
 ## Graph Usage
 
 See sample projects for graph creation:

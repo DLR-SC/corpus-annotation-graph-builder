@@ -25,6 +25,7 @@ class GraphCreatorBase(ABC, Component):
     _BELONGS_TO_RELATION_NAME = 'BelongsTo'
     _REFERS_TO_RELATION_NAME = 'RefersTo'
     _HAS_AUTHOR_RELATION_NAME = 'HasAuthor'
+    _PUBLISHED_AT_RELATION_NAME = 'PublishedAt'
     _EDGE_ABSTRACT_TEXT = 'AbstractText'
     _EDGE_TEXT_TERM = 'TextTerm'
     _EDGE_KEYTERM_RELATION = 'KeyTermRelation'
@@ -110,10 +111,11 @@ class GraphCreatorBase(ABC, Component):
         corpus = self.upsert_vert(GraphCreatorBase._CORPUS_NODE_NAME, dict_)
         return corpus
 
-    def create_text_vertex(self, text):
+    def create_text_vertex(self, text, timestamp=None):
+        if timestamp == None: timestamp = self.now
         dict_ = {
             "text": text,
-            "timestamp": self.now
+            "timestamp": timestamp
         }
         key = self._get_doc_key(
             GraphCreatorBase._TEXT_NODE_NAME, {"text": text})
@@ -139,7 +141,9 @@ class GraphCreatorBase(ABC, Component):
             GraphCreatorBase._IMAGE_NODE_NAME,  dict_)
         return img
 
-    def create_author_vertex(self, author_name):
+    def create_author_vertex(self, author_name, timestamp=None):
+        if timestamp is None:
+            timestamp = self.now
         dict_ = {
             "name": author_name,
             "timestamp": self.now
