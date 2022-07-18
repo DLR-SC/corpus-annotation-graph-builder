@@ -112,7 +112,8 @@ class GraphCreatorBase(ABC, Component):
         return corpus
 
     def create_text_vertex(self, text, timestamp=None):
-        if timestamp == None: timestamp = self.now
+        if timestamp is None:
+            timestamp = self.now
         dict_ = {
             "text": text,
             "timestamp": timestamp
@@ -146,7 +147,7 @@ class GraphCreatorBase(ABC, Component):
             timestamp = self.now
         dict_ = {
             "name": author_name,
-            "timestamp": self.now
+            "timestamp": timestamp
         }
 
         key = self._get_doc_key(
