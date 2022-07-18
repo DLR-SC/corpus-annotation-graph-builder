@@ -146,7 +146,7 @@ class GraphCreatorBase(ABC, Component):
             timestamp = self.now
         dict_ = {
             "name": author_name,
-            "timestamp": self.now
+            "timestamp":timestamp
         }
 
         key = self._get_doc_key(
