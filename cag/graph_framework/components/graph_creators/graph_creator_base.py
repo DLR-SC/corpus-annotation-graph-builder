@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 from cag import logger
-from cag.utils.utils import encode_name
 from pyArango.collection import Document, Collection
 
 from cag.utils.config import Config
@@ -141,13 +140,17 @@ class GraphCreatorBase(ABC, Component):
         return img
 
     def create_author_vertex(self, author_name):
-        key = encode_name(author_name)
-
         dict_ = {
-            "_key": key,
             "name": author_name,
             "timestamp": self.now
         }
+
+        key = self._get_doc_key(
+            GraphCreatorBase._AUTHOR_NODE_NAME, {"name": author_name})
+
+        if key is not None:
+            dict_["_key"] = key
+
         author = self.upsert_vert(
             GraphCreatorBase._AUTHOR_NODE_NAME, dict_)
 
