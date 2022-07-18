@@ -209,6 +209,7 @@ analyzer.create(database)
         ]
     }
 </details>
+
 ## Graph Usage
 
 See sample projects for graph creation:
