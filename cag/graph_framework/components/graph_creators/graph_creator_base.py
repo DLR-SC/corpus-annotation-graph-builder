@@ -6,7 +6,7 @@ from pyArango.collection import Document, Collection
 
 from cag.utils.config import Config
 
-from graph_framework.components.component import Component
+from cag.graph_framework.components.component import Component
 from datetime import datetime
 import re
 
