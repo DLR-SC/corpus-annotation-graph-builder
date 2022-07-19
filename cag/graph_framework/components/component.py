@@ -47,10 +47,21 @@ class Component(object):
         for ed in (self._edge_definitions+self._base_edge_definitions):
             self.graph.update_graph_structure(ed['relation'],
                                               ed['from_collections'], ed['to_collections'], create_collections=True)
-
-    def upsert_vert(self, collectionName: str, data: "dict[str, Any]") -> Document:
+    def upsert_vert(self, collectionName: str, data: "dict[str, Any]", alt_key:str=None) -> Document:
         coll: Collection = self.database[collectionName]
         data['timestamp'] = datetime.now().isoformat()
+        
+        if alt_key is not None and alt_key in data.keys():
+            coll.ensureIndex("fulltext", [alt_key], unique=True)
+            try:
+                sample: Document = coll.fetchByExample(
+                    {alt_key: data[alt_key]}, batchSize=1)[0]
+                if sample is not None:
+                    sample.getStore().update(data)
+                    sample.save()
+                    return sample
+            except Exception as e:
+                pass
         if data['_key'] in coll:
             vert: Document = coll.fetchDocument(data['_key'])
             for key, d in data.items():

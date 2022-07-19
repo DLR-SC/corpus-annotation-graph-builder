@@ -67,43 +67,6 @@ class GraphCreatorBase(ABC, Component):
             key = itms[0]['_key']
         return key
 
-    def upsert_vert(self, collectionName, data, alt_key=None) -> Document:
-        coll: Collection = self.database[collectionName]
-        if alt_key and alt_key in data.keys():
-            coll.ensureIndex("fulltext", alt_key)
-            try:
-                sample: Document = coll.fetchByExample(
-                    {alt_key: data[alt_key]})
-                if sample is not None:
-                    sample.getStore().update(data)
-                    sample.save()
-                    return sample
-            except:
-                pass
-        if '_key' in data.keys() and data['_key'] in coll:
-            vert: Document = coll.fetchDocument(data['_key'])
-            vert.getStore().update(data)
-            vert.save()
-            return coll[data['_key']]
-        else:
-            try:
-                vert = self.graph.createVertex(collectionName, data)
-            except:
-                logger.exception("Ane exception was thrown while creating the vertex/edge {}"
-                                 "with the following data: {}".format(collectionName, str(data)))
-                vert = None
-        return vert
-
-    def upsert_link(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}):
-        from_key = re.sub("/", "-", from_doc._id)
-        to_key = re.sub("/", "-", to_doc._id)
-        link_key = f'{from_key}-{to_key}'
-        self.database[relationName].validatePrivate("_from", from_doc._id)
-        self.database[relationName].validatePrivate("_to", to_doc._id)
-
-        edge_dic = {'_key': link_key, '_from': from_doc._id,
-                    '_to': to_doc._id, **edge_attrs}
-        return self.upsert_vert(relationName, edge_dic)
 
     ######### END OF HELPERS ###########################################################
 
