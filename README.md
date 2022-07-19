@@ -1,4 +1,4 @@
-# Corpus Analytics Graph
+# Corpus Analytics Graph (CAG)
 
 ## Overview
 Corpus Analytics Graph serves as a base framework to create an ArangoDB graphs and Arango [Views](https://www.arangodb.com/docs/stable/arangosearch-views.html). It contains basic *nodes* (aka Vertices in ArangoDB) and *Relations* (a.k.a Edges in ArangoDB).
@@ -11,14 +11,14 @@ This package is in early developement stages - to use/update it, clone the repos
 pip install -e .
 ```
 
-This will allow you to use the module `graph_frameworks` from any python script locally.
+This will allow you to use the module **`cag`** from any python script locally. The two main packages are **`cag.graph_framework`** and **`cag.view_wrapper`**.
 
 ## Documentation
 
-### Graph creation
+### Graph creation - subpackage **`cag.graph_framework`**
 #TODO
 
-### Arango Views
+### Arango Views - **`cag.view_wrapper`**
 
 The arango view wrapper has classes that facilitates the creation of arango view and all its properties and components.
 
