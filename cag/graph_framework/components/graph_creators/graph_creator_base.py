@@ -49,7 +49,7 @@ class GraphCreatorBase(ABC, Component):
         }
     ]
 
-    def __init__(self, corpus_file_or_dir, conf: Config=None):
+    def __init__(self, corpus_file_or_dir, conf: Config = None):
         super().__init__(conf)
         self.corpus_file_or_dir = corpus_file_or_dir
         self.now = datetime.now()
@@ -67,9 +67,19 @@ class GraphCreatorBase(ABC, Component):
             key = itms[0]['_key']
         return key
 
-    def upsert_vert(self, collectionName, data) -> Document:
+    def upsert_vert(self, collectionName, data, alt_key=None) -> Document:
         coll: Collection = self.database[collectionName]
-
+        if alt_key and alt_key in data.keys():
+            coll.ensureIndex("fulltext", alt_key)
+            try:
+                sample: Document = coll.fetchByExample(
+                    {alt_key: data[alt_key]})
+                if sample is not None:
+                    sample.getStore().update(data)
+                    sample.save()
+                    return sample
+            except:
+                pass
         if '_key' in data.keys() and data['_key'] in coll:
             vert: Document = coll.fetchDocument(data['_key'])
             vert.getStore().update(data)
