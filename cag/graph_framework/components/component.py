@@ -9,6 +9,8 @@ from typing import Any
 
 from ... import logger
 
+from pyArango.collection import BulkOperation
+
 
 class Component(object):
     """The class from witch all more specialized components must derive."""
@@ -26,6 +28,7 @@ class Component(object):
     _base_edge_definitions = []
     _description = "No description"
     _name = "Component"
+
     def __init__(self, conf: Config = None):
         if conf is None:
             conf = configuration(use_global_conf=True)
@@ -47,34 +50,37 @@ class Component(object):
         for ed in (self._edge_definitions+self._base_edge_definitions):
             self.graph.update_graph_structure(ed['relation'],
                                               ed['from_collections'], ed['to_collections'], create_collections=True)
-    def upsert_vert(self, collectionName: str, data: "dict[str, Any]", alt_key:str=None) -> Document:
+
+    def upsert_vert(self, collectionName: str, data: "dict[str, Any]", alt_key: str = None) -> Document:
         coll: Collection = self.database[collectionName]
         data['timestamp'] = datetime.now().isoformat()
-        
-        if alt_key is not None and alt_key in data.keys():
-            coll.ensureIndex("fulltext", [alt_key], unique=True)
+        if alt_key is not None:
+            coll.ensureHashIndex([alt_key], unique=True)
+        vert=None
+        try:
+            vert = self.graph.createVertex(collectionName, data)
+        except Exception as e:
             try:
-                sample: Document = coll.fetchByExample(
-                    {alt_key: data[alt_key]}, batchSize=1)[0]
-                if sample is not None:
-                    sample.getStore().update(data)
-                    sample.save()
-                    return sample
+                if alt_key is not None and alt_key in data.keys():
+                    try:
+                        sample: Document = coll.fetchByExample(
+                            {alt_key: data[alt_key]}, batchSize=1)[0]
+                        if sample is not None:
+                            sample.getStore().update(data)
+                            sample.save()
+                            return sample
+                    except Exception as e:
+                        logger.exception("Ane exception was thrown while creating the vertex/edge an alt-key {}"
+                                         "with the following data: {} and error: {}".format(collectionName, str(data), e))
+                if '_key' in data.keys() and data['_key'] in coll:
+                    vert: Document = coll.fetchDocument(data['_key'])
+                    for key, d in data.items():
+                        vert[key] = d
+                    vert.save()
+                    return coll[data['_key']]
             except Exception as e:
-                pass
-        if data['_key'] in coll:
-            vert: Document = coll.fetchDocument(data['_key'])
-            for key, d in data.items():
-                vert[key] = d
-            vert.save()
-            return coll[data['_key']]
-        else:
-            try:
-                vert = self.graph.createVertex(collectionName, data)
-            except:
                 logger.exception("Ane exception was thrown while creating the vertex/edge {}"
-                                 "with the following data: {}".format(collectionName, str(data)))
-                vert = None
+                                 "with the following data: {}".format(collectionName, str(data)), e)
         return vert
 
     def upsert_link(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id=""):
