@@ -91,13 +91,9 @@ class GraphCreatorBase(ABC, Component):
             "text": text,
             "timestamp": timestamp
         }
-        key = self._get_doc_key(
-            GraphCreatorBase._TEXT_NODE_NAME, {"text": text})
-        if key is not None:
-            dict_["_key"] = key
 
         txt = self.upsert_vert(
-            GraphCreatorBase._TEXT_NODE_NAME, dict_)
+            GraphCreatorBase._TEXT_NODE_NAME, dict_, alt_key="text")
         return txt
 
     def create_image_vertex(self, url):
@@ -107,12 +103,8 @@ class GraphCreatorBase(ABC, Component):
             "timestamp": self.now
         }
 
-        key = self._get_doc_key(
-            GraphCreatorBase._IMAGE_NODE_NAME, {"url": url})
-        if key is not None:
-            dict_["_key"] = key
         img = self.upsert_vert(
-            GraphCreatorBase._IMAGE_NODE_NAME,  dict_)
+            GraphCreatorBase._IMAGE_NODE_NAME,  dict_, alt_key="url")
         return img
 
     def create_author_vertex(self, author_name, timestamp=None):
@@ -123,14 +115,8 @@ class GraphCreatorBase(ABC, Component):
             "timestamp": timestamp
         }
 
-        key = self._get_doc_key(
-            GraphCreatorBase._AUTHOR_NODE_NAME, {"name": author_name})
-
-        if key is not None:
-            dict_["_key"] = key
-
         author = self.upsert_vert(
-            GraphCreatorBase._AUTHOR_NODE_NAME, dict_)
+            GraphCreatorBase._AUTHOR_NODE_NAME, dict_, alt_key="name")
 
         return author
 
@@ -141,12 +127,6 @@ class GraphCreatorBase(ABC, Component):
             "timestamp": self.now
         }
 
-        key = self._get_doc_key(
-            GraphCreatorBase._WEB_RESOURCE_NODE_NAME, {"url": url})
-
-        if key is not None:
-            dict_["_key"] = key
-
         web_resource = self.upsert_vert(
-            GraphCreatorBase._WEB_RESOURCE_NODE_NAME, dict_)
+            GraphCreatorBase._WEB_RESOURCE_NODE_NAME, dict_, alt_key="url")
         return web_resource

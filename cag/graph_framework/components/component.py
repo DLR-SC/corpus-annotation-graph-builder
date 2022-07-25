@@ -51,9 +51,12 @@ class Component(object):
             self.graph.update_graph_structure(ed['relation'],
                                               ed['from_collections'], ed['to_collections'], create_collections=True)
 
-    def upsert_vert(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None, timestamp=None) -> Document:
+    def upsert_vert(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> Document:
         coll: Collection = self.database[collectionName]
-        data['timestamp'] = datetime.now().isoformat() if timestamp is None else timestamp
+
+        if 'timestamp' not in data.keys() or data['timestamp'] is None:
+            data['timestamp'] = datetime.now().isoformat()
+
         if alt_key is not None:
             if not isinstance(alt_key, list):
                 alt_key = [alt_key]
