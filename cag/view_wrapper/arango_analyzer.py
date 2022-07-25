@@ -150,6 +150,7 @@ class ArangoAnalyzer():
 @dataclass
 class AnalyzerList:
     analyzerList: List = field(default_factory=lambda:[])  # ["text_en"]
+    database: StandardDatabase = None
 
     def get_invalid_analyzers(self, database: StandardDatabase, verbose=0):
         invalid_analyzer = []
@@ -169,4 +170,19 @@ class AnalyzerList:
                 logger.warning("Filtered out the following invalid analyzers: "+ str(invalid_analyzer))
         self.analyzerList = [a for a in self.analyzerList if a not in invalid_analyzer]
 
+
+    def add_analyzer(self, analyzer_name:str, force_add = False):
+        '''
+        Adds the analyzer name to a list. If force_add =True then it adds is even if this analyzer does not exist in the database
+        '''
+        try:
+            if self.database is not None:
+                _ = self.database.analyzer(analyzer_name)
+            else:
+                print("couldnt validate analyzer because database connection is not set.")
+            self.analyzerList.append(analyzer_name)
+        except AnalyzerGetError:
+            print("Invalid Analyzer")
+            if force_add:
+                self.analyzerList.append(analyzer_name)
 

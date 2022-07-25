@@ -51,26 +51,30 @@ class Component(object):
             self.graph.update_graph_structure(ed['relation'],
                                               ed['from_collections'], ed['to_collections'], create_collections=True)
 
-    def upsert_vert(self, collectionName: str, data: "dict[str, Any]", alt_key: str = None) -> Document:
+    def upsert_vert(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None, timestamp=None) -> Document:
         coll: Collection = self.database[collectionName]
-        data['timestamp'] = datetime.now().isoformat()
+        data['timestamp'] = datetime.now().isoformat() if timestamp is None else timestamp
         if alt_key is not None:
-            coll.ensureHashIndex([alt_key], unique=True)
+            if not isinstance(alt_key, list):
+                alt_key = [alt_key]
+            coll.ensureHashIndex(alt_key, unique=True)
         vert=None
         try:
             vert = self.graph.createVertex(collectionName, data)
         except Exception as e:
             try:
-                if alt_key is not None and alt_key in data.keys():
+                if alt_key is not None and all(x in data.keys() for x in alt_key):
                     try:
+                        query = {k:v for k, v in data.items() if k in alt_key}
                         sample: Document = coll.fetchByExample(
-                            {alt_key: data[alt_key]}, batchSize=1)[0]
+                            query,
+                            batchSize=1)[0]
                         if sample is not None:
                             sample.getStore().update(data)
                             sample.save()
                             return sample
                     except Exception as e:
-                        logger.exception("Ane exception was thrown while creating the vertex/edge an alt-key {}"
+                        logger.exception("An exception was thrown while creating the vertex/edge an alt-key {}"
                                          "with the following data: {} and error: {}".format(collectionName, str(data), e))
                 if '_key' in data.keys() and data['_key'] in coll:
                     vert: Document = coll.fetchDocument(data['_key'])
@@ -79,7 +83,7 @@ class Component(object):
                     vert.save()
                     return coll[data['_key']]
             except Exception as e:
-                logger.exception("Ane exception was thrown while creating the vertex/edge {}"
+                logger.exception("An exception was thrown while creating the vertex/edge {}"
                                  "with the following data: {}".format(collectionName, str(data)), e)
         return vert
 
