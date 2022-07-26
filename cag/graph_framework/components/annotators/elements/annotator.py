@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import field, dataclass
 from typing import List, ClassVar
-from pyArango.connection import Database
 
 from cag.utils import utils
 from cag.utils.config import Config, configuration
@@ -28,9 +27,9 @@ class Annotator(ABC):
 
 
     def __post_init__(self):
-        if self.conf is None:
-            conf = configuration(use_global_conf=True)
-        database = conf.db
+        if self.config is None:
+            self.config = configuration(use_global_conf=True)
+        database = self.config.db
         #self.conf = conf
         #self.graph_name = conf.graph
 
@@ -46,9 +45,9 @@ class Annotator(ABC):
             database.createCollection(edge_name)
 
     @abstractmethod
-    def create_vertex(self, *kargs):
+    def create_vertex(self, **kargs):
         pass
 
     @abstractmethod
-    def save_annotations(self):
+    def save_annotations(self, annotated_text:"[]")
         pass
