@@ -1,9 +1,10 @@
-
+from abc import ABC, abstractmethod
 from dataclasses import field, dataclass
 from typing import List, ClassVar
 from pyArango.connection import Database
 
 from cag.utils import utils
+from cag.utils.config import Config, configuration
 
 
 @dataclass
