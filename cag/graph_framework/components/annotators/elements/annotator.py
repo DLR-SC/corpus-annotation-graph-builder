@@ -49,5 +49,5 @@ class Annotator(ABC):
         pass
 
     @abstractmethod
-    def save_annotations(self, annotated_text:"[]")
+    def save_annotations(self, annotated_text:"[]"):
         pass
