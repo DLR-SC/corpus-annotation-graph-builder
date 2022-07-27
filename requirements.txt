@@ -1,2 +1,3 @@
 nltk
 pyArango==2.0.1
+spacy

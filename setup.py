@@ -1,3 +1,4 @@
+import setuptools
 from setuptools import setup
 
 setup(
@@ -8,11 +9,7 @@ setup(
     author='DLR',
     author_email='tobias.hecking@dlr.de',
     license='MIT',
-    packages=['cag.graph_framework',
-              'cag.graph_framework.components',
-              'cag.graph_framework.graph',
-              'cag.utils',
-              'cag.view_wrapper'],
+    packages=setuptools.find_packages(),
     install_requires=['pyArango',
                       'python-arango',
                       'nltk'
