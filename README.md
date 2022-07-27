@@ -5,10 +5,16 @@ Corpus Analytics Graph serves as a base framework to create an ArangoDB graphs a
 
 ## Installation
 
+### Manual cloning
 This package is in early developement stages - to use/update it, clone the repository, and go to the root folder and then run
 
 ```
 pip install -e .
+```
+### Direct install via pip 
+The package can also be installed directly via pip
+```
+pip install git+https://gitlab.dlr.de/sc/ivs-open/corpus_analytics_graph
 ```
 
 This will allow you to use the module **`cag`** from any python script locally. The two main packages are **`cag.graph_framework`** and **`cag.view_wrapper`**.
