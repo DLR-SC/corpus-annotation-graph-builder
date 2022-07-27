@@ -9,7 +9,7 @@ Corpus Analytics Graph serves as a base framework to create an ArangoDB graphs a
 This package is in early developement stages - to use/update it, clone the repository, and go to the root folder and then run
 
 ```
-pip install -e .
+pip install .
 ```
 ### Direct install via pip 
 The package can also be installed directly via pip
