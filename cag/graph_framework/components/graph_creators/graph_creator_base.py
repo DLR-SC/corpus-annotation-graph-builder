@@ -60,7 +60,6 @@ class GraphCreatorBase(ABC, Component):
     def init_graph(self):
         g = self.graph
 
-    @abstractmethod
     def update_graph(self, timestamp):
         g = self.graph
 

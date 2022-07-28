@@ -1,4 +1,4 @@
-image: python:3.7-alpine
+image: python:3.8
 
 stages:
  - test
@@ -13,6 +13,7 @@ test-all:
         ARANGO_NO_AUTH: 1
   script:
   - pip install -r requirements.txt
+  - pip install ./
   - pytests tests/
   variables:
     ARANGO_URL: "http://arangodb_testserver:8529"

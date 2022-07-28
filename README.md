@@ -117,11 +117,9 @@ class AnyGraphCreator(GraphCreatorBase):
         }
     ]
 
-    def __init__(self, corpus_dir, database, initialize=False):
-        super().__init__(corpus_dir, database)
-    def update_graph(self, timestamp):
-        return
 
+    def __init__(self, corpus_dir, config, initialize=False):
+        super().__init__(corpus_dir, config, initialize)
     def init_graph(self):
         corpus = self.create_corpus_vertex(key="AnyCorpus",
                                            name=AnyGraphCreator._name,
