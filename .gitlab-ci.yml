@@ -6,10 +6,25 @@ stages:
 
 test-all:
 
+  services:
+    - name: arangodb:3.9.2
+      alias: arangodb_testserver
+      variables:
+      - ARANGO_NO_AUTH=1
+  script:
+  - pip install -r requirements.txt
+  - pytests tests/
+  variables:
+  - ARANGO_URL="http://arangodb_testserver:8529"
+  - ARANGO_USER=""
+  - ARANGO_PW=""
+
 publish-docs: 
   stage: publish
   script:
+  - pip install -r requirements.txt
   - pip install -U sphinx
+  - sphinx-autogen docs/source/index.rst
   - sphinx-build -b html docs/source public
   artifacts:
     paths:

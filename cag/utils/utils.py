@@ -4,19 +4,26 @@ import urllib
 from re import sub
 
 def get_hash_from_str(str):
+    """_summary_
+    generate a sha256-16 byte int from your string to use as a key
+
+    :param str: _description_
+    :type str: _type_
+    :return: _description_
+    :rtype: _type_
+    """
     hashing_func = hashlib.sha256
     str2int = lambda s : int(hashing_func(s.encode()).hexdigest(), 16)
     return str2int(str)
 
 def encode_name(name):
-    """ Encodes any string into a string consisting only of characters valid in ArangoDB _keys.
+    """_summary_
+    Encodes any string in a readable key (length may be of an issue)
 
-    Args:
-        name (string): The string to be encoded
-
-    Returns:
-        (string) Encoded result
-
+    :param name: _description_
+    :type name: _type_
+    :return: _description_
+    :rtype: _type_
     """
     enc_n = urllib.parse.quote_plus(name)
     enc_n = enc_n.replace("~", "%7E")
@@ -24,6 +31,13 @@ def encode_name(name):
 
 
 def to_dictionary(obj: object) -> dict:
+    """_summary_
+    Deep-clone an object by jsonifying it
+    :param obj: _description_
+    :type obj: object
+    :return: _description_
+    :rtype: dict
+    """
     return json.loads(json.dumps(obj, default=lambda o: vars(o)))
 
 
