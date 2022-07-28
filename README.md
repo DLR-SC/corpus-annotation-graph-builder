@@ -129,13 +129,13 @@ class AnyGraphCreator(GraphCreatorBase):
                                            desc=AnyGraphCreator._description,
                                            created_on=datetime.today())
         # fetch your data, load it, etc,
-        # self.corpus_file_or_dir can be used to tell your creator where to start
-        # ...
+        # self.corpus_file_or_dir can be used to tell your creator where your files or data is
 
 ```
 
-### Annotators -**`cag.graph_framework.components`**
+### Annotators 
 
+**TO BE DEFINED**
 An example for annotation metadata in json format for annotations produced by keyphrase extraction is given below:
 
 ```
@@ -147,6 +147,10 @@ An example for annotation metadata in json format for annotations produced by ke
     }
 }
 ```
+
+### Analyzers -**`cag.graph_framework.components`**
+
+**TO BE DEFINED**
 
 
 ### Arango Views - **`cag.view_wrapper`**
