@@ -49,10 +49,16 @@ class GraphCreatorBase(ABC, Component):
         }
     ]
 
-    def __init__(self, corpus_file_or_dir, conf: Config = None):
+    def __init__(self, corpus_file_or_dir, conf: Config = None, initialize=False):
         super().__init__(conf)
         self.corpus_file_or_dir = corpus_file_or_dir
         self.now = datetime.now()
+        if initialize:
+            self.init_graph()
+
+    @abstractmethod
+    def init_graph(self):
+        g = self.graph
 
     @abstractmethod
     def update_graph(self, timestamp):
@@ -67,10 +73,10 @@ class GraphCreatorBase(ABC, Component):
             key = itms[0]['_key']
         return key
 
-
     ######### END OF HELPERS ###########################################################
 
     ######### Generic func to create vertices ##########################################
+
     def create_corpus_vertex(self, key, name, type, desc, created_on):
 
         dict_ = {

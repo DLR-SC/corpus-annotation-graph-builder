@@ -91,6 +91,7 @@ class Component(object):
         return vert
 
     def upsert_link(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id=""):
+        
         from_key = re.sub("/", "-", from_doc._id)
         to_key = re.sub("/", "-", to_doc._id)
         add_id = re.sub("/", "-", add_id)

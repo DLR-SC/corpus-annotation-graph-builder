@@ -1,7 +1,7 @@
 # Corpus Analytics Graph (CAG)
 
 ## Overview
-Corpus Analytics Graph serves as a base framework to create an ArangoDB graphs and Arango [Views](https://www.arangodb.com/docs/stable/arangosearch-views.html). It contains basic *nodes* (aka Vertices in ArangoDB) and *Relations* (a.k.a Edges in ArangoDB).
+Corpus Analytics Graph serves as a base framework to create an ArangoDB graphs and Arango [Views](https://www.arangodb.com/docs/stable/arangosearch-views.html). It contains basic *nodes* (aka Vertices in ArangoDB) and *relations* (a.k.a Edges in ArangoDB).
 
 ## Installation
 
@@ -19,10 +19,135 @@ pip install git+https://gitlab.dlr.de/sc/ivs-open/corpus_analytics_graph
 
 This will allow you to use the module **`cag`** from any python script locally. The two main packages are **`cag.graph_framework`** and **`cag.view_wrapper`**.
 
+
+## Concept
+
+The graph is, both, object of analysis as well as result container. This means that annotation runs evaluate the graph and enrich it with annoations. 
+
+In the example below object of study (OOS) nodes are depicted as white and blue boxes and annoation nodes as grey boxes. OOS nodes are created by [Graph Creators](#graph-creators) that read raw corpus data and map it to the OOS graph. Graph builders also create some basic self-evident annotations (e.g. methods, provided keywords, categories, etc.). The OOS nodes are analysed by automatic [Annotators](#annotators), which add or update annoations to the graph. 
+
+
+![OOS Grapg](OoS_Data_Model.drawio.png)
+
+In order to create direct links between annotations [Annotation Linkers](#annotation-linkers) establish relations between existing annotations like "is identical to", "belongs to", etc. 
+
+The enriched InsightsNet graph can be further analysed or queried by [Analyzers](#analyzers) for producing results to be presented to the end-users.
+
+## Components
+
+### Graph Creators
+Graph creator components evaluate raw corpus data and map it to the graph by creating OOS nodes and corresponding relations.
+
+**Input:** Raw corpus data
+
+**Output:** Object of study (OOS) nodes, self-evident annotations and relations in ArangoDB
+
+**Metadata stored in nodes and edges:**
+
+- Timestamp
+
+### Annotators 
+Annotator components enrich the graph by analysing OOS nodes and link them to newly created annotation nodes. Annotations can be on different levels. For example, corpus level (e.g. corpus statistics, topics), text nodes (e.g. named entities, keyphrases), image nodes (e.g. generated caption), etc.
+
+**Input:** Knowledge Graph, Subgraph selection query
+
+**Output:** Annotation nodes and relations in ArangoDB
+
+**Metadata stored in annotation nodes and annotated edges:**
+
+- Timestamp
+- Component that created the annotation
+- Parameters used for analysing content nodes
+
+
+**Gradual update rules (not yet implemented):**
+
+The annotation metadata is used to keep the annoation graph consistent and to avoid unneccessary computations. 
+
+An annotation of a OOS node is only computed once. To this end, before an annotator (parameterized by algorithm and settings) analyzes an OOS node, it first checks if there exists already an attached annotation node that has matching parameter settings in its metadata. In this way annotations can be created on demand for specific subgraphs depending on the analysis goal and re-used where possible. The more analysis runs performed, the less likely it is that a OOS node has to be evaluated.
+
+However, since the corpus builder can modify the OOS part of the graph annotations may need to be updated after graph updates. The timestamp propagation mechanism of the graph builder components described above ensures that the timestamp of OOS nodes is updated if it was affected by a graph update. If the timestamp of an annotation is smaller than the timestamp of its attached OOS node, it might be outdated and needs re-computation.
+
+Two options for annotation updates *(open issue)*:
+
+1. Compute new delete old (Pro: No legacy information, Con: Graph is not fully reversible to a prior state).
+2. Compute new flag old as outdated (Pro: Graph is fully reversible to any prior state, Con: Graph may contain much useless information, e.g. results from trial runs)
+
+### Annotation Linkers
+
+Annotation linkers 
+
+**Input:** Knowledge Graph, Subgraph selection query
+
+**Output:** Links between annoations in ArangoDB
+
+**Metadata links between annotation:**
+
+- Timestamp
+
+
+### Analyzers
+
+Analysers are components that produce results that are not stored in the graph. These can be, for example, visualisations. Some analysers may just read out information from the graph (e.g. corpus topics) and create a representation for the end user. Others can perform analyses based on specific queries (e.g. determining collocates of a given query term).
+
+**Input:** Updated Knowledge Graph, Subgraph selection query
+
+**Output:** Analysis results and visualisations
+
+
 ## Documentation
 
-### Graph creation - subpackage **`cag.graph_framework`**
-#TODO
+
+### Graph Creators - **`cag.graph_framework.components`**
+A simple example can be found in [the examples folder](examples/graph_creation_example.py). The basic idea is to extend the `GraphCreatorBase` where you can access all the relevant helpers methods and which will, upon instantion, create your defined graph (including all relevant collections and edges - these have to be specified though):
+
+```python
+import cag.utils as utils
+from cag.graph_framework.components import GraphCreatorBase
+class AnyGraphCreator(GraphCreatorBase):
+    _ANY_DATASET_NODE_NAME = "AnyDataset"
+    _ANY_EDGE_PUB_CORPUS = "AnyEdgeDSCorpus"
+    _name = "Any Graph Creator"
+    _description = "Creates a graph based on any corpus"
+    _edge_definitions = [
+        {
+            'relation': _ANY_EDGE_PUB_CORPUS,
+            'from_collections': [_ANY_DATASET_NODE_NAME],
+            'to_collections': [GraphCreatorBase._CORPUS_NODE_NAME]
+        }
+    ]
+
+    def __init__(self, corpus_dir, database, initialize=False):
+        super().__init__(corpus_dir, database)
+    def update_graph(self, timestamp):
+        return
+
+    def init_graph(self):
+        corpus = self.create_corpus_vertex(key="AnyCorpus",
+                                           name=AnyGraphCreator._name,
+                                           type="journal",
+                                           desc=AnyGraphCreator._description,
+                                           created_on=datetime.today())
+        # fetch your data, load it, etc,
+        # self.corpus_file_or_dir can be used to tell your creator where to start
+        # ...
+
+```
+
+### Annotators -**`cag.graph_framework.components`**
+
+An example for annotation metadata in json format for annotations produced by keyphrase extraction is given below:
+
+```
+{
+    analysis_component: 'keyphrase_extraction',
+    parameters: {
+        algorithm: text_rank,
+        relevance_threshold: 0.75
+    }
+}
+```
+
 
 ### Arango Views - **`cag.view_wrapper`**
 
