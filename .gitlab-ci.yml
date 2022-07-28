@@ -3,7 +3,13 @@ image: python:3.8
 stages:
  - test
  - publish
-
+cache:
+  - key: 
+      files: 
+        - requirements.txt
+        - setup.py
+    paths:
+      - .cache/pip
 test-all:
 
   services:
