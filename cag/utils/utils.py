@@ -4,8 +4,7 @@ import urllib
 from re import sub
 
 def get_hash_from_str(str):
-    """_summary_
-    generate a sha256-16 byte int from your string to use as a key
+    """generate a sha256-16 byte int from your string to use as a key
 
     :param str: _description_
     :type str: _type_
@@ -17,8 +16,7 @@ def get_hash_from_str(str):
     return str2int(str)
 
 def encode_name(name):
-    """_summary_
-    Encodes any string in a readable key (length may be of an issue)
+    """Encodes any string in a readable key (length may be of an issue)
 
     :param name: _description_
     :type name: _type_
@@ -31,8 +29,8 @@ def encode_name(name):
 
 
 def to_dictionary(obj: object) -> dict:
-    """_summary_
-    Deep-clone an object by jsonifying it
+    """Deep-clone an object by jsonifying it
+    
     :param obj: _description_
     :type obj: object
     :return: _description_

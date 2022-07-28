@@ -23,12 +23,8 @@ Indices and tables
 Modules
 =======
 
-.. autosummary::
-   :toctree: modules
+.. toctree::
+   :maxdepth: 4
+   :glob:
 
-   cag.utils.config
-   cag.utils.utils
-   cag.view_wrapper.link
-   cag.view_wrapper.view
-   cag.view_wrapper.arango_analyzer
-   cag.graph_framework.components
+   modules/*

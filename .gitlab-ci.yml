@@ -25,7 +25,7 @@ publish-docs:
   script:
   - pip install -r requirements.txt
   - pip install -U sphinx
-  - sphinx-autogen docs/source/index.rst
+  - sphinx-apidoc -o docs/source/modules . 
   - sphinx-build -b html docs/source public
   artifacts:
     paths:

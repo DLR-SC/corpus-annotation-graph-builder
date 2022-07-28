@@ -14,8 +14,13 @@ author = 'DLR'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.autodoc',
-   'sphinx.ext.autosummary']
+    'sphinx.ext.autodoc']
+
+
+# generate autosummary even if no references
+autosummary_generate = True
+autoclass_content="both"
+
 
 templates_path = ['_templates']
 exclude_patterns = []
