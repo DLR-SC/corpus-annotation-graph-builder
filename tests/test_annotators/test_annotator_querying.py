@@ -1,4 +1,4 @@
-from cag.graph_framework.components.annotators.annotator_base import AnnotatorBase
+from cag.graph_framework.components import AnnotatorBase
 from cag.graph_framework.graph.base_graph import BaseGraph
 
 from pyArango.graph import EdgeDefinition

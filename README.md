@@ -104,6 +104,7 @@ A simple example can be found in [the examples folder](examples/graph_creation_e
 ```python
 import cag.utils as utils
 from cag.graph_framework.components import GraphCreatorBase
+import datetime
 class AnyGraphCreator(GraphCreatorBase):
     _ANY_DATASET_NODE_NAME = "AnyDataset"
     _ANY_EDGE_PUB_CORPUS = "AnyEdgeDSCorpus"
@@ -125,7 +126,7 @@ class AnyGraphCreator(GraphCreatorBase):
                                            name=AnyGraphCreator._name,
                                            type="journal",
                                            desc=AnyGraphCreator._description,
-                                           created_on=datetime.today())
+                                           created_on=datetime.datetime.today())
         # fetch your data, load it, etc,
         # self.corpus_file_or_dir can be used to tell your creator where your files or data is
 
@@ -133,22 +134,35 @@ class AnyGraphCreator(GraphCreatorBase):
 
 ### Annotators 
 
-**TO BE DEFINED**
+To ease the filtering based on the parameters, we provide a simple base class where the documents can be checked in and easily filtered:
+
+```python
+from cag.graph_framework.components import AnnotatorBase
+class AnyAnnotator(AnnotatorBase):
+    def __init__(self, conf: Config, params={'mode': 'run-1'}, filter_annotatable=True):
+        super().__init__(query=f"""FOR dp IN {AnyGraphCreator._ANY_DATASET_NODE_NAME}
+        RETURN dp
+        """, params=params, conf=conf, filter_annotatable=filter_annotatable)
+    def update_graph(self, timestamp):
+        return super().update_graph(timestamp)
+```
+You can disable the filtering by providing `filter_annotatable=False`. When returning more complex data make sure that you also return a root-level field (in your data structure) called `_annotator_params` (from a component that will be annotated) or provide your own fieldname in the parameter `annotator_fieldname`. Each document that will be upserted (or checked into `complete_annotation`) will recieve the parameter on this field, providing the next run with the neccessary information to filter.
+
 An example for annotation metadata in json format for annotations produced by keyphrase extraction is given below:
 
-```
+```json
 {
-    analysis_component: 'keyphrase_extraction',
-    parameters: {
-        algorithm: text_rank,
-        relevance_threshold: 0.75
+    "analysis_component": "keyphrase_extraction",
+    "parameters": {
+        "algorithm": "text_rank",
+        "relevance_threshold": 0.75
     }
 }
 ```
 
 ### Analyzers -**`cag.graph_framework.components`**
 
-**TO BE DEFINED**
+**Not yet implemented**
 
 
 ### Arango Views - **`cag.view_wrapper`**
