@@ -1,6 +1,6 @@
 from cag.utils.config import configuration
 
-from .test_nodes import *
+from ..test_nodes import *
 from ..text_db_fixture import *
 
 class TestGCBasics:

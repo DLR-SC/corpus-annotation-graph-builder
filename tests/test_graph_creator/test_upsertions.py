@@ -1,4 +1,4 @@
-from .test_nodes import *
+from ..test_nodes import *
 from cag.utils.config import configuration
 from ..text_db_fixture import *
 
