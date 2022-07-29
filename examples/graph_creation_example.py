@@ -25,7 +25,7 @@ class AnyGraphCreator(GraphCreatorBase):
                                            name=AnyGraphCreator._name,
                                            type="journal",
                                            desc=AnyGraphCreator._description,
-                                           created_on=datetime.today())
+                                           created_on=datetime.datetime.today())
         # fetch your data, load it, etc,
         # self.corpus_file_or_dir can be used to tell your creator where to start
         # ...

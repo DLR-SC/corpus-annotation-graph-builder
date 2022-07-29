@@ -73,9 +73,10 @@ class Component(object):
                             query,
                             batchSize=1)[0]
                         if sample is not None:
-                            sample.getStore().update(data)
+                            for key, d in data.items():
+                                sample[key] = d
                             sample.save()
-                            return sample
+                            return coll[sample['_key']]
                     except Exception as e:
                         logger.exception("An exception was thrown while creating the vertex/edge an alt-key {}"
                                          "with the following data: {} and error: {}".format(collectionName, str(data), e))
