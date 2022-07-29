@@ -49,7 +49,7 @@ class AnalyzerBase(ABC, Component):
     def run():
         pass
 
-    def create_networkx(self, graph_data: list[PathElement], weight_edges=False) -> nx.Graph:
+    def create_networkx(self, graph_data: 'list[PathElement]', weight_edges=False) -> nx.Graph:
         G = nx.Graph()
         for p in graph_data:
             for v in p.vertices:
@@ -64,7 +64,7 @@ class AnalyzerBase(ABC, Component):
                         G.add_edge(e._from, e._to, weight=1, **e)
         return G
 
-    def visualize_graph(self, graph_data: list[PathElement], weight_edges=False) -> Network:
+    def visualize_graph(self, graph_data: 'list[PathElement]', weight_edges=False) -> Network:
         G = self.create_networkx(graph_data, weight_edges)
         g = Network(notebook=(self.mode == AnalyzerMode.NOTEBOOK))
         g.from_nx(G)
