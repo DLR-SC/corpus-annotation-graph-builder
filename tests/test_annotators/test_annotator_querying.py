@@ -50,12 +50,15 @@ class TestAnnotatorBasics:
         annotator.complete_annotation(docs[0])
 
         # after completing one annotation only three docs should remain
-        annotator_2 = AnyAnnotator(conf)
-        assert len(annotator_2.fetch_annotator_data()) == 3
+        conf = configuration(graph='SampleGraph', database=whoami())
+        annotator = AnyAnnotator(conf)
+        assert len(annotator.fetch_annotator_data()) == 3
 
         # however, when changing the params it should have 4 again!
-        annotator_3 = AnyAnnotator(conf, params={'mode': 'run-2'})
-        assert len(annotator_3.fetch_annotator_data()) == 4
+        conf = configuration(graph='SampleGraph', database=whoami())
+        annotator = AnyAnnotator(conf, params={'mode': 'run-2'})
+        assert len(annotator.fetch_annotator_data()) == 4
         # or when disabling the filter: default OFF!
-        annotator_3 = AnyAnnotator(conf, filter_annotatable=False)
-        assert len(annotator_3.fetch_annotator_data()) == 4
+        conf = configuration(graph='SampleGraph', database=whoami())
+        annotator = AnyAnnotator(conf, filter_annotatable=False)
+        assert len(annotator.fetch_annotator_data()) == 4
