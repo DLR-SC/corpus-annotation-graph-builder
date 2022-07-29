@@ -30,8 +30,8 @@ class EdgeDoc(Doc):
 
 @dataclass
 class PathElement:
-    vertices: list[Doc]
-    edges: list[EdgeDoc]
+    vertices: 'list[Doc]'
+    edges: 'list[EdgeDoc]'
 
 
 class AnalyzerBase(ABC, Component):
