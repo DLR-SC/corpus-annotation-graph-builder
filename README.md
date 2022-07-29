@@ -99,7 +99,7 @@ Analysers are components that produce results that are not stored in the graph. 
 
 
 ### Graph Creators - **`cag.graph_framework.components`**
-A simple example can be found in [the examples folder](examples/graph_creation_example.py). The basic idea is to extend the `GraphCreatorBase` where you can access all the relevant helpers methods and which will, upon instantion, create your defined graph (including all relevant collections and edges - these have to be specified though):
+A simple example can be found in [the examples folder](examples/graph_creation_example.py). The basic idea is to extend the `GraphCreatorBase` where you can access all the relevant helpers methods and which will, upon instantion, create your defined graph (including all relevant collections and edges - you have to include each collection to create in at leat one edge definition):
 
 ```python
 import cag.utils as utils

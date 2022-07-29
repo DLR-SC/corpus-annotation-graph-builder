@@ -3,6 +3,7 @@ from cag.graph_framework.components import GraphCreatorBase
 
 import datetime
 
+
 class AnyGraphCreator(GraphCreatorBase):
     _ANY_DATASET_NODE_NAME = "AnyDataset"
     _ANY_EDGE_PUB_CORPUS = "AnyEdgeDSCorpus"
@@ -16,9 +17,8 @@ class AnyGraphCreator(GraphCreatorBase):
         }
     ]
 
-
-    def __init__(self, corpus_dir, config, initialize=False):
-        super().__init__(corpus_dir, config, initialize)
+    def __init__(self, corpus_dir, config):
+        super().__init__(corpus_dir, config, initialize=True)
 
     def init_graph(self):
         corpus = self.create_corpus_vertex(key="AnyCorpus",

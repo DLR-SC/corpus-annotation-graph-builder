@@ -7,8 +7,25 @@ from pyArango.collection import Document
 from pyArango.query import AQLQuery
 from cag.utils.config import Config
 class AnnotatorBase(ABC, Component):
-    def __init__(self, query, run=False, params={}, conf: Config=None, fetch_args:"dict[str,Any]"={}, filter_annotatable=False,
+    def __init__(self, query:str, run=False, params={}, conf: Config=None, fetch_args:"dict[str,Any]"={}, filter_annotatable=False,
         annotator_fieldname="_annotator_params"):
+        """the base class to extend your annotators from
+
+        :param query: an arango query valid on your DB, returing the `annotator_fieldname` on the root-elements as a field from the docs to update
+        :type query: str
+        :param run: whether to run the analyzer on init, defaults to False
+        :type run: bool, optional
+        :param params: the parameters to set/check for on update, defaults to {}
+        :type params: dict, optional
+        :param conf: the config+connection to use, defaults to None
+        :type conf: Config, optional
+        :param fetch_args: the AQLQuery parameters (batch_size, etc.), defaults to {}
+        :type fetch_args: dict[str,Any], optional
+        :param filter_annotatable: Whether to filter your annotations, defaults to False
+        :type filter_annotatable: bool, optional
+        :param annotator_fieldname: the field to set your params on and filter the data, defaults to "_annotator_params"
+        :type annotator_fieldname: str, optional
+        """
         super().__init__(conf)
         self.annotator_fieldname=annotator_fieldname
         self.query = query

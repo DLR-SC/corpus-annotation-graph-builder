@@ -52,6 +52,18 @@ class Component(object):
                                               ed['from_collections'], ed['to_collections'], create_collections=True)
 
     def upsert_vert(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> Document:
+        """Upsert an item in a collection based on a _key or any other property
+
+        :param collectionName: the collection to work on
+        :type collectionName: str
+        :param data: a dictionary with your data
+        :type data: dict[str, Any]
+        :param alt_key: on which key the upsert should look for existing data (if there are multiple, 
+        the first match will return and it combines all key into a fetch-by-example-query), defaults to None
+        :type alt_key: str | [], optional
+        :return: the upserted Document
+        :rtype: Document
+        """
         coll: Collection = self.database[collectionName]
 
         if 'timestamp' not in data.keys() or data['timestamp'] is None:
@@ -61,14 +73,14 @@ class Component(object):
             if not isinstance(alt_key, list):
                 alt_key = [alt_key]
             coll.ensureHashIndex(alt_key, unique=True)
-        vert=None
+        vert = None
         try:
             vert = self.graph.createVertex(collectionName, data)
         except Exception as e:
             try:
                 if alt_key is not None and all(x in data.keys() for x in alt_key):
                     try:
-                        query = {k:v for k, v in data.items() if k in alt_key}
+                        query = {k: v for k, v in data.items() if k in alt_key}
                         sample: Document = coll.fetchByExample(
                             query,
                             batchSize=1)[0]
@@ -91,8 +103,22 @@ class Component(object):
                                  "with the following data: {}".format(collectionName, str(data)), e)
         return vert
 
-    def upsert_link(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id=""):
-        
+    def upsert_link(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id="") -> Document:
+        """Upsert a link (will generate a synthetic key from the provided documents, can optionally add something to these keys and edges)
+
+        :param relationName: which edge collection to create this link on
+        :type relationName: str
+        :param from_doc: the document where this relation starts
+        :type from_doc: Document
+        :param to_doc: the document where this relation leads to
+        :type to_doc: Document
+        :param edge_attrs: attributes to add to edge (provenance), defaults to {}
+        :type edge_attrs: dict, optional
+        :param add_id: data to append the id (if the from-to relation may not be unique), defaults to ""
+        :type add_id: str, optional
+        :return: the upserted edge document
+        :rtype: Document
+        """
         from_key = re.sub("/", "-", from_doc._id)
         to_key = re.sub("/", "-", to_doc._id)
         add_id = re.sub("/", "-", add_id)

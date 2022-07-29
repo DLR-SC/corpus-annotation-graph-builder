@@ -49,7 +49,16 @@ class GraphCreatorBase(ABC, Component):
         }
     ]
 
-    def __init__(self, corpus_file_or_dir, conf: Config = None, initialize=False):
+    def __init__(self, corpus_file_or_dir: str, conf: Config = None, initialize=False):
+        """Creates a graph and provides some general helper methods
+
+        :param corpus_file_or_dir: where your update_graph-method can find it's data 
+        :type corpus_file_or_dir: str
+        :param conf: config+connection to DB, defaults to None
+        :type conf: Config, optional
+        :param initialize: whether to initaialze the DB using init_graph(), defaults to False
+        :type initialize: bool, optional
+        """
         super().__init__(conf)
         self.corpus_file_or_dir = corpus_file_or_dir
         self.now = datetime.now()

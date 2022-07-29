@@ -12,7 +12,9 @@ setup(
     packages=setuptools.find_packages(),
     install_requires=['pyArango',
                       'python-arango',
-                      'nltk'
+                      'nltk',
+                      'networkx',
+                      'pyvis'
                       ],
     classifiers=[
           'Development Status :: 2 - Pre-Alpha',
