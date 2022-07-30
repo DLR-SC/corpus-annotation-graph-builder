@@ -11,9 +11,9 @@ def main():
     config= Config(
         url="http://127.0.0.1:8529",
         user="root",
-        password="p3yqy8I0dHkpOrZs",
-        database="InsightsNet",
-        graph="InsightsNetGraph"
+        password="root",
+        database="_system",
+        graph="GenericGraph"
     )
 
     examples.annotation_example.run_sample(config)
