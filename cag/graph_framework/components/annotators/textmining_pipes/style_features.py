@@ -17,7 +17,7 @@ def set_extension_(ext, default = None):
 
 ### Pipes ###
 @Language.component("empath_component")
-def empath_component_function(doc):
+def empath_component_function(doc:Doc):
     lexicon = Empath()
     empath_dic = lexicon.analyze(doc.text, normalize=False)
     for k,v in empath_dic.items():

@@ -1,4 +1,4 @@
 
 #TODO: add sample code here
-def sample():
+def run_sample(config):
     pass
