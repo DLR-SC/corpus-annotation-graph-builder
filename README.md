@@ -22,11 +22,12 @@ We use ArangoDB to store the graphs. This framework has three main components, l
 
 - [Analyzer - `cag.graph_framework.components.analyzers`](#analyzer)
 
-cag also contains a tool to facilitate the creation of Arango Views:
+cag also contains a tool to facilitate the creation of Arango [views](https://www.arangodb.com/docs/stable/arangosearch-views.html):
 - [View Wrapper - `cag.view_wrapper`](#arango_view)
 
-    graph_framework:graphs and Arango [Views](https://www.arangodb.com/docs/stable/arangosearch-views.html). It contains basic *nodes* (aka Vertices in ArangoDB) and *Relations* (a.k.a Edges in ArangoDB).
+
 ## Installation
+
 <a name="install"/>
 
 ### Manual cloning
