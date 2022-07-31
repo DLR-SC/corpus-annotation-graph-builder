@@ -181,7 +181,8 @@ class CorpusDistanceAnalyzer(AnalyzerBase):
         aql = self.database.AQLQuery(query, bindVars={
             'f_id': f_id, 't_id': t_id}, rawResults=True)
         data = list(aql)
-        self.visualize_graph(data)
+        g=self.visualize_graph(data)
+        g.show() #if you are in a Jupyter Notebook
 ```
 
 
