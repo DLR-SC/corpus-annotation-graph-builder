@@ -64,27 +64,44 @@ the annotator is responsible for adding levels of abstractions in order to creat
 
 As a start we support the creation of a textmining pipeline that can be customized by the user. The package contains some samples of features extractions ([`cag.graph_framework.components.annotators.textmining_pipes`](cag/graph_framework/components/annotators/textmining_pipes)). 
 
-A simple pipeline, using existing pipes, can be created as follow:
+A simple pipeline, using existing pipes, can be created as follow (assuming you have an arangodb instance up and running) (see code [here](examples/annotation_example.py)):
 
 ```python
 from pyArango.collection import Collection
 
 from cag.graph_framework.components.annotators.pipeline import Pipeline
+from cag.utils.config import Config
 
+## set database configuration
+config= Config(
+        url="http://127.0.0.1:8529",
+        user="root",
+        password="root",
+        database="_system",
+        graph="GenericGraph"
+    )
 
+## define the pipeline
 pipeline: Pipeline = Pipeline(database_config=config)
 
-pipeline.add_annotation_pipe("NamedEntityAnnotator", True)
+pipeline.add_annotation_pipe("NamedEntityAnnotator", save=True)
 
 coll: Collection = pipeline.database_config.db["TextNode"]
+
+## fetch data 
 docs = coll.fetchAll(limit=500)
 processed = []
 for txt_node in docs:
     processed.append((txt_node.text, {"_key": txt_node._key}))
+
+## annotating using the defined pipes
 pipeline.annotate(processed)
 
+## save to the database
 pipeline.save()
+
 ```
+NOTE: as a start, we support only text based annotations. We will support other annotations types in the future.
 
 ### Analyzer - [`cag.graph_framework.components.analyzers`](cag/graph_framework/components/analyzers)
 <a name="analyzer"/>
@@ -97,7 +114,7 @@ The analyzer component is responisble for extracting insights from the graph. Th
 
 The arango view rapper is a tool to simplify the creation of Arango Analyzers. This tool can be used by the *Analyzer* component we mentioned above. This wrapper has classes that facilitates the creation of arango view and all its properties and components.
 
-The full example can be found in the [main.py](main.py)
+The full example can be found in the [here](examples/view_creation_example.py)
 
 #### Create an analyzer
 
