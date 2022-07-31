@@ -31,6 +31,7 @@ publish-docs:
   script:
   - pip install -r requirements.txt
   - pip install -U sphinx
+  - pip install ./
   - sphinx-apidoc -o docs/source/modules . 
   - sphinx-build -b html docs/source public
   artifacts:
