@@ -7,6 +7,13 @@
 [Installation](#install)
 
 [Documentation](#documentation)
+  - [Graph Creator -  `cag.graph_framework.components.graph_creators` ](#graph_creator)
+    
+  - [Annotator `cag.graph_framework.components.annotators`](#annotator)
+
+  - [Analyzer - `cag.graph_framework.components.analyzers`](#analyzer)
+
+  - [Tool to create views - View Wrapper - `cag.view_wrapper`](#arango_view)
 
 ## Overview
 
