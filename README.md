@@ -50,7 +50,7 @@ This will allow you to use the module **`cag`** from any python script locally. 
 
 <a name="graph_creator"/>
 
-The graph_creator has the tools and infrastructure to allow the user to build, and maintain a graph with its defined nodes. This framework defines generic nodes and relations (a.k.a edges): [`cag.graph_framework.graph.nodes.py`](cag/graph_framework/graph/nodes.py) and [`cag.graph_framework.graph.nodes.py`](cag/graph_framework/graph/relations.py).
+The graph_creator has the tools and infrastructure to allow the user to build, and maintain a graph with its defined nodes. This framework defines generic nodes and relations (a.k.a edges): [`cag.graph_framework.graph.nodes.py`](cag/graph_framework/graph/nodes.py) and [`cag.graph_framework.graph.relations.py`](cag/graph_framework/graph/relations.py).
 
 See sample projects for graph creation:
 - [InsighstNet Graphs](https://gitlab.dlr.de/insightsnet/inisightsnet_code/-/tree/main/insightsnet_graphs)
