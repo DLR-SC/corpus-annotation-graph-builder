@@ -143,8 +143,10 @@ class AnyAnnotator(AnnotatorBase):
         super().__init__(query=f"""FOR dp IN {AnyGraphCreator._ANY_DATASET_NODE_NAME}
         RETURN dp
         """, params=params, conf=conf, filter_annotatable=filter_annotatable)
-    def update_graph(self, timestamp):
-        return super().update_graph(timestamp)
+    def update_graph(self, timestamp, data):
+        for d in data:
+            d['add-prop']=some_algo(d['text'])
+            self.upsert_vert(d) #will annotate the data!
 ```
 You can disable the filtering by providing `filter_annotatable=False`. When returning more complex data make sure that you also return a root-level field (in your data structure) called `_annotator_params` (from a component that will be annotated) or provide your own fieldname in the parameter `annotator_fieldname`. Each document that will be upserted (or checked into `complete_annotation`) will recieve the parameter on this field, providing the next run with the neccessary information to filter.
 
