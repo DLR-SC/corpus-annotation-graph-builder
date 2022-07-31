@@ -52,16 +52,17 @@ class AnalyzerBase(ABC, Component):
     def create_networkx(self, graph_data: 'list[PathElement]', weight_edges=False) -> nx.Graph:
         G = nx.Graph()
         for p in graph_data:
-            for v in p.vertices:
-                G.add_node(v._id, **v)
-            for e in p.edges:
+            for v in p['vertices']:
+                G.add_node(v['_id'], **v)
+            for e in p['edges']:
+                f_t=(e['_from'], e['_to'],)
                 if weight_edges:
-                    G.add_edge(e._from, e._to, **e)
+                    G.add_edge(*f_t, **e)
                 else:
-                    if G.has_edge(e._from, e._to):
-                        G.get_edge_data(e._from, e._to)['weight'] += 1
+                    if G.has_edge(*f_t):
+                        G.get_edge_data(*f_t)['weight'] += 1
                     else:
-                        G.add_edge(e._from, e._to, weight=1, **e)
+                        G.add_edge(*f_t, weight=1, **e)
         return G
 
     def visualize_graph(self, graph_data: 'list[PathElement]', weight_edges=False) -> Network:
