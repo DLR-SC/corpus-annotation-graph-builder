@@ -1,9 +1,33 @@
 # Corpus Analytics Graph (CAG)
 
-## Overview
-Corpus Analytics Graph serves as a base framework to create an ArangoDB graphs and Arango [Views](https://www.arangodb.com/docs/stable/arangosearch-views.html). It contains basic *nodes* (aka Vertices in ArangoDB) and *Relations* (a.k.a Edges in ArangoDB).
+## Table of Content
 
+[Overview](#overview)
+
+[Installation](#install)
+
+[Documentation](#documentation)
+
+## Overview
+
+<a name="overview"/>
+
+Corpus Analytics Graph (CAG) serves as a base framework to create graphs, extend them and analyze them.
+
+We use ArangoDB to store the graphs. This framework has three main components, located under `cag.graph_framework.components`:
+
+- [Graph Creator -  `cag.graph_framework.components.graph_creators` ](#graph_creator)
+    
+- [Annotator `cag.graph_framework.components.annotators`](#annotator)
+
+- [Analyzer - `cag.graph_framework.components.analyzers`](#analyzer)
+
+cag also contains a tool to facilitate the creation of Arango Views:
+- [View Wrapper - `cag.view_wrapper`](#arango_view)
+
+    graph_framework:graphs and Arango [Views](https://www.arangodb.com/docs/stable/arangosearch-views.html). It contains basic *nodes* (aka Vertices in ArangoDB) and *Relations* (a.k.a Edges in ArangoDB).
 ## Installation
+<a name="install"/>
 
 ### Manual cloning
 This package is in early developement stages - to use/update it, clone the repository, and go to the root folder and then run
@@ -20,15 +44,61 @@ pip install git+https://gitlab.dlr.de/sc/ivs-open/corpus_analytics_graph
 This will allow you to use the module **`cag`** from any python script locally. The two main packages are **`cag.graph_framework`** and **`cag.view_wrapper`**.
 
 ## Documentation
+<a name="documentation"/>
 
-### Graph creation - subpackage **`cag.graph_framework`**
+### Graph Creator -  `cag.graph_framework.components.graph_creators`
+
+<a name="graph_creator"/>
+
+The graph_creator has the tools and infrastructure to allow the user to build, and maintain a graph with its defined nodes. This framework defines generic nodes and relations (a.k.a edges): [`cag.graph_framework.graph.nodes.py`](cag/graph_framework/graph/nodes.py) and [`cag.graph_framework.graph.nodes.py`](cag/graph_framework/graph/relations.py).
+
+See sample projects for graph creation:
+- [InsighstNet Graphs](https://gitlab.dlr.de/insightsnet/inisightsnet_code/-/tree/main/insightsnet_graphs)
+- [Pangea KG](https://gitlab.dlr.de/sc/ivs-open/pangaea-kg)
+
+
+### Annotator `cag.graph_framework.components.annotators`
+<a name="annotator"/>
+
+the annotator is responsible for adding levels of abstractions in order to create a linkable graph. More precisely, this component is responsible for taking a set of nodes (e.g. TextNodes), and apply a pipeline (e.g. text mining pipeline) to extract features on the level of a single node or a collection. These extracted features are then saved in an *annotation node*.
+
+As a start we support the creation of a textmining pipeline that can be customized by the user. The package contains some samples of features extractions ([`cag.graph_framework.components.annotators.textmining_pipes`](cag/graph_framework/components/annotators/textmining_pipes)). 
+
+A simple pipeline, using existing pipes, can be created as follow:
+
+```python
+from pyArango.collection import Collection
+
+from cag.graph_framework.components.annotators.pipeline import Pipeline
+
+
+pipeline: Pipeline = Pipeline(database_config=config)
+
+pipeline.add_annotation_pipe("NamedEntityAnnotator", True)
+
+coll: Collection = pipeline.database_config.db["TextNode"]
+docs = coll.fetchAll(limit=500)
+processed = []
+for txt_node in docs:
+    processed.append((txt_node.text, {"_key": txt_node._key}))
+pipeline.annotate(processed)
+
+pipeline.save()
+```
+
+### Analyzer - [`cag.graph_framework.components.analyzers`](cag/graph_framework/components/analyzers)
+<a name="analyzer"/>
+The analyzer component is responisble for extracting insights from the graph. These insights can be in the form of a visualization or a curated list of items, ranked and processed based on user queries.
+
 #TODO
 
 ### Arango Views - **`cag.view_wrapper`**
+<a name="arango_view"/>
 
-The arango view wrapper has classes that facilitates the creation of arango view and all its properties and components.
+The arango view rapper is a tool to simplify the creation of Arango Analyzers. This tool can be used by the *Analyzer* component we mentioned above. This wrapper has classes that facilitates the creation of arango view and all its properties and components.
 
 The full example can be found in the [main.py](main.py)
+
 #### Create an analyzer
 
 ([source](https://www.arangodb.com/docs/stable/analyzers.html)):
@@ -216,9 +286,7 @@ analyzer.create(database)
     }
 </details>
 
-## Graph Usage
 
-See sample projects for graph creation:
-- [InsighstNet Graphs](https://gitlab.dlr.de/insightsnet/inisightsnet_code/-/tree/main/insightsnet_graphs)
-- [Pangea KG]()
+
+
 
