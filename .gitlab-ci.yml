@@ -32,7 +32,7 @@ publish-docs:
   - pip install -r requirements.txt
   - pip install -U sphinx
   - pip install ./
-  - sphinx-apidoc -o docs/source/modules . 
+  - sphinx-apidoc -o docs/source/modules ./cag
   - sphinx-build -b html docs/source public
   artifacts:
     paths:
