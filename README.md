@@ -12,7 +12,7 @@
 
 <a name="overview"/>
 
-Corpus Analytics Graph (CAG) serves as a base framework to create graphs, extend them and analyze them.
+Corpus Analytics Graph (CAG) serves as a base framework for creating graphs, extending them, and analyzing them.
 
 We use ArangoDB to store the graphs. This framework has three main components, located under `cag.graph_framework.components`:
 
@@ -31,13 +31,13 @@ cag also contains a tool to facilitate the creation of Arango [views](https://ww
 <a name="install"/>
 
 ### Manual cloning
-This package is in early developement stages - to use/update it, clone the repository, and go to the root folder and then run
+This package is in the early development stages - to use/update it, clone the repository, go to the root folder and then run:
 
 ```
 pip install .
 ```
 ### Direct install via pip 
-The package can also be installed directly via pip
+The package can also be installed directly via pip.
 ```
 pip install git+https://gitlab.dlr.de/sc/ivs-open/corpus_analytics_graph
 ```
@@ -51,7 +51,7 @@ This will allow you to use the module **`cag`** from any python script locally. 
 
 <a name="graph_creator"/>
 
-The graph_creator has the tools and infrastructure to allow the user to build, and maintain a graph with its defined nodes. This framework defines generic nodes and relations (a.k.a edges): [`cag.graph_framework.graph.nodes.py`](cag/graph_framework/graph/nodes.py) and [`cag.graph_framework.graph.relations.py`](cag/graph_framework/graph/relations.py).
+The graph_creator has the tools and infrastructure to allow the user to build and maintain a graph with its defined nodes. This framework defines generic nodes and relations (a.k.a edges): [`cag.graph_framework.graph.nodes.py`](cag/graph_framework/graph/nodes.py) and [`cag.graph_framework.graph.relations.py`](cag/graph_framework/graph/relations.py).
 
 See sample projects for graph creation:
 - [InsighstNet Graphs](https://gitlab.dlr.de/insightsnet/inisightsnet_code/-/tree/main/insightsnet_graphs)
@@ -61,11 +61,11 @@ See sample projects for graph creation:
 ### Annotator `cag.graph_framework.components.annotators`
 <a name="annotator"/>
 
-the annotator is responsible for adding levels of abstractions in order to create a linkable graph. More precisely, this component is responsible for taking a set of nodes (e.g. TextNodes), and apply a pipeline (e.g. text mining pipeline) to extract features on the level of a single node or a collection. These extracted features are then saved in an *annotation node*.
+The annotator is responsible for adding levels of abstractions to create a linkable graph. More precisely, this component is responsible for taking a set of nodes (e.g., TextNodes) and applying a pipeline (e.g., text mining pipeline) to extract features on the level of a single node or a collection. These extracted features are then saved in an *annotation node*.
 
-As a start we support the creation of a textmining pipeline that can be customized by the user. The package contains some samples of features extractions ([`cag.graph_framework.components.annotators.textmining_pipes`](cag/graph_framework/components/annotators/textmining_pipes)). 
+As a start, we support the creation of a text-mining pipeline that the user can customize. The package contains some samples of features extractions ([`cag.graph_framework.components.annotators.textmining_pipes`](cag/graph_framework/components/annotators/textmining_pipes)). 
 
-A simple pipeline, using existing pipes, can be created as follow (assuming you have an arangodb instance up and running) (see code [here](examples/annotation_example.py)):
+A simple pipeline, using existing pipes, can be created as follows (assuming you have an arangodb instance up and running) (see code [here](examples/annotation_example.py)):
 
 ```python
 from pyArango.collection import Collection
@@ -102,27 +102,27 @@ pipeline.annotate(processed)
 pipeline.save()
 
 ```
-NOTE: as a start, we support only text based annotations. We will support other annotations types in the future.
+NOTE: as a start, we support only text-based annotations. We will support other annotation types in the future.
 
 ### Analyzer - [`cag.graph_framework.components.analyzers`](cag/graph_framework/components/analyzers)
 <a name="analyzer"/>
-The analyzer component is responisble for extracting insights from the graph. These insights can be in the form of a visualization or a curated list of items, ranked and processed based on user queries.
+The analyzer component is responsible for extracting insights from the graph. These insights can be in the form of visualization or a curated list of items ranked and processed based on user queries.
 
 #TODO
 
 ### Arango Views - **`cag.view_wrapper`**
 <a name="arango_view"/>
 
-The arango view rapper is a tool to simplify the creation of Arango Analyzers. This tool can be used by the *Analyzer* component we mentioned above. This wrapper has classes that facilitates the creation of arango view and all its properties and components.
+The arango view rapper is a tool to simplify the creation of Arango Analyzers. This tool can be used by the *Analyzer* component mentioned above. This wrapper has classes that facilitate the creation of arango view and all its properties and components.
 
-The full example can be found in the [here](examples/view_creation_example.py)
+The full example can be found [here](examples/view_creation_example.py)
 
 #### Create an analyzer
 
 ([source](https://www.arangodb.com/docs/stable/analyzers.html)):
-> The valid attributes/values for the properties are dependant on what type is used. For example, the delimiter type needs to know the desired delimiting character(s), whereas the text type takes a locale, stop-words and more.
+> The valid attributes/values for the properties depend on the type used. For example, the delimiter type needs to know the desired delimiting character(s), whereas the text type takes a locale, stop-words, and more.
 
-The analyzer class, loads the required attributes of an analyzer based on its type. The supported types are:
+The analyzer class loads the required attributes of an analyzer based on its type. The supported types are:
 * _TYPE_IDENTITY -> "identity", **attributes to set:** None
 * _TYPE_TEXT -> "text", **attributes to set:** 'locale', 'case', 'stopwords', 'accent', 'stemming', 'edge_ngram'
 * _TYPE_NGRAM -> "ngram", **attributes to set:**  'min', 'max', 'preserve_original', 'start_marker', 'end_marker', 'stem_type'
@@ -153,7 +153,7 @@ The summary returns the dictionary used to create the Analyzer:
         "name": "sample_analyzer",
         "type": "text",
         "features": [
-            "frequency",
+            "Frequency",
             "norm",
             "position"
         ],
@@ -177,7 +177,7 @@ The summary returns the dictionary used to create the Analyzer:
 
 </details>
 
-The the analyzer can simply be created:
+The analyzer can simply be created as follows:
 
 ```python
 
@@ -192,17 +192,17 @@ analyzer.create(database)
 #### Create a *link* with *fields*
 
 ```python
-    # Create Link - a view can hvae 0 to * links
+    # Create Link - a view can have 0 to * links
     link = Link(name="TextNode") # Name of a collection in the database
     linkAnalyzers = AnalyzerList(["identity"])
     link.analyzers = linkAnalyzers
 
     # A link can have 0..* fields
     # for the *text* field in the *textNode* collection, add the analyzers below
-    field = Field("text", AnalyzerList(["text_en", "invalid_analyzer", "analyzer_sample"])) # text_en is a predifined analyzer from arango
+    field = Field("text", AnalyzerList(["text_en", "invalid_analyzer", "analyzer_sample"])) # text_en is a predefined analyzer from arango
     
     # filters out the analyzer that are not defined in the database
-    field.analyzers.filter_invalid_analyzers(db, verbose=1) 
+    field.analyzers.filter_invalid_analyzers(DB, verbose=1) 
     print("current analyzers after filtering invalid ones: ", field.analyzers)
 ```
 <details><summary>OUTPUT - Click to expand</summary>
@@ -238,7 +238,7 @@ analyzer.create(database)
     print("Prints the *view* as a dict:", view.summary())
 
 ```
-!!! Note: The links might need few minutes to be created and to show in ArangoDB.
+!!! Note: The links might need a few minutes to be created and to show in ArangoDB.
 
 <details><summary>OUTPUT - Click to expand</summary>
 
@@ -303,8 +303,3 @@ analyzer.create(database)
         ]
     }
 </details>
-
-
-
-
-
