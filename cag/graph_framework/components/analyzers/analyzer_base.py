@@ -35,18 +35,18 @@ class PathElement:
 
 
 class AnalyzerBase(ABC, Component):
-    def __init__(self, config: Config, mode: AnalyzerMode = AnalyzerMode.NOTEBOOK, run=False, query: "None|str" = None) -> None:
+    def __init__(self, config: Config, mode: AnalyzerMode = AnalyzerMode.NOTEBOOK, run=False, query: "None|str" = None, params={'rawResults': True}) -> None:
         super().__init__(config)
         self.mode = mode
         self.data = []
         self.query = query
         if self.query:
-            self.data = self.database.AQLQuery(self.database, self.query)
+            self.data = self.database.AQLQuery(self.query, **params)
         if run:
-            self.run()
+            self.run(self.data)
 
     @abstractmethod
-    def run():
+    def run(data):
         pass
 
     def create_networkx(self, graph_data: 'list[PathElement]', weight_edges=False) -> nx.Graph:
@@ -55,7 +55,7 @@ class AnalyzerBase(ABC, Component):
             for v in p['vertices']:
                 G.add_node(v['_id'], **v)
             for e in p['edges']:
-                f_t=(e['_from'], e['_to'],)
+                f_t = (e['_from'], e['_to'],)
                 if weight_edges:
                     G.add_edge(*f_t, **e)
                 else:

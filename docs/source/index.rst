@@ -24,7 +24,7 @@ Modules
 =======
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
    :glob:
 
    modules/*
