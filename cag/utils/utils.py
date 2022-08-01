@@ -1,4 +1,5 @@
 import hashlib
+import importlib
 import json
 import urllib
 from re import sub

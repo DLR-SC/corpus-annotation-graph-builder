@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='cag',
-    version='0.6.0',
+    version='0.6.5',
     description='This is a general framework to create arango db graphs',
     # url='',
     author='DLR',
@@ -15,6 +15,9 @@ setup(
                       'nltk',
                       'networkx',
                       'pyvis'
+                      'tomli >= 1.1.0',
+                      'spacy',
+                      'markupsafe<=2.0.1' # for spacy - it uses soft_unicode which was removed from version > 2.0.1
                       ],
     classifiers=[
           'Development Status :: 2 - Pre-Alpha',
@@ -22,7 +25,7 @@ setup(
           'License :: OSI Approved :: MIT License',
           'Programming Language :: Python',
       ],
-      zip_safe=False,
-
-
+    zip_safe=False,
+    include_package_data=True,
+    package_data={"configs": ["*.toml"]},
 )

@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from pyArango.theExceptions import DocumentNotFoundError, SimpleQueryError
+
 from cag.utils.config import Config, configuration
 
 from ..graph.base_graph import *
@@ -51,6 +53,36 @@ class Component(object):
             self.graph.update_graph_structure(ed['relation'],
                                               ed['from_collections'], ed['to_collections'], create_collections=True)
 
+    def get_document(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None):
+        '''
+        Gets the vertex if it exists.
+        In case alt_key is provided, it queries the vertex based on the alt_key keys and values in the data dict.
+        In case alt_key is not provided and _key is part of the data dict, it fetches the document based on it.
+        Otherwise it returns None
+        '''
+        coll: Collection = self.database[collectionName]
+        vert = None
+        try:
+            if alt_key is None and '_key' in data.keys() and data['_key'] in coll:
+                vert: Document = coll.fetchDocument(data['_key'])
+            elif alt_key is not None and all(x in data.keys() for x in alt_key):
+                if not isinstance(alt_key, list):
+                    alt_key = [alt_key]
+                coll.ensureHashIndex(alt_key, unique=True)
+
+                query = {k: v for k, v in data.items() if k in alt_key}
+                vert: Document = coll.fetchByExample(
+                    query,
+                    batchSize=1)[0]
+            else:
+                logger.debug("vertex does not exist - make sure you provide _key as part of data dict "
+                             "or alt_key as a lst and part of the data dict")
+        except (DocumentNotFoundError, SimpleQueryError) as e:
+            logger.debug("Document was not found for data {} and vertex {} - message: {}".format(collectionName, str(data), e.message))
+        except Exception as unknown_e:
+            logger.error("An unknown error was thrown for data {} and vertex {} - message: {}".format(collectionName, str(data), str(unknown_e)))
+        return vert
+
     def upsert_vert(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> Document:
         """Upsert an item in a collection based on a _key or any other property
 
@@ -69,13 +101,19 @@ class Component(object):
         if 'timestamp' not in data.keys() or data['timestamp'] is None:
             data['timestamp'] = datetime.now().isoformat()
 
-        if alt_key is not None:
-            if not isinstance(alt_key, list):
-                alt_key = [alt_key]
-            coll.ensureHashIndex(alt_key, unique=True)
+
         vert = None
         try:
-            vert = self.graph.createVertex(collectionName, data)
+            vert :Document = self.get_document(collectionName, data, alt_key)
+            if vert is None:
+                vert = self.graph.createVertex(collectionName, data)
+            else :
+                logger.debug("updating existing vertex")
+                for key, d in data.items():
+                    vert[key] = d
+                vert.save()
+                vert = coll[vert._key]
+
         except Exception as e:
             try:
                 if alt_key is not None and all(x in data.keys() for x in alt_key):
@@ -103,7 +141,21 @@ class Component(object):
                                  "with the following data: {}".format(collectionName, str(data)), e)
         return vert
 
-    def upsert_link(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id="") -> Document:
+
+    def _get_edge_dict(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id=""):
+        from_key = re.sub("/", "-", from_doc._id)
+        to_key = re.sub("/", "-", to_doc._id)
+        add_id = re.sub("/", "-", add_id)
+        add_id = f'-{add_id}' if len(add_id) > 0 else ''
+        link_key = f'{from_key}-{to_key}{add_id}'
+        self.database[relationName].validatePrivate("_from", from_doc._id)
+        self.database[relationName].validatePrivate("_to", to_doc._id)
+
+        edge_dic = {'_key': link_key, '_from': from_doc._id,
+                    '_to': to_doc._id, **edge_attrs}
+        return edge_dic
+
+    def upsert_link(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id=""):
         """Upsert a link (will generate a synthetic key from the provided documents, can optionally add something to these keys and edges)
 
         :param relationName: which edge collection to create this link on
@@ -119,14 +171,5 @@ class Component(object):
         :return: the upserted edge document
         :rtype: Document
         """
-        from_key = re.sub("/", "-", from_doc._id)
-        to_key = re.sub("/", "-", to_doc._id)
-        add_id = re.sub("/", "-", add_id)
-        add_id = f'-{add_id}' if len(add_id) > 0 else ''
-        link_key = f'{from_key}-{to_key}{add_id}'
-        self.database[relationName].validatePrivate("_from", from_doc._id)
-        self.database[relationName].validatePrivate("_to", to_doc._id)
-
-        edge_dic = {'_key': link_key, '_from': from_doc._id,
-                    '_to': to_doc._id, **edge_attrs}
+        edge_dic  = self._get_edge_dict(relationName, from_doc, to_doc, edge_attrs, add_id)
         return self.upsert_vert(relationName, edge_dic)

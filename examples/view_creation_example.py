@@ -6,11 +6,8 @@ from cag.view_wrapper.link import Link, Field
 from cag.view_wrapper.view import View
 
 
-def sample():
-    client = ArangoClient()
-
-    # Connect to the database as root user.
-    db = client.db('InsightsNet', username='root', password='root')
+def run_sample(config):
+    db = config.arango_db
 
     # Create analyzer
     analyzer = ArangoAnalyzer("analyzer_sample")
@@ -50,23 +47,7 @@ def sample():
     view.add_stored_value(["text", "timestamp"], compression="lz4")
 
     print("Prints the *view* as a dict:", view.summary())
-    """
 
-    Prints
-    the * view * as a dict: 
-    {'name': 'sample_view', 'viewType': 'arangosearch',
-           'properties': {'cleanupintervalstep': 0, 'cleanupIntervalStep': 0, 'commitIntervalMsec': 1000,
-                          'consolidationIntervalMsec': 0,
-                          'consolidationPolicy': {'type': 'tier', 'segmentsMin': 1, 'segmentsMax': 10,
-                                                  'segmentsBytesMax': 5368709120, 'segmentsBytesFloor': 2097152,
-                                                  'minScore': 0}, 'primarySortCompression': 'lz4',
-                          'writebufferIdle': 64, 'writebufferActive': 0, 'writebufferMaxSize': 33554432}, 'links': {
-            'TextNode': {'analyzers': ['identity'], 'fields': {'text': {'analyzers': ['text_en', 'analyzer_sample']}},
-                         'includeAllFields': False, 'trackListPositions': False, 'inBackground': False}},
-           'primarySort': [{'field': 'text', 'asc': False}],
-           'storedValues': [{'fields': ['text'], 'compression': 'lz4'},
-                            {'fields': ['timestamp'], 'compression': 'lz4'}]}
-    """
 
     ## creates the view in the database
     view.create(db)

@@ -1,7 +1,9 @@
 nltk
-pyArango==2.0.1
 spacy
 python-arango
 pytest
 networkx
 pyvis
+spacy>=3.4
+tomli>=1.1.0
+markupsafe<=2.0.1
