@@ -19,6 +19,14 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+Reference
+=========
+
+.. toctree::
+   :maxdepth: 2
+   :glob:
+
+   reference/*
 
 Modules
 =======
