@@ -1,7 +1,18 @@
+from cag.graph_framework.graph.base_graph import BaseGraph
+
+from pyArango.graph import Graph, EdgeDefinition
+
 import cag.utils as utils
 from cag.graph_framework.components import GraphCreatorBase
-
 import datetime
+import inspect
+class SampleGraph(BaseGraph):
+    _edgeDefinitions = [EdgeDefinition('GenericEdge', fromCollections=['GenericNode'], toCollections=['GenericNode'])]
+    _orphanedCollections = []
+    
+def whoami():
+    frame = inspect.getouterframes(inspect.currentframe())[1]
+    return frame.function
 
 
 class AnyGraphCreator(GraphCreatorBase):
@@ -17,8 +28,8 @@ class AnyGraphCreator(GraphCreatorBase):
         }
     ]
 
-    def __init__(self, corpus_dir, config):
-        super().__init__(corpus_dir, config, initialize=True)
+    def __init__(self, corpus_dir, config, initialize=False):
+        super().__init__(corpus_dir, config, initialize)
 
     def init_graph(self):
         corpus = self.create_corpus_vertex(key="AnyCorpus",
@@ -26,19 +37,4 @@ class AnyGraphCreator(GraphCreatorBase):
                                            type="journal",
                                            desc=AnyGraphCreator._description,
                                            created_on=datetime.datetime.today())
-        # fetch your data, load it, etc,
-        # self.corpus_file_or_dir can be used to tell your creator where to start
-        # ...
-        for anyset in [{'data': "Test entry #1", 'data': "Test entry #2"}]:
-            any_doc = {
-                'name': anyset['data']
-            }
-            any_doc['_key'] = utils.encode_name(any_doc['name'])
-            any_vert = self.update_vert(
-                AnyGraphCreator._ANY_DATASET_NODE_NAME, any_vert)
-            self.upsert_link(
-                AnyGraphCreator._ANY_EDGE_PUB_CORPUS, any_vert, corpus)
-            # now add more ressource to this dataset
 
-            # ...
-            # you can also use self.database and self.graph to access the pyArango objects directly

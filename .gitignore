@@ -58,3 +58,7 @@ pip-delete-this-directory.txt
 
 
 
+docs/build
+docs/source/modules
+public
+interactive_tutorials
