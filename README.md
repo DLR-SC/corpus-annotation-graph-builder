@@ -59,7 +59,7 @@ The graph is, both, object of analysis as well as result container. This means t
 In the example below object of study (OOS) nodes are depicted as white and blue boxes and annoation nodes as grey boxes. OOS nodes are created by [Graph Creators](#graph-creators) that read raw corpus data and map it to the OOS graph. Graph builders also create some basic self-evident annotations (e.g. methods, provided keywords, categories, etc.). The OOS nodes are analysed by automatic [Annotators](#annotators), which add or update annoations to the graph. 
 
 
-![OOS Grapg](OoS_Data_Model.drawio.png)
+![OOS Grapg](img/OoS_Data_Model.drawio.png)
 
 In order to create direct links between annotations [Annotation Linkers](#annotation-linkers) establish relations between existing annotations like "is identical to", "belongs to", etc. 
 
