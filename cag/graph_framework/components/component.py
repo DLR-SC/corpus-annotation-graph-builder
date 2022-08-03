@@ -127,41 +127,34 @@ class Component(object):
                 vert = coll[vert._key]
 
         except Exception as e:
-            try:
-                if alt_key is not None and all(x in data.keys() for x in alt_key):
-                    try:
-                        query = {k: v for k, v in data.items() if k in alt_key}
-                        sample: Document = coll.fetchByExample(
-                            query,
-                            batchSize=1)[0]
-                        if sample is not None:
-                            for key, d in data.items():
-                                sample[key] = d
-                            sample.save()
-                            return coll[sample['_key']]
-                    except Exception as e:
-                        logger.exception("An exception was thrown while creating the vertex/edge an alt-key {}"
-                                         "with the following data: {} and error: {}".format(collectionName, str(data), e))
-                if '_key' in data.keys() and data['_key'] in coll:
-                    vert: Document = coll.fetchDocument(data['_key'])
-                    for key, d in data.items():
-                        vert[key] = d
-                    vert.save()
-                    return coll[data['_key']]
-            except Exception as e:
-                logger.exception("An exception was thrown while creating the vertex/edge {}"
-                                 "with the following data: {}".format(collectionName, str(data)), e)
+            logger.error(
+                "An unknown error was thrown for data {} and vertex {} - message: {}".format(collectionName, str(data),
+                                                                                             str(e)))
         return vert
 
     def _get_edge_dict(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id=""):
+        """Gets a link
+
+        :param relationName: which edge collection to create this link on
+        :type relationName: str
+        :param from_doc: the document where this relation starts
+        :type from_doc: Document
+        :param to_doc: the document where this relation leads to
+        :type to_doc: Document
+        :param edge_attrs: attributes to add to edge (provenance), defaults to {}
+        :type edge_attrs: dict, optional
+        :param add_id: data to append the id (if the from-to relation may not be unique), defaults to ""
+        :type add_id: str, optional
+        :return: the  edge document if it exists
+        :rtype: Document
+        """
         from_key = re.sub("/", "-", from_doc._id)
         to_key = re.sub("/", "-", to_doc._id)
         add_id = re.sub("/", "-", add_id)
         add_id = f'-{add_id}' if len(add_id) > 0 else ''
         link_key = f'{from_key}-{to_key}{add_id}'
-        coll: Collection = self.database[relationName]
-        coll.validatePrivate("_from", from_doc._id)
-        coll.validatePrivate("_to", to_doc._id)
+        self.database[relationName].validatePrivate("_from", from_doc._id)
+        self.database[relationName].validatePrivate("_to", to_doc._id)
 
         edge_dic = {'_key': link_key, '_from': from_doc._id,
                     '_to': to_doc._id, **edge_attrs}
@@ -183,6 +176,6 @@ class Component(object):
         :return: the upserted edge document
         :rtype: Document
         """
-        edge_dic = self._get_edge_dict(
-            relationName, from_doc, to_doc, edge_attrs, add_id)
+
+        edge_dic = self._get_edge_dict(relationName, from_doc, to_doc, edge_attrs, add_id)
         return self.upsert_vert(relationName, edge_dic)

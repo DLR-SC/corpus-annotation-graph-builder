@@ -1,9 +1,9 @@
 nltk
-spacy
+spacy>=3.4
 python-arango
-pytest
+pytest>=7.1.2
 networkx
 pyvis
-spacy>=3.4
 tomli>=1.1.0
 markupsafe<=2.0.1
+empath>=0.89

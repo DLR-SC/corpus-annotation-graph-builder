@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='cag',
-    version='0.6.5',
+    version='0.7.0',
     description='This is a general framework to create arango db graphs',
     # url='',
     author='DLR',
@@ -16,9 +16,10 @@ setup(
                       'networkx',
                       'pyvis',
                       'tomli >= 1.1.0',
-                      'spacy',
+                      'spacy>=3.4',
                       # for spacy - it uses soft_unicode which was removed from version > 2.0.1
-                      'markupsafe<=2.0.1'
+                      'markupsafe<=2.0.1',
+                      'empath>=0.89'
                       ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
