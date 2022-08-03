@@ -53,17 +53,17 @@ def configuration(url: "str | None" = None,
                   graph: "str | None" = None, connect=True, use_global_conf=False) -> Config:
     """Start a new conenction using the provided config
 
-    :param url: _description_, defaults to "http://127.0.0.1:8529"
+    :param url: the adress of the ArangoDB, defaults to "http://127.0.0.1:8529"
     :type url: _type_, optional
-    :param user: _description_, defaults to "root"
+    :param user: username, defaults to "root"
     :type user: str | None, optional
-    :param password: _description_, defaults to ""
+    :param password: password, defaults to ""
     :type password: str | None, optional
-    :param database: _description_, defaults to "_system"
+    :param database: database, will be created if it does not exist, defaults to "_system"
     :type database: str | None, optional
-    :param graph: _description_, defaults to "GenericGraph"
+    :param graph: which graph to work on (must exist as class), defaults to "GenericGraph"
     :type graph: str | None, optional
-    :param connect: _description_, defaults to True
+    :param connect: whether to automatically connect, can be done later, defaults to True
     :type connect: bool, optional
     :param use_global_conf: if you want re-use one global config, defaults to False
     :type use_global_conf: bool, optional 
