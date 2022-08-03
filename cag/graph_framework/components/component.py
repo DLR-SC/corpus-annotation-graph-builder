@@ -53,7 +53,7 @@ class Component(object):
             self.graph.update_graph_structure(ed['relation'],
                                               ed['from_collections'], ed['to_collections'], create_collections=True)
 
-    def get_document(self, collectionName: str, data: "dict[str, Any]", alt_key: "str|list[str]" = None) -> "Optional[Document]":
+    def get_document(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> "Optional[Document]":
         """Gets the vertex if it exists.
         In case alt_key is provided, it queries the vertex based on the alt_key keys and values in the data dict.
         In case alt_key is not provided and _key is part of the data dict, it fetches the document based on it.
@@ -74,11 +74,12 @@ class Component(object):
         coll: Collection = self.database[collectionName]
         vert = None
         try:
+            if type(alt_key) == str :
+                alt_key = [alt_key]
+
             if alt_key is None and '_key' in data.keys() and data['_key'] in coll:
                 vert: Document = coll.fetchDocument(data['_key'])
             elif alt_key is not None and all(x in data.keys() for x in alt_key):
-                if not isinstance(alt_key, list):
-                    alt_key = [alt_key]
                 coll.ensureHashIndex(alt_key, unique=True)
 
                 query = {k: v for k, v in data.items() if k in alt_key}
