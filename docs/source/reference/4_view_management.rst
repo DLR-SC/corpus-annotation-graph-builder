@@ -6,7 +6,7 @@ Arango Views
 
 The arango view wrapper (:py:mod:`cag.view_wrapper`) is a tool to simplify the creation of Arango Analyzers. This tool can be used by the *Analyzer* component mentioned above. This wrapper has classes that facilitate the creation of arango view and all its properties and components.
 
-The full example can be found `in the xamples folder <examples/view_creation_example.py>`_
+The full example can be found `in the examples folder <examples/view_creation_example.py>`_
 
 
 Create an arango analyzer
