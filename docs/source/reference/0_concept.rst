@@ -7,7 +7,7 @@ The graph is, both, object of analysis as well as result container. This means t
 
 In the example below object of study (OOS) nodes are depicted as white and blue boxes and annoation nodes as grey boxes. OOS nodes are created by :ref:`Graph Creators <graph-creators>` that read raw corpus data and map it to the OOS graph. Graph builders also create some basic self-evident annotations (e.g. methods, provided keywords, categories, etc.). The OOS nodes are analysed by automatic :ref:`Annotators <annotators>`, which add or update annoations to the graph. 
 
-.. image:: /imgs/OoS_Data_Model.drawio.png
+.. image:: /imgs/data_model.png
 
 
 The enriched graph can be further analysed or queried by :ref:`Analyzers <analyzers>` for producing results to be presented to the end-users.
