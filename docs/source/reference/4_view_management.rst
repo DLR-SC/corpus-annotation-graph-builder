@@ -6,7 +6,7 @@ Arango Views
 
 The arango view wrapper (:py:mod:`cag.view_wrapper`) is a tool to simplify the creation of Arango Analyzers. This tool can be used by the *Analyzer* component mentioned above. This wrapper has classes that facilitate the creation of arango view and all its properties and components.
 
-The full example can be found `in the xamples folder <examples/view_creation_example.py>`
+The full example can be found `in the xamples folder <examples/view_creation_example.py>`_
 
 
 Create an arango analyzer
@@ -16,7 +16,7 @@ Create an arango analyzer
 
     The valid attributes/values for the properties depend on the type used. For example, the delimiter type needs to know the desired delimiting character(s), whereas the text type takes a locale, stop-words, and more.
 
-    -- `source <https://www.arangodb.com/docs/stable/analyzers.html>`
+    -- `source <https://www.arangodb.com/docs/stable/analyzers.html>`_
 
 The analyzer class loads the required attributes of an analyzer based on its type. The supported types are:
 
