@@ -6,7 +6,7 @@ Analyzers
 =========
 
 
-Our analyzer allow you to easily write converters and graph visualizations. THe following sample allows you to see the connection between two corpus within one knowledge graph, convert that result to a :python:`NetworkX()` graph and visualize it using :python:`pyvis` using little code outside the actual arango query:
+Our analyzer allow you to easily write converters and graph visualizations. The following sample allows you to see the connection between two corpus within one knowledge graph, convert that result to a :python:`NetworkX()` graph and visualize it using :python:`pyvis` using little code outside the actual arango query:
 
 .. code-block:: python
 
