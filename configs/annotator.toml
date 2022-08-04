@@ -1,11 +1,23 @@
 [annotator]
 
     [annotator.NamedEntityAnnotator] ## ner is the key for this annotator to get all the variables
-    annotator_class ="cag.graph_framework.components.annotators.elements.ner_annotator.NamedEntityAnnotator"
-    vertex_class = "cag.graph_framework.components.annotators.elements.collections.NamedEntityNode"
-    edge_class = "cag.graph_framework.components.annotators.elements.collections.HasAnnotation"
+    annotator_class ="cag.graph_framework.components.annotators.instance.ner_annotator.NamedEntityAnnotator"
+    vertex_class = "cag.graph_framework.components.annotators.element.graph_elements.NamedEntityNode"
+    edge_class = "cag.graph_framework.components.annotators.element.graph_elements.HasAnnotation"
     pipe = "ner"
-    level = "TEXT"
+    pipe_path = "" # leave empty if the pipe is a spacy native pipe
+    level = "node" # node or corpus
+    type = "text" # for now we support text - later url, image
+    annotated_vertex_name="TextNode"
+
+    [annotator.EmpathAnnotator] ## ner is the key for this annotator to get all the variables
+    annotator_class ="cag.graph_framework.components.annotators.instance.empath_annotator.EmpathAnnotator"
+    vertex_class = "cag.graph_framework.components.annotators.element.graph_elements.EmpathNode"
+    edge_class = "cag.graph_framework.components.annotators.element.graph_elements.HasAnnotation"
+    pipe = "empath_component"
+    pipe_path = "cag.graph_framework.components.annotators.pipe.linguistic.style_features" # leave empty if the pipe is a spacy native pipe
+    level = "node" # node or corpus
+    type = "text" # for now we support text - later url, image
     annotated_vertex_name="TextNode"
 
 

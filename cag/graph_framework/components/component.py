@@ -147,7 +147,7 @@ class Component(object):
         :param add_id: data to append the id (if the from-to relation may not be unique), defaults to ""
         :type add_id: str, optional
         :return: the  edge document if it exists
-        :rtype: Document
+        :rtype: 'Dict[str|Any]'
         """
         from_key = re.sub("/", "-", from_doc._id)
         to_key = re.sub("/", "-", to_doc._id)
