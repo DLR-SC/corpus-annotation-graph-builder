@@ -53,8 +53,8 @@ These annotators fit a more general class, where we only provide basic functiona
 
 .. code-block:: python
 
-    from cag.graph_framework.components import AnnotatorBase
-    class AnyAnnotator(AnnotatorBase):
+    from cag.graph_framework.components import GenericAnnotator
+    class AnyAnnotator(GenericAnnotator):
         def __init__(self, conf: Config, params={'mode': 'run-1'}, filter_annotatable=True):
             super().__init__(query=f"""FOR dp IN {AnyGraphCreator._ANY_DATASET_NODE_NAME}
             RETURN dp

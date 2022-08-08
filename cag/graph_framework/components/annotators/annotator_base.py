@@ -6,7 +6,7 @@ from ..component import Component
 from pyArango.collection import Document
 from pyArango.query import AQLQuery
 from cag.utils.config import Config
-class AnnotatorBase(ABC, Component):
+class GenericAnnotator(ABC, Component):
     def __init__(self, query:str, run=False, params={}, conf: Config=None, fetch_args:"dict[str,Any]"={}, filter_annotatable=False,
         annotator_fieldname="_annotator_params"):
         """the base class to extend your annotators from

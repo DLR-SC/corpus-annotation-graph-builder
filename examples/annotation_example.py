@@ -1,4 +1,4 @@
-from cag.graph_framework.components import AnnotatorBase
+from cag.graph_framework.components import GenericAnnotator
 from cag.graph_framework.components.annotators.pipeline.pipeline_base import Pipeline
 from cag.graph_framework.components.annotators.pipeline.text_pipeline import TextPipeline
 from cag.utils.config import *
@@ -8,7 +8,7 @@ from pyArango.query import AQLQuery
 
 from pyArango.collection import Collection
 
-class AnyAnnotator(AnnotatorBase):
+class AnyAnnotator(GenericAnnotator):
     def __init__(self, conf: Config, params={'mode': 'run-1'}, filter_annotatable=True):
         super().__init__(query=f"""FOR dp IN {AnyGraphCreator._ANY_DATASET_NODE_NAME}
         RETURN dp
