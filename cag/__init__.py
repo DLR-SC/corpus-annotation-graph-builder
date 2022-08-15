@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 logs_folder = 'corpus-analytics-logs'
 Path(logs_folder).mkdir(parents=True, exist_ok=True)
@@ -24,7 +24,7 @@ file_format = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(messa
 f_handler.setFormatter(file_format)
 logger.addHandler(f_handler)
 
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 

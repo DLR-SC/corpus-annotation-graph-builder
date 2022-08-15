@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='cag',
-    version='0.8.0',
+    version='0.9.0',
     description='This is a general framework to create arango db graphs',
     # url='',
     author='DLR',

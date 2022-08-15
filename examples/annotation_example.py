@@ -1,6 +1,6 @@
+
 from cag.graph_framework.components import GenericAnnotator
 from cag.graph_framework.components.annotators.pipeline.pipeline_base import Pipeline
-from cag.graph_framework.components.annotators.pipeline.text_pipeline import TextPipeline
 from cag.utils.config import *
 
 from examples.graph_creation_example import AnyGraphCreator
@@ -20,20 +20,38 @@ class AnyAnnotator(GenericAnnotator):
 
 
 ## Pipeline for specialized annotator
+
+class SamplePipeline(Pipeline):
+
+     def process_input(self) -> list:
+        processed = []
+        for txt_node in self.input:
+            processed.append((txt_node.text, {"_key": txt_node._key}))
+
+        return processed
+
+     def instanciate_and_run(self):
+        # Extend the Default toml if needed, by either defining the path of a dictionary
+         # Pipeline.extend_config(extened_dict)
+
+        # Add the pipes defined in the Toml files
+         self.add_annotation_pipe(name = "NamedEntityAnnotator", save_output= True, is_spacy=True)
+         self.add_annotation_pipe(name = "EmpathAnnotator", save_output= True, is_spacy=True)
+         self.add_annotation_pipe(name = "DummyDefaultAnnotator", save_output= False, is_spacy=False)
+
+        # Get your Input in any way you like
+         coll: Collection = self.database_config.db["TextNode"]
+         docs = coll.fetchAll(limit=50)
+
+        # Set the INPUT - this will automatically call preprocess_input (make sure to implement it
+         self.set_input(docs)
+
+        # annotate the input
+         self.set_spacy_language_model("en_core_web_md")
+         self.annotate()
+        # save annotations when "save_output" is set to True
+         self.save()
+
 def run_sample(config):
-    pipeline: Pipeline = TextPipeline(database_config=config)
-    # Pipeline.extend_config(extened_dict)
-
-    pipeline.add_annotation_pipe("NamedEntityAnnotator", True)
-    pipeline.add_annotation_pipe("EmpathAnnotator", True)
-
-    coll: Collection = pipeline.database_config.db["TextNode"]
-
-    docs = coll.fetchAll(limit=10)
-    processed = []
-    for txt_node in docs:
-        processed.append((txt_node.text, {"_key": txt_node._key}))
-
-    pipeline.annotate(processed)
-
-    pipeline.save()
+    sample_pipeline = SamplePipeline(config)
+    sample_pipeline.instanciate_and_run()

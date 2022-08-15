@@ -68,11 +68,10 @@ def camel_nest_dict(dict_) -> dict:
     return res
 
 def load_module(module_name:str):
-    importlib.import_module(module_name)
+    return importlib.import_module(module_name)
 
 def get_cls_from_path(path: str):
     module_name, class_name = path.rsplit(".", 1)
 
     cls = getattr(importlib.import_module(module_name), class_name)
-
     return cls, class_name

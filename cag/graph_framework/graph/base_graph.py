@@ -8,7 +8,6 @@ from .relations import *
 import json
 
 class BaseGraph(Graph):
-
     _edgeDefinitions = [EdgeDefinition('GenericEdge', fromCollections=['GenericNode'], toCollections=['GenericNode'])]
     _orphanedCollections = []
 
@@ -46,7 +45,6 @@ class BaseGraph(Graph):
 
                 if create_collections:
                     self._check_and_update_collections(new_froms)
-                
                 from_collections = list(existings_froms | new_froms)
 
             if len(new_tos) > 0:
@@ -54,7 +52,6 @@ class BaseGraph(Graph):
 
                 if create_collections:
                     self._check_and_update_collections(new_tos)
-                
                 from_collections = list(new_tos | new_tos)
 
             if (len(new_froms - existings_froms) > 0) or (len(new_tos - existing_tos) > 0):

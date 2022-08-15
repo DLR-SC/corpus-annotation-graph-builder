@@ -23,9 +23,9 @@ class Annotator(ABC, Component):
         self.annotation_level = annotators_config["annotator"][self.name]["level"]
         self.annotation_type = annotators_config["annotator"][self.name]["type"]
         self.annotated_vertex = annotators_config["annotator"][self.name][ "annotated_vertex_name"]
+        self.pipe_code = annotators_config["annotator"][self.name]["pipe"]
 
         self.vertex_name = self.vertex_class_path.split(".")[-1]
-        print(self.vertex_name)
         self.edge_name = self.edge_class_path.split(".")[-1]
 
         self.load_pipe_component()
@@ -54,17 +54,26 @@ class Annotator(ABC, Component):
                                                                                                 e.message))
 
     def load_pipe_component(self):
+        module = None
         if "pipe_path" in self.annotators_config["annotator"][self.name].keys():
             self.pipe_path = self.annotators_config["annotator"][self.name]["pipe_path"]
             if self.pipe_path is not None and len(self.pipe_path) > 0:
-                print("loading {}".format(self.pipe_path))
                 logger.debug("loading {}".format(self.pipe_path))
-                utils.load_module(self.pipe_path)
+                module = utils.load_module(self.pipe_path)
+        return module
+
+    def get_pipe_func(self):
+        module = self.load_pipe_component()
+        pipe_func = None
+        if module is not None:
+            if "pipe" in self.annotators_config["annotator"][self.name].keys():
+                pipe_code = self.annotators_config["annotator"][self.name]["pipe"]
+                pipe_func = getattr(module, pipe_code)
+        return pipe_func
+
 
     def validate(self):
-
         error_dict = {}
-
         if self.annotation_type not in Annotator.ANNOTATION_TYPE:
             error_dict["annotation_type"] = "The annotation type should have one of the following values: {} but has the value {}".\
                 format(str(Annotator.ANNOTATION_TYPE), self.annotation_type)
