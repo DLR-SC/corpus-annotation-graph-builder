@@ -43,7 +43,7 @@ class SamplePipeline(Pipeline):
          coll: Collection = self.database_config.db["TextNode"]
          docs = coll.fetchAll(limit=50)
 
-        # Set the INPUT - this will automatically call preprocess_input (make sure to implement it
+        # Set the INPUT - this will automatically call process_input (make sure to implement it
          self.set_input(docs)
 
         # annotate the input

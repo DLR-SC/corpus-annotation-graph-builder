@@ -14,11 +14,10 @@ from cag import logger
 from cag.graph_framework.components.annotators.element.annotator import Annotator
 from cag.utils import utils
 import spacy
-
+from tqdm import tqdm
 from cag.utils.config import Config
 
-config_path = os.path.join("configs", "annotator.toml")
-
+config_path = os.path.join(os.path.dirname(__file__), "..", "..","annotators", "annotator.toml")
 
 @dataclasses.dataclass
 class Pipe:
@@ -100,7 +99,7 @@ class Pipeline(ABC):
         if self.annotated_artifacts is None:
             logger.error("call annotate before saving")
             pass
-        for pipe in self.pipeline:
+        for pipe in tqdm(self.pipeline):
             if pipe.save_output:
                 logger.info("saving annotations of {}".format(pipe))
                 self.annotator_instances[pipe.name].save_annotations(self.annotated_artifacts)
@@ -109,11 +108,16 @@ class Pipeline(ABC):
     ############################################
     #####           SETTERS                #####
     ############################################
+    def reset_input_output(self):
+        self.set_input(None)
+        self.annotated_artifacts = None
 
     def set_input(self, nodes: [Collection]):
         self.input = nodes
         if self.input is not None:
             self.processed_input = self.process_input()
+        else:
+            self.processed_input = None
 
     def set_spacy_language_model(self, language_package = "en_core_web_sm"):
         self.spacy_language_model = language_package
@@ -124,9 +128,6 @@ class Pipeline(ABC):
         #   en_core_web_lg (382MB)
         # English transformer pipeline (roberta-base). Components: transformer, tagger, parser, ner, attribute_ruler, lemmatizer.
         #   en_core_web_trf (438)
-
-
-
 
     def add_annotation_pipe(self, pipe:Pipe=None,
                             name:str="", save_output: bool = False, is_spacy:bool=False):
@@ -202,10 +203,10 @@ class Pipeline(ABC):
         if type(extended_config_dict_or_path) == str:
             extended_dic = tomli.loads(
                 Path(extended_config_dict_or_path).read_text(encoding="utf-8"))
-        else:
+        elif extended_dic is not None:
             extended_dic = extended_config_dict_or_path
         if extended_dic is not None:
-            config.update(extended_dic)
+            config = {**config, **extended_dic} # in python >3.9: config | extended_dic
         Pipeline.ANNOTATORS_CONFIG = config
         return config
 

@@ -19,7 +19,8 @@ setup(
                       'spacy>=3.4',
                       # for spacy - it uses soft_unicode which was removed from version > 2.0.1
                       'markupsafe<=2.0.1',
-                      'empath>=0.89'
+                      'empath>=0.89',
+                      'tqdm'
                       ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
@@ -27,7 +28,5 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
     ],
-    zip_safe=False,
-    include_package_data=True,
-    package_data={"configs": ["*.toml"]},
+    zip_safe=False
 )

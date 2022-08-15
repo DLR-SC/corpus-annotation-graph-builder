@@ -7,3 +7,4 @@ pyvis
 tomli>=1.1.0
 markupsafe<=2.0.1
 empath>=0.89
+tqdm
