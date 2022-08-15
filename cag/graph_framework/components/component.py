@@ -74,7 +74,7 @@ class Component(object):
         coll: Collection = self.database[collectionName]
         vert = None
         try:
-            if type(alt_key) == str :
+            if type(alt_key) == str:
                 alt_key = [alt_key]
 
             if alt_key is None and '_key' in data.keys() and data['_key'] in coll:
@@ -83,9 +83,12 @@ class Component(object):
                 coll.ensureHashIndex(alt_key, unique=True)
 
                 query = {k: v for k, v in data.items() if k in alt_key}
-                vert: Document = coll.fetchByExample(
+
+                resp = coll.fetchByExample(
                     query,
-                    batchSize=1)[0]
+                    batchSize=1)
+                if len(resp) > 0:
+                    vert: Document = resp[0]
             else:
                 logger.debug("vertex does not exist - make sure you provide _key as part of data dict "
                              "or alt_key as a lst and part of the data dict")
@@ -178,5 +181,6 @@ class Component(object):
         :rtype: Document
         """
 
-        edge_dic = self._get_edge_dict(relationName, from_doc, to_doc, edge_attrs, add_id)
+        edge_dic = self._get_edge_dict(
+            relationName, from_doc, to_doc, edge_attrs, add_id)
         return self.upsert_vert(relationName, edge_dic)
