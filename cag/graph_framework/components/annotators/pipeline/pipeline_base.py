@@ -65,7 +65,7 @@ class Pipeline(ABC):
         pass
 
     @abstractmethod
-    def instanciate_and_run(self) -> list:
+    def init_and_run(self) -> list:
         pass
     ############################################
     #####      MAIN. ANNOTATE and SAVE     #####

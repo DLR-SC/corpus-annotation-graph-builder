@@ -30,7 +30,7 @@ class SamplePipeline(Pipeline):
 
         return processed
 
-     def instanciate_and_run(self):
+     def init_and_run(self):
         # Extend the Default toml if needed, by either defining the path of a dictionary
          # Pipeline.extend_config(extened_dict)
 
@@ -54,4 +54,4 @@ class SamplePipeline(Pipeline):
 
 def run_sample(config):
     sample_pipeline = SamplePipeline(config)
-    sample_pipeline.instanciate_and_run()
+    sample_pipeline.init_and_run()
