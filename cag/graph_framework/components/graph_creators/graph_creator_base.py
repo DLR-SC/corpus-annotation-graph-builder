@@ -85,7 +85,7 @@ class GraphCreatorBase(ABC, Component):
 
     ######### Generic func to create vertices ##########################################
 
-    def create_corpus_vertex(self, key, name, type, desc, created_on):
+    def create_corpus_vertex(self, key, name, type, desc, created_on, timestamp=None):
 
         dict_ = {
             "_key": key,
@@ -93,7 +93,7 @@ class GraphCreatorBase(ABC, Component):
             "type": type,
             "description": desc,
             "created_on": created_on,
-            "timestamp": self.now
+            "timestamp": self.now if timestamp is None else timestamp
         }
         corpus = self.upsert_vert(GraphCreatorBase._CORPUS_NODE_NAME, dict_)
         return corpus
