@@ -51,7 +51,10 @@ class Component(object):
         # Setup graph structure
         for ed in (self._edge_definitions+self._base_edge_definitions):
             self.graph.update_graph_structure(ed['relation'],
-                                              ed['from_collections'], ed['to_collections'], create_collections=True)
+                                              ed['from_collections'],
+                                              ed['to_collections'],
+                                              create_collections=True
+                                              )
 
     def get_document(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> "Optional[Document]":
         """Gets the vertex if it exists.

@@ -18,7 +18,3 @@ class IsIdenticalTo(GenericEdge):
 
 class HasAuthor(GenericEdge):
     _fields = GenericEdge._fields
-
-"""OPEN ALEX RELATED RELATIONS"""
-class PublishedAt(GenericEdge):
-    _fields = GenericEdge._fields
