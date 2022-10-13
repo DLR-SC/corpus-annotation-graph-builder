@@ -19,7 +19,7 @@ setup(
                     'nltk==3.4.5',
                     'pyvis==0.2.1',
                     'tqdm==4.43.0',
-                    'python_arango==7.4.1',
+                    'python-arango==7.4.1',
                     #'arango==0.2.1',
                     'pyArango==2.0.1',
                     'tomli>=2.0.1'
