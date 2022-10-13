@@ -1,16 +1,16 @@
-dataclasses==0.6
-spacy_arguing_lexicon==0.0.3
-empath==0.89
-pytest==7.1.2
-networkx==2.8.5
-nltk==3.4.5
-pyvis==0.2.1
-tqdm==4.43.0
-spacy==3.4.1
-python-arango==7.4.1
+dataclasses>=0.6
+spacy_arguing_lexicon>=0.0.3
+empath>=0.89
+pytest>=7.1.2
+networkx>=2.8.5
+nltk>=3.4.5
+pyvis>=0.2.1
+tqdm>=4.43.0
+spacy>=3.4.1
+python-arango>=7.4.1
 #arango==0.2.1
-pyArango==2.0.1
-tomli==2.0.1
+pyArango>=2.0.1
+tomli>=2.0.1
 #markupsafe<=2.0.1
 
 
