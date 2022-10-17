@@ -1,6 +1,7 @@
 import hashlib
 import importlib
 import json
+import pkgutil
 import urllib
 from re import sub
 
@@ -75,3 +76,12 @@ def get_cls_from_path(path: str):
 
     cls = getattr(importlib.import_module(module_name), class_name)
     return cls, class_name
+
+
+def load_sub_packages(package):
+    prefix = package.__name__ + "."
+    #print(f"prefix {prefix}")
+    for importer, modname, ispkg in pkgutil.iter_modules(package.__path__, prefix):
+        #print(f"Found submodule {modname} (is a package: {ispkg})" )
+        module = load_module(modname)
+        #print (f"Imported {module}")

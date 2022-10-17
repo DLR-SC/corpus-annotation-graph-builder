@@ -1,9 +1,4 @@
-from pyArango.connection import Connection
 from pyArango.graph import Graph, EdgeDefinition
-from pyArango.collection import Collection
-from pyArango.theExceptions import CreationError
-from .nodes import *
-from .relations import *
 
 import json
 

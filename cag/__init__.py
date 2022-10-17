@@ -1,8 +1,8 @@
 import logging
 from pathlib import Path
-__version__ = "0.9.0"
+__version__ = "0.19.0"
 
-logs_folder = 'corpus-analytics-logs'
+logs_folder = 'cag_logs'
 Path(logs_folder).mkdir(parents=True, exist_ok=True)
 
 # Create a custom logger

@@ -5,13 +5,12 @@ from pyArango.theExceptions import DocumentNotFoundError, SimpleQueryError
 from cag.utils.config import Config, configuration
 
 from ..graph.base_graph import *
-from pyArango.collection import Document
+from pyArango.collection import Document, Collection
 import re
 from typing import Any, Optional
 
 from ... import logger
 
-from pyArango.collection import BulkOperation
 
 
 class Component(object):
@@ -184,6 +183,32 @@ class Component(object):
         :rtype: Document
         """
 
-        edge_dic = self._get_edge_dict(
+        data = self._get_edge_dict(
             relationName, from_doc, to_doc, edge_attrs, add_id)
-        return self.upsert_vert(relationName, edge_dic)
+
+        coll: Collection = self.database[relationName]
+
+        if 'timestamp' not in data.keys() or data['timestamp'] is None:
+            data['timestamp'] = datetime.now().isoformat()
+
+        edge = None
+        try:
+            edge: Document = self.get_document(relationName, data)
+            if edge is None:
+                edge = self.graph.createEdge(relationName, from_doc._id, to_doc._id, data)
+            else:
+                logger.debug("updating existing vertex")
+                for key, d in data.items():
+                    edge[key] = d
+                edge.save()
+                edge = coll[edge._key]
+
+        except Exception as e:
+            logger.error(
+                "An unknown error was thrown for data {} and vertex {} - message: {}".format(relationName, str(data),
+                                                                                             str(e)))
+
+
+        return edge
+
+

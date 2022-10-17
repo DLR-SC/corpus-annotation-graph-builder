@@ -1,13 +1,11 @@
 from abc import ABC, abstractmethod
 
 from cag import logger
-from pyArango.collection import Document, Collection
 
 from cag.utils.config import Config
 
 from cag.graph_framework.components.component import Component
 from datetime import datetime
-import re
 
 
 class GraphCreatorBase(ABC, Component):
