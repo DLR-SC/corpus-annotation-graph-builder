@@ -15,9 +15,9 @@ class NamedEntityAnnotator(Annotator):
         data = {"name": ner_txt, "type": ner_type}
         return self.upsert_vert(self.vertex_name, data, alt_key=["name", "type"])
 
-    def create_edge(self, from_, to_, entity):
+    def create_edge(self, _from: Document, _to: Document, entity) -> Document:
         position = (entity.start_char, entity.end_char)
-        edge_dict: dict = self._get_edge_dict(self.edge_name, from_, to_)
+        edge_dict: dict = self._get_edge_dict(self.edge_name, _from, _to)
         edge = self.get_document(self.edge_name, edge_dict)
 
         lst_positions = [position]
@@ -32,8 +32,8 @@ class NamedEntityAnnotator(Annotator):
             else:
                 return edge
         return self.upsert_link(self.edge_name,
-                                from_,
-                                to_,
+                                _from,
+                                _to,
                                 edge_attrs={"count": count,
                                             "token_position_lst": lst_positions
                                             }

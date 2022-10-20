@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 __version__ = "0.19.0"
 
-logs_folder = 'cag_logs'
+logs_folder = './cag_logs'
 Path(logs_folder).mkdir(parents=True, exist_ok=True)
 
 # Create a custom logger
@@ -24,7 +24,7 @@ file_format = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(messa
 f_handler.setFormatter(file_format)
 logger.addHandler(f_handler)
 
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 

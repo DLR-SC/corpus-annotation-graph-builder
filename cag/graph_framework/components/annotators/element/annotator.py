@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import ClassVar
 
 from pyArango.document import Document
+from pyArango.graph import EdgeDefinition
 from pyArango.theExceptions import CreationError
 
 from cag import logger
@@ -30,28 +31,27 @@ class Annotator(ABC, Component):
 
         self.load_pipe_component()
         self.init_graph_elts()
-        self.validate()
+        is_valid, errors = self.validate()
+        logger.info(f"annotator is validated: {is_valid}")
+        logger.debug(f"annotator is validated: {errors}")
 
 
     def init_graph_elts(self):
-        self.vertex_class, _ = utils.get_cls_from_path(self.vertex_class_path)
-        self.edge_class, _ = utils.get_cls_from_path(self.edge_class_path)
+        self.vertex_class, annotation_vertex = utils.get_cls_from_path(self.vertex_class_path)
+        self.edge_class, relation = utils.get_cls_from_path(self.edge_class_path)
 
-        try:
-            if not self.database.hasCollection(self.vertex_name):
-                logger.info('creating collection name', self.vertex_name)
-                self.database.createCollection(self.vertex_name)
-        except CreationError as e:
-            logger.error("An error was thrown when creating the edge {} with message {}".format(self.vertex_name,
-                                                                                                e.message()))
+        utils.load_module(".".join(self.vertex_class_path.split(".")[:-1]))
+        utils.load_module(".".join(self.edge_class_path.split(".")[:-1]))
 
-        try:
-            if not self.database.hasCollection(self.edge_name):
-                logger.info('creating edge name', self.edge_name)
-                self.database.createCollection(self.edge_name)
-        except CreationError as e:
-            logger.error("An error was thrown when creating the edge {} with message {}".format(self.edge_name,
-                                                                                                e.message))
+        logger.info(f"saving relation {relation} to {annotation_vertex} and from {self.annotated_vertex}")
+        #EdgeDefinition('GenericEdge', fromCollections=['GenericNode'], toCollections=['GenericNode'])
+        self.graph.update_graph_structure(relation,
+                                          [self.annotated_vertex],
+                                          [annotation_vertex],
+                                          create_collections=True
+                                          )
+
+
 
     def load_pipe_component(self):
         module = None
