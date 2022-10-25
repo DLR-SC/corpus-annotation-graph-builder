@@ -1,48 +1,55 @@
-import os
-from collections import deque
 from queue import Queue
 from abc import ABC, abstractmethod
-from pathlib import Path
 from typing import ClassVar
 
 import dataclasses
-import tomli
 from pyArango.collection import Collection
 from spacy import Language
 
 from cag import logger
-from cag.graph_framework.components.annotators.element.annotator import Annotator
+from cag.graph_framework.components.annotators import registered_pipes
+from cag.graph_framework.components.annotators.element.orchestrator import PipeOrchestrator
 from cag.utils import utils
 import spacy
 from tqdm import tqdm
 from cag.utils.config import Config
-
-config_path = os.path.join(os.path.dirname(__file__), "..", "..","annotators", "annotator.toml")
 
 @dataclasses.dataclass
 class Pipe:
     name: str
     is_spacy:bool = False
     save_output:bool = True
-    pipe_code:str = None # set internally from toml
+    pipe_id_or_func:str = None # set internally from toml
 
 
 
 
 class Pipeline(ABC):
-    ANNOTATORS_CONFIG: ClassVar = tomli.loads(
-        Path(config_path).read_text(encoding="utf-8"))  # default call annotators.get_annotators_config
+    REGISTERED_PIPE_CONFIGS: ClassVar = registered_pipes._dict
 
-
+    def _load_registered_pipes(self, load_default_pipe_configs:bool = True,
+                 extended_pipe_configs:dict = None):
+        if load_default_pipe_configs:
+            _copy = Pipeline.REGISTERED_PIPE_CONFIGS.copy()
+            if  extended_pipe_configs is not None:
+                _copy.update(extended_pipe_configs)
+            registered_pipes = _copy
+        return registered_pipes
     def __init__(self,
                  database_config: Config,
-                 input: "[Collection]" = None):
+                 input: "[Collection]" = None,
+                 load_default_pipe_configs = True,
+                 extended_pipe_configs:dict = None
+                 ):
         """
         The Pipeline class is responsible for taking a set of nodes as input, annotating them and saving them into
         the database.
 
         """
-        self.annotator_instances = {}
+
+        self.registered_pipes = self._load_registered_pipes(load_default_pipe_configs, extended_pipe_configs)
+
+        self.pipe_instance_dict = {}
         self.pipeline:[Pipe] = []
 
 
@@ -60,7 +67,6 @@ class Pipeline(ABC):
     ############################################
     @abstractmethod
     def process_input(self) -> object:
-
         pass
 
     @abstractmethod
@@ -83,7 +89,7 @@ class Pipeline(ABC):
             else:
                 while pipe_stack['stack']:
                     current_pipe: Pipe = pipe_stack['stack'].pop(0)
-                    pipe_instance :Annotator = self.annotator_instances[current_pipe.name]
+                    pipe_instance :PipeOrchestrator = self.pipe_instance_dict[current_pipe.name]
                     pipe_func = pipe_instance.get_pipe_func()
                     if pipe_func is None:
                         logger.error("The pipe is not a spacy pipe. Make sure to define the pipe_path and pipe code and "
@@ -97,12 +103,12 @@ class Pipeline(ABC):
 
     def save(self):
         if self.annotated_artifacts is None:
-            logger.error("call annotate before saving")
+            logger.error("Nothing to save, call annotate before saving")
             pass
         for pipe in tqdm(self.pipeline):
             if pipe.save_output:
                 logger.info("saving annotations of {}".format(pipe))
-                self.annotator_instances[pipe.name].save_annotations(self.annotated_artifacts)
+                self.pipe_instance_dict[pipe.name].save_annotations(self.annotated_artifacts)
 
 
     ############################################
@@ -136,18 +142,18 @@ class Pipeline(ABC):
             The corrisponding Annotator class (given from the toml)  to this pipe is initiated and saved, to be used
             for annotating and saving to the database.
             *annotator_instances*
-            *pipe_code*
+            *pipe_id_or_func*
             *pipeline*
         """
         pipe = pipe if pipe is not None else Pipe(name, save_output, is_spacy)
 
         logger.info(f"adding pipe with name {pipe.name}")
-        cls, _ = utils.get_cls_from_path(Pipeline.ANNOTATORS_CONFIG["annotator"][pipe.name]["annotator_class"])
-        instance = cls(Pipeline.ANNOTATORS_CONFIG, self.database_config)
-        self.annotator_instances[pipe.name] = instance
+        cls, _ = utils.get_cls_from_path(self.registered_pipes[pipe.name][registered_pipes.PipeConfigKeys._orchestrator_class])
+        instance = cls(self.registered_pipes, orchestrator_config_id= pipe.name, conf=self.database_config)
+        self.pipe_instance_dict[pipe.name] = instance
 
-        logger.info(f"adding pipe with code {instance.pipe_code}")
-        pipe.pipe_code = instance.pipe_code
+        logger.info(f"adding pipe with code {instance.pipe_id_or_func}")
+        pipe.pipe_id_or_func = instance.pipe_id_or_func
 
         self.pipeline.append(pipe)
 
@@ -181,11 +187,11 @@ class Pipeline(ABC):
     def init_spacy_nlp(self, subpipeline) -> Language:
         nlp = spacy.load(self.spacy_language_model, disable=["ner"])
         for pipe in subpipeline:
-            if not nlp.has_pipe(pipe.pipe_code):
-                if pipe.pipe_code in nlp.disabled:
-                    nlp.enable_pipe(pipe.pipe_code)
+            if not nlp.has_pipe(pipe.pipe_id_or_func):
+                if pipe.pipe_id_or_func in nlp.disabled:
+                    nlp.enable_pipe(pipe.pipe_id_or_func)
                 else:
-                    nlp.add_pipe(pipe.pipe_code)#, **kargs)
+                    nlp.add_pipe(pipe.pipe_id_or_func)#, **kargs)
             else:
                 logger.debug("pipe already in pipeline")
         return nlp
@@ -193,21 +199,5 @@ class Pipeline(ABC):
     def load_spacy_model(self):
         if not spacy.util.is_package(self.spacy_language_model):
             spacy.cli.download(self.spacy_language_model)
-    ############################################
-    #####    static. TOML EXTENSION        #####
-    ############################################
-
-    @staticmethod
-    def extend_annotators(extended_config_dict_or_path: "dict|str" = None):
-        config = tomli.loads(Path(config_path).read_text(encoding="utf-8"))
-        if type(extended_config_dict_or_path) == str:
-            extended_dic = tomli.loads(
-                Path(extended_config_dict_or_path).read_text(encoding="utf-8"))
-        elif extended_dic is not None:
-            extended_dic = extended_config_dict_or_path
-        if extended_dic is not None:
-            config = {**config, **extended_dic} # in python >3.9: config | extended_dic
-        Pipeline.ANNOTATORS_CONFIG = config
-        return config
 
 

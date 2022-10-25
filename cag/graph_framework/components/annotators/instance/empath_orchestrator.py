@@ -1,10 +1,9 @@
 
 from pyArango.document import Document
-import pyArango
-from cag.graph_framework.components.annotators.element.annotator import Annotator
+from cag.graph_framework.components.annotators.element.orchestrator import PipeOrchestrator
 
 
-class EmpathAnnotator(Annotator):
+class EmpathPipeOrchestrator(PipeOrchestrator):
 
     def create_vertex(self, empath_cat) -> Document:
         data = {"category": empath_cat}
@@ -36,7 +35,7 @@ class EmpathAnnotator(Annotator):
             for category, count in doc._.empath_count.items():
                 empath_vertex: Document = self.create_vertex(category)
                 text_vertex: Document = self.get_document(self.annotated_vertex, {"_key": text_key})
-                empath_edge: Document = self.create_edge(text_vertex, empath_vertex,
+                _: Document = self.create_edge(text_vertex, empath_vertex,
                                                       doc._.empath_count[category],
                                                       doc._.empath_ratio[category],
                                                       doc._.empath_positions[category],

@@ -1,9 +1,9 @@
 from pyArango.document import Document
 from cag import logger
-from cag.graph_framework.components.annotators.element.annotator import Annotator
+from cag.graph_framework.components.annotators.element.orchestrator import PipeOrchestrator
 
 
-class DummyDefaultAnnotator(Annotator):
+class DummyPipeOrchestrator(PipeOrchestrator):
 
     def create_edge(self, _from: Document, _to: Document, **kwargs) -> Document:
         pass

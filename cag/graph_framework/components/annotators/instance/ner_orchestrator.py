@@ -3,13 +3,10 @@ from typing import ClassVar, List
 from pyArango.document import Document
 import pyArango
 from cag.utils.config import Config
-from cag.graph_framework.components.annotators.element.annotator import Annotator
+from cag.graph_framework.components.annotators.element.orchestrator import PipeOrchestrator
 
 
-class NamedEntityAnnotator(Annotator):
-
-    def __init__(self, annotators_config, conf: Config = None):
-        super().__init__(annotators_config, conf)
+class NamedEntityPipeOrchestrator(PipeOrchestrator):
 
     def create_vertex(self, ner_txt, ner_type) -> pyArango.document.Document:
         data = {"name": ner_txt, "type": ner_type}
@@ -47,7 +44,7 @@ class NamedEntityAnnotator(Annotator):
                 ner_type = ent.label_
                 ner_vertex:Document = self.create_vertex(ner_txt, ner_type)
                 text_vertex:Document = self.get_document(self.annotated_vertex, {"_key": text_key})
-                ner_edge :Document = self.create_edge(text_vertex, ner_vertex, ent)
+                _ :Document = self.create_edge(text_vertex, ner_vertex, ent)
 
 
 
