@@ -32,8 +32,7 @@ class Component(object):
 
     def __init__(self, conf: Config = None):
         edges = self._base_edge_definitions+self._edge_definitions
-        if (edges is None or len(edges) == 0):
-            raise CreationError("You have to define an edge")
+
         if conf is None:
             conf = configuration(use_global_conf=True)
         self.conf = conf
@@ -52,7 +51,9 @@ class Component(object):
                 edge_def_arr.append(EdgeDefinition(ed['relation'],
                                                    fromCollections=ed['from_collections'],
                                                    toCollections=ed['to_collections']))
-            graph_cls = type(self.graph_name, (BaseGraph,), {'_edgeDefinitions': edge_def_arr})
+            if len(edge_def_arr) == 0:
+                raise CreationError("You have to define an edge for your graph in the your graph creator")
+            _ = type(self.graph_name, (BaseGraph,), {'_edgeDefinitions': edge_def_arr})
             self.graph: BaseGraph = self.database.createGraph(
                 self.graph_name)
         self.arango_db = conf.arango_db

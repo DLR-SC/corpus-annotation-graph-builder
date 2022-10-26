@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-__version__ = "0.23.0"
+__version__ = "0.25.0"
 
 logs_folder = '~/cag_logs'
 Path(logs_folder).mkdir(parents=True, exist_ok=True)
