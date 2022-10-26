@@ -31,6 +31,9 @@ class Component(object):
     _name = "Component"
 
     def __init__(self, conf: Config = None):
+        edges = self._base_edge_definitions+self._edge_definitions
+        if (edges is None or len(edges) == 0):
+            raise CreationError("You have to define an edge")
         if conf is None:
             conf = configuration(use_global_conf=True)
         self.conf = conf
@@ -39,16 +42,23 @@ class Component(object):
         if self.database.hasGraph(self.graph_name):
             self.graph = self.database.graphs[self.graph_name]
         else:
-            if not self.database.hasCollection('GenericNode'):
-                self.database.createCollection('GenericNode')
-            if not self.database.hasCollection('GenericEdge'):
-                self.database.createCollection('GenericEdge')
+
+            edge_def_arr = []
+            for ed in edges:
+                for col in [ed['relation']] + ed['from_collections'] + ed['to_collections']:
+                    if not self.database.hasCollection(col):
+                        self.database.createCollection(col)
+
+                edge_def_arr.append(EdgeDefinition(ed['relation'],
+                                                   fromCollections=ed['from_collections'],
+                                                   toCollections=ed['to_collections']))
+            graph_cls = type(self.graph_name, (BaseGraph,), {'_edgeDefinitions': edge_def_arr})
             self.graph: BaseGraph = self.database.createGraph(
                 self.graph_name)
         self.arango_db = conf.arango_db
 
         # Setup graph structure
-        for ed in (self._edge_definitions+self._base_edge_definitions):
+        for ed in edges:
             self.graph.update_graph_structure(ed['relation'],
                                               ed['from_collections'],
                                               ed['to_collections'],

@@ -31,9 +31,8 @@ class BaseGraph(Graph):
         Returns:
             Boolean value indicating if the edge definitions of this graph have been updated.
         """
-        is_new_relation = True
+
         if relation in self.definitions.keys():
-            is_new_relation = False
 
             existings_froms = set(self.definitions[relation].fromCollections)
             existing_tos = set(self.definitions[relation].toCollections)
@@ -78,8 +77,6 @@ class BaseGraph(Graph):
                 },
                 default=str), params={'waitForSync': waitForSync}
                                              )
-
-
 
         data = r.json()
         if r.status_code == 201 or r.status_code == 202:
