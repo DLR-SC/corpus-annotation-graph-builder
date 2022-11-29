@@ -3,8 +3,8 @@ from setuptools import setup
 
 setup(
     name='cag',
-    version='0.25.0',
-    description='This is a general framework to create arango db graphs, annot',
+    version='1.0',
+    description='This is a general framework to create arango db graphs and annotate them.',
     # url='',
     author='DLR',
     author_email='tobias.hecking@dlr.de, roxanne.elbaff@dlr.de',
@@ -25,7 +25,7 @@ setup(
                     'tomli>=2.0.1'
                       ],
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
