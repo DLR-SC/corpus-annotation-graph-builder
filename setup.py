@@ -30,5 +30,8 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
     ],
+    entry_points={
+        'console_scripts': ['cag=cag.cli:app'],
+    },
     zip_safe=False
 )

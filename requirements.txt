@@ -11,5 +11,6 @@ python-arango>=7.4.1
 pyArango>=2.0.1
 tomli>=2.0.1
 #markupsafe<=2.0.1
-
-
+typer~=0.4.2
+python-slugify~=6.1.2
+rich~=12.6.0
