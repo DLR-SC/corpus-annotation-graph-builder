@@ -1,4 +1,4 @@
-from cag.graph_framework.components import AnnotatorBase
+from cag.graph_framework.components import GenericAnnotator
 from cag.graph_framework.graph.base_graph import BaseGraph
 
 from pyArango.graph import EdgeDefinition
@@ -9,7 +9,7 @@ from cag.utils.config import *
 from ..test_nodes import *
 
 
-class AnyAnnotator(AnnotatorBase):
+class AnyAnnotator(GenericAnnotator):
     def __init__(self, conf: Config, params={'mode': 'run-1'}, filter_annotatable=True):
         super().__init__(query=f"""FOR dp IN {AnyGraphCreator._ANY_DATASET_NODE_NAME}
         RETURN dp

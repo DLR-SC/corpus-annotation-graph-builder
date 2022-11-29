@@ -1,13 +1,11 @@
 from abc import ABC, abstractmethod
 
 from cag import logger
-from pyArango.collection import Document, Collection
 
 from cag.utils.config import Config
 
 from cag.graph_framework.components.component import Component
 from datetime import datetime
-import re
 
 
 class GraphCreatorBase(ABC, Component):
@@ -49,7 +47,7 @@ class GraphCreatorBase(ABC, Component):
         }
     ]
 
-    def __init__(self, corpus_file_or_dir: str, conf: Config = None, initialize=False):
+    def __init__(self, corpus_file_or_dir: str, conf: Config = None, initialize=False, load_generic_graph=True):
         """Creates a graph and provides some general helper methods
 
         :param corpus_file_or_dir: where your update_graph-method can find it's data 
@@ -58,7 +56,10 @@ class GraphCreatorBase(ABC, Component):
         :type conf: Config, optional
         :param initialize: whether to initaialze the DB using init_graph(), defaults to False
         :type initialize: bool, optional
+        :type load_generic_graph: bool, optional whether to load the predefined nodes and relations
         """
+        if not load_generic_graph:
+            self._base_edge_definitions = []
         super().__init__(conf)
         self.corpus_file_or_dir = corpus_file_or_dir
         self.now = datetime.now()
@@ -72,20 +73,11 @@ class GraphCreatorBase(ABC, Component):
     def update_graph(self, timestamp):
         g = self.graph
 
-    #########   HELPERS ###########################################################
-    def _get_doc_key(self, collection_name, query):
-        key = None
-        itms = self.database[collection_name].fetchFirstExample(
-            query, rawResults=False)
-        if len(itms) > 0:
-            key = itms[0]['_key']
-        return key
-
     ######### END OF HELPERS ###########################################################
 
     ######### Generic func to create vertices ##########################################
 
-    def create_corpus_vertex(self, key, name, type, desc, created_on):
+    def create_corpus_vertex(self, key, name, type, desc, created_on, timestamp=None):
 
         dict_ = {
             "_key": key,
@@ -93,14 +85,13 @@ class GraphCreatorBase(ABC, Component):
             "type": type,
             "description": desc,
             "created_on": created_on,
-            "timestamp": self.now
+            "timestamp": timestamp
         }
         corpus = self.upsert_vert(GraphCreatorBase._CORPUS_NODE_NAME, dict_)
         return corpus
 
     def create_text_vertex(self, text, timestamp=None):
-        if timestamp is None:
-            timestamp = self.now
+
         dict_ = {
             "text": text,
             "timestamp": timestamp
@@ -110,11 +101,11 @@ class GraphCreatorBase(ABC, Component):
             GraphCreatorBase._TEXT_NODE_NAME, dict_, alt_key="text")
         return txt
 
-    def create_image_vertex(self, url):
+    def create_image_vertex(self, url, timestamp=None):
 
         dict_ = {
             "url": url,
-            "timestamp": self.now
+            "timestamp": timestamp
         }
 
         img = self.upsert_vert(
@@ -122,8 +113,7 @@ class GraphCreatorBase(ABC, Component):
         return img
 
     def create_author_vertex(self, author_name, timestamp=None):
-        if timestamp is None:
-            timestamp = self.now
+
         dict_ = {
             "name": author_name,
             "timestamp": timestamp
@@ -134,11 +124,11 @@ class GraphCreatorBase(ABC, Component):
 
         return author
 
-    def create_web_resource_vertex(self, url):
+    def create_web_resource_vertex(self, url, timestamp=None):
 
         dict_ = {
             "url": url,
-            "timestamp": self.now
+            "timestamp": timestamp
         }
 
         web_resource = self.upsert_vert(

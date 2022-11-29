@@ -1,14 +1,13 @@
-from pyArango.connection import Connection
 from pyArango.graph import Graph, EdgeDefinition
-from pyArango.collection import Collection
-from pyArango.theExceptions import CreationError
-from .nodes import *
-from .relations import *
 
 import json
 
-class BaseGraph(Graph):
+from pyArango.theExceptions import CreationError
 
+from cag import logger
+
+
+class BaseGraph(Graph):
     _edgeDefinitions = [EdgeDefinition('GenericEdge', fromCollections=['GenericNode'], toCollections=['GenericNode'])]
     _orphanedCollections = []
 
@@ -32,52 +31,56 @@ class BaseGraph(Graph):
         Returns:
             Boolean value indicating if the edge definitions of this graph have been updated.
         """
+
         if relation in self.definitions.keys():
 
             existings_froms = set(self.definitions[relation].fromCollections)
             existing_tos = set(self.definitions[relation].toCollections)
+
             proposed_froms = set(from_collections)
             proposed_tos = set(to_collections)
+
             new_froms = proposed_froms - existings_froms
             new_tos = proposed_tos - existing_tos
 
-            if len(new_froms) > 0:
-                url = '%s/edge/%s' % (self.getURL(), relation)
+            if create_collections and len(new_froms) > 0:
+                self._check_and_update_collections(new_froms)
 
-                if create_collections:
-                    self._check_and_update_collections(new_froms)
-                
-                from_collections = list(existings_froms | new_froms)
 
-            if len(new_tos) > 0:
-                url = '%s/edge/%s' % (self.getURL(), relation)
+            if create_collections and (len(new_tos) > 0):
+                self._check_and_update_collections(new_tos)
 
-                if create_collections:
-                    self._check_and_update_collections(new_tos)
-                
-                from_collections = list(new_tos | new_tos)
-
-            if (len(new_froms - existings_froms) > 0) or (len(new_tos - existing_tos) > 0):
+            if (len(new_froms ) > 0) or (len(new_tos) > 0):
                  url = '%s/edge/%s' % (self.getURL(), relation)
                  from_collections = list(existings_froms | new_froms)
                  to_collections = list(existing_tos | new_tos)
             else:
+                logger.debug(f"edge  found {relation} but has no changes")
                 return False
+
+            logger.debug(f"edge  found {relation}, updating it")
+            r = self.connection.session.put(url, data=json.dumps(
+                {
+                    'collection': relation,
+                    'from': from_collections,
+                    'to': to_collections
+                }, default=str), params={'waitForSync': waitForSync}
+                                            )
         else:
+            logger.debug(f"edge not found {relation}, adding it")
             url = '%s/edge' % self.getURL()
-        
-        r = self.connection.session.post(url, data = json.dumps(
-            {
-                'collection': relation,
-                'from': from_collections,
-                'to': to_collections       
-            }, 
-            default=str), params = {'waitForSync' : waitForSync}
-        )
+            r = self.connection.session.post(url, data=json.dumps(
+                {
+                    'collection': relation,
+                    'from': from_collections,
+                    'to': to_collections
+                },
+                default=str), params={'waitForSync': waitForSync}
+                                             )
 
         data = r.json()
         if r.status_code == 201 or r.status_code == 202:
             self.definitions[relation] = EdgeDefinition(relation, fromCollections = from_collections, toCollections = to_collections)
             return True
 
-        #raise CreationError("Unable to modify edge definitions., %s" % data["errorMessage"], data)
+        raise CreationError("Unable to modify edge definitions., %s" % data["errorMessage"], data)

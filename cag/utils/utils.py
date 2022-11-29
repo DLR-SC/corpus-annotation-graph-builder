@@ -1,6 +1,7 @@
 import hashlib
 import importlib
 import json
+import pkgutil
 import urllib
 from re import sub
 
@@ -67,10 +68,20 @@ def camel_nest_dict(dict_) -> dict:
                 res[camel_case(k)] = v
     return res
 
+def load_module(module_name:str):
+    return importlib.import_module(module_name)
 
-def get_cls_from_path(path):
+def get_cls_from_path(path: str):
     module_name, class_name = path.rsplit(".", 1)
 
     cls = getattr(importlib.import_module(module_name), class_name)
-
     return cls, class_name
+
+
+def load_sub_packages(package):
+    prefix = package.__name__ + "."
+    #print(f"prefix {prefix}")
+    for importer, modname, ispkg in pkgutil.iter_modules(package.__path__, prefix):
+        #print(f"Found submodule {modname} (is a package: {ispkg})" )
+        module = load_module(modname)
+        #print (f"Imported {module}")

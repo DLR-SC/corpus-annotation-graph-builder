@@ -5,13 +5,12 @@ from pyArango.theExceptions import DocumentNotFoundError, SimpleQueryError
 from cag.utils.config import Config, configuration
 
 from ..graph.base_graph import *
-from pyArango.collection import Document
+from pyArango.collection import Document, Collection
 import re
 from typing import Any, Optional
 
 from ... import logger
 
-from pyArango.collection import BulkOperation
 
 
 class Component(object):
@@ -32,6 +31,8 @@ class Component(object):
     _name = "Component"
 
     def __init__(self, conf: Config = None):
+        edges = self._base_edge_definitions+self._edge_definitions
+
         if conf is None:
             conf = configuration(use_global_conf=True)
         self.conf = conf
@@ -40,18 +41,30 @@ class Component(object):
         if self.database.hasGraph(self.graph_name):
             self.graph = self.database.graphs[self.graph_name]
         else:
-            if not self.database.hasCollection('GenericNode'):
-                self.database.createCollection('GenericNode')
-            if not self.database.hasCollection('GenericEdge'):
-                self.database.createCollection('GenericEdge')
+
+            edge_def_arr = []
+            for ed in edges:
+                for col in [ed['relation']] + ed['from_collections'] + ed['to_collections']:
+                    if not self.database.hasCollection(col):
+                        self.database.createCollection(col)
+
+                edge_def_arr.append(EdgeDefinition(ed['relation'],
+                                                   fromCollections=ed['from_collections'],
+                                                   toCollections=ed['to_collections']))
+            if len(edge_def_arr) == 0:
+                raise CreationError("You have to define an edge for your graph in the your graph creator")
+            _ = type(self.graph_name, (BaseGraph,), {'_edgeDefinitions': edge_def_arr})
             self.graph: BaseGraph = self.database.createGraph(
                 self.graph_name)
         self.arango_db = conf.arango_db
 
         # Setup graph structure
-        for ed in (self._edge_definitions+self._base_edge_definitions):
+        for ed in edges:
             self.graph.update_graph_structure(ed['relation'],
-                                              ed['from_collections'], ed['to_collections'], create_collections=True)
+                                              ed['from_collections'],
+                                              ed['to_collections'],
+                                              create_collections=True
+                                              )
 
     def get_document(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> "Optional[Document]":
         """Gets the vertex if it exists.
@@ -74,7 +87,7 @@ class Component(object):
         coll: Collection = self.database[collectionName]
         vert = None
         try:
-            if type(alt_key) == str :
+            if type(alt_key) == str:
                 alt_key = [alt_key]
 
             if alt_key is None and '_key' in data.keys() and data['_key'] in coll:
@@ -83,9 +96,12 @@ class Component(object):
                 coll.ensureHashIndex(alt_key, unique=True)
 
                 query = {k: v for k, v in data.items() if k in alt_key}
-                vert: Document = coll.fetchByExample(
+
+                resp = coll.fetchByExample(
                     query,
-                    batchSize=1)[0]
+                    batchSize=1)
+                if len(resp) > 0:
+                    vert: Document = resp[0]
             else:
                 logger.debug("vertex does not exist - make sure you provide _key as part of data dict "
                              "or alt_key as a lst and part of the data dict")
@@ -147,7 +163,7 @@ class Component(object):
         :param add_id: data to append the id (if the from-to relation may not be unique), defaults to ""
         :type add_id: str, optional
         :return: the  edge document if it exists
-        :rtype: Document
+        :rtype: 'Dict[str|Any]'
         """
         from_key = re.sub("/", "-", from_doc._id)
         to_key = re.sub("/", "-", to_doc._id)
@@ -178,5 +194,32 @@ class Component(object):
         :rtype: Document
         """
 
-        edge_dic = self._get_edge_dict(relationName, from_doc, to_doc, edge_attrs, add_id)
-        return self.upsert_vert(relationName, edge_dic)
+        data = self._get_edge_dict(
+            relationName, from_doc, to_doc, edge_attrs, add_id)
+
+        coll: Collection = self.database[relationName]
+
+        if 'timestamp' not in data.keys() or data['timestamp'] is None:
+            data['timestamp'] = datetime.now().isoformat()
+
+        edge = None
+        try:
+            edge: Document = self.get_document(relationName, data)
+            if edge is None:
+                edge = self.graph.createEdge(relationName, from_doc._id, to_doc._id, data)
+            else:
+                logger.debug("updating existing vertex")
+                for key, d in data.items():
+                    edge[key] = d
+                edge.save()
+                edge = coll[edge._key]
+
+        except Exception as e:
+            logger.error(
+                "An unknown error was thrown for data {} and vertex {} - message: {}".format(relationName, str(data),
+                                                                                             str(e)))
+
+
+        return edge
+
+

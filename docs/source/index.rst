@@ -5,6 +5,7 @@
 
 Welcome to Corpus Analytics Graph's documentation!
 ==================================================
+Corpus Analytics Graph (CAG) serves as a base framework for creating graphs, extending them, and analyzing them. You can read our :doc:`get started guide </reference/1_get_started>` to see some core concepts directly applied. If you want to read up on those concept, you should go to the :doc:`concept writeup </reference/0_concept>` 
 
 .. toctree::
    :maxdepth: 2
