@@ -1,3 +1,6 @@
+
+[![PyPI version](https://badge.fury.io/py/cag.svg)](https://badge.fury.io/py/cag)
+
 # Corpus Annotation Graph Builder (CAG)
 
 
