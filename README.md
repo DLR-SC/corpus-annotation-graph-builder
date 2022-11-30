@@ -1,4 +1,4 @@
-# Corpus Analytics Graph (CAG)
+# Corpus Annotation Graph Builder (CAG)
 
 
 * [Overview](#overview)
