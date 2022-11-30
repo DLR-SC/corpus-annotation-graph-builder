@@ -1,6 +1,6 @@
 
-from cag.graph_framework.components import GenericAnnotator
-from cag.graph_framework.components.annotators.pipeline.pipeline_base import Pipeline
+from cag.framework.annotator import GenericAnnotator
+from cag.framework.annotator.pipeline.pipeline_base import Pipeline
 from cag.utils.config import *
 
 from examples.graph_creation_example import AnyGraphCreator

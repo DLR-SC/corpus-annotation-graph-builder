@@ -1,5 +1,5 @@
-from cag.graph_framework.components import GenericAnnotator
-from cag.graph_framework.graph.base_graph import BaseGraph
+from cag.framework import GenericAnnotator
+from cag.graph_elements.base_graph import BaseGraph
 
 from pyArango.graph import EdgeDefinition
 

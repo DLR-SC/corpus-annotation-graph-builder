@@ -7,7 +7,7 @@ class TestGCUpserts:
         config = configuration(graph='SampleGraph', database=whoami())
         config_2 = configuration(graph='SampleGraph', database=whoami())
         gc = AnyGraphCreator("", config)
-        gc.upsert_vert(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
+        gc.upsert_node(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
             '_key': 'test_1',
             'name': 'before_upsert'
         })
@@ -15,7 +15,7 @@ class TestGCUpserts:
         assert vert is not None
         assert vert['name'] == 'before_upsert'
 
-        gc.upsert_vert(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
+        gc.upsert_node(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
             '_key': 'test_1',
             'name': 'after_upsert'
         })
@@ -27,7 +27,7 @@ class TestGCUpserts:
 
 
         # only update the correct doc
-        gc.upsert_vert(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
+        gc.upsert_node(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
             '_key': 'test_1',
             'name': 'before_insert'
         })
@@ -35,7 +35,7 @@ class TestGCUpserts:
         assert vert is not None
         assert vert['name'] == 'before_insert'
 
-        gc.upsert_vert(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
+        gc.upsert_node(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
             '_key': 'test_2',
             'name': 'after_insert'
         })
@@ -52,7 +52,7 @@ class TestGCUpserts:
         config = configuration(graph='SampleGraph', database=whoami())
         config_2 = configuration(graph='SampleGraph', database=whoami())
         gc = AnyGraphCreator("", config)
-        gc.upsert_vert(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
+        gc.upsert_node(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
             '_key': 'test_1',
             'key_alt': 'test_alt',
             'name': 'before_upsert'
@@ -60,7 +60,7 @@ class TestGCUpserts:
         vert = config.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME]['test_1']
         assert vert is not None
         assert vert['name'] == 'before_upsert'
-        gc.upsert_vert(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
+        gc.upsert_node(AnyGraphCreator._ANY_DATASET_NODE_NAME, {
             'key_alt': 'test_alt',
             'name': 'after_upsert'
         }, alt_key='key_alt')

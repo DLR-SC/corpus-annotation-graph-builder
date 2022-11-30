@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pyvis.network import Network
 import networkx as nx
 from cag.utils.config import Config
-from cag.graph_framework.components.component import Component
+from cag.framework.component import Component
 from enum import Enum
 from pyArango.query import AQLQuery
 

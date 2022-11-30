@@ -1,8 +1,8 @@
 
 
 
-import cag.graph_framework.graph.nodes as parent_nodes
-from cag.graph_framework.graph.relations import GenericEdge
+import cag.graph_elements.nodes as parent_nodes
+from cag.graph_elements.relations import GenericEdge
 from pyArango.collection import  Field
 
 """OOS NODES RELEVANT FOR ANNOTATIONS"""
@@ -11,7 +11,7 @@ from pyArango.collection import  Field
 ## NAMED ENTITY ANNOTATOR
 
 class NamedEntityNode(parent_nodes.GenericNode):
-    """ A class to define a Named Entity vertex in arangodb - This is used by pyarango to create the Collection """
+    """ A class to define a Named Entity node in arangodb - This is used by pyarango to create the Collection """
     _fields = {
         "type": parent_nodes.Field(),
         "name": parent_nodes.Field(),
@@ -24,7 +24,7 @@ class NamedEntityNode(parent_nodes.GenericNode):
 
 
 class EmpathNode(parent_nodes.GenericNode):
-    """ A class to define a Named Entity vertex in arangodb - This is used by pyarango to create the Collection """
+    """ A class to define a Named Entity node in arangodb - This is used by pyarango to create the Collection """
     _fields = {
         "category": parent_nodes.Field(),
     }

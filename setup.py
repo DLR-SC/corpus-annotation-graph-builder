@@ -1,15 +1,19 @@
 import setuptools
 from setuptools import setup
-
+__version__  ="0.5.5"
+URL = 'https://github.com/DLR-SC/corpus-annotation-graph-builder'
 setup(
     name='cag',
-    version='1.0',
+    version=__version__,
     description='This is a general framework to create arango db graphs and annotate them.',
-    # url='',
+    url=URL,
     author='DLR',
-    author_email='tobias.hecking@dlr.de, roxanne.elbaff@dlr.de',
+    author_email='roxanne.elbaff@dlr.de, tobias.hecking@dlr.de',
     license='MIT',
+    download_url=f'{URL}/archive/{__version__}.tar.gz',
     packages=setuptools.find_packages(),
+    python_requires='>=3.7',
+    keywords=['graph', 'architectural framework', 'graph creator', 'graph annotator'],
     install_requires=['dataclasses>=0.6',
                     'spacy>=3.4.1',
                     'spacy_arguing_lexicon>=0.0.3',

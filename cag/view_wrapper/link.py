@@ -1,7 +1,7 @@
 import logging
 
-from ..utils import utils
-from ..view_wrapper.arango_analyzer import AnalyzerList
+from cag.utils import utils
+from cag.view_wrapper.arango_analyzer import AnalyzerList
 
 
 from dataclasses import field, dataclass

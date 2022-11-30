@@ -1,6 +1,6 @@
 from pyArango.document import Document
 from cag import logger
-from cag.graph_framework.components.annotators.element.orchestrator import PipeOrchestrator
+from cag.framework.annotator.element.orchestrator import PipeOrchestrator
 
 
 class DummyPipeOrchestrator(PipeOrchestrator):
@@ -9,7 +9,7 @@ class DummyPipeOrchestrator(PipeOrchestrator):
         pass
 
 
-    def create_vertex(self, **kwargs) -> Document:
+    def create_node(self, **kwargs) -> Document:
         pass
 
     def save_annotations(self, annotated_text: "[]"):

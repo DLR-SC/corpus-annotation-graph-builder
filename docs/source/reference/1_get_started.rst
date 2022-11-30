@@ -39,7 +39,7 @@ In order to connect, you have to have the graph created and imported somewhere (
 .. code-block:: python
 
 
-    from cag.graph_framework.graph.base_graph import BaseGraph
+    from cag.graph_elements.base_graph import BaseGraph
     from pyArango.graph import Graph, EdgeDefinition
 
     class KnowledgeGraph(BaseGraph):
@@ -52,7 +52,7 @@ The next step is to create the graph creator and the graph definition. This basi
 
 
     import cag.utils as utils
-    from cag.graph_framework.components import GraphCreatorBase
+    from cag.framework import GraphCreatorBase
     import datetime
     class AnyGraphCreator(GraphCreatorBase):
         _ANY_DATASET_NODE_NAME = "AnyDataset"
@@ -71,7 +71,7 @@ The next step is to create the graph creator and the graph definition. This basi
         def __init__(self, corpus_dir, config, initialize=False):
             super().__init__(corpus_dir, config, initialize)
         def init_graph(self):
-            corpus = self.create_corpus_vertex(key="AnyCorpus",
+            corpus = self.create_corpus_node(key="AnyCorpus",
                                             name=AnyGraphCreator._name,
                                             type="journal",
                                             desc=AnyGraphCreator._description,

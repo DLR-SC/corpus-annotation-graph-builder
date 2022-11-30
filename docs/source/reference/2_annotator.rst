@@ -2,7 +2,7 @@
    :language: python
 
 
-Annotators
+annotator
 ==========
 
 Textmining annotator
@@ -16,7 +16,7 @@ A simple pipeline, using existing pipes, can be created as follows (assuming you
 
     from pyArango.collection import Collection
 
-    from cag.graph_framework.components.annotators.pipeline import Pipeline
+    from cag.framework.annotator.pipeline import Pipeline
     from cag.utils.config import Config
 
     ## set database configuration
@@ -49,11 +49,11 @@ A simple pipeline, using existing pipes, can be created as follows (assuming you
 
 General annotator
 -----------------
-These annotators fit a more general class, where we only provide basic functionality, similar to the graph creator. To ease the filtering based on the parameters, we provide a simple base class where the documents can be checked in and easily filtered:
+These annotator fit a more general class, where we only provide basic functionality, similar to the graph creator. To ease the filtering based on the parameters, we provide a simple base class where the documents can be checked in and easily filtered:
 
 .. code-block:: python
 
-    from cag.graph_framework.components import GenericAnnotator
+    from cag.framework import GenericAnnotator
     class AnyAnnotator(GenericAnnotator):
         def __init__(self, conf: Config, params={'mode': 'run-1'}, filter_annotatable=True):
             super().__init__(query=f"""FOR dp IN {AnyGraphCreator._ANY_DATASET_NODE_NAME}
@@ -62,7 +62,7 @@ These annotators fit a more general class, where we only provide basic functiona
         def update_graph(self, timestamp, data):
             for d in data:
                 d['add-prop']=some_algo(d['text'])
-                self.upsert_vert(d) #will annotate the data!
+                self.upsert_node(d) #will annotate the data!
 
 
 You can disable the filtering by providing :python:`filter_annotatable=False`. When returning more complex data make sure that you also return a root-level field (in your data structure) called :python:`'_annotator_params'` (from a component that will be annotated) or provide your own fieldname in the parameter :python:`annotator_fieldname`. Each document that will be upserted (or checked into :python:`complete_annotation`) will recieve the parameter on this field, providing the next run with the neccessary information to filter.
