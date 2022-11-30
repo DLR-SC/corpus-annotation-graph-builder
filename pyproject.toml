@@ -1,0 +1,53 @@
+
+# pyproject.toml
+
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+#[build-system]
+#requires = ["setuptools>=61.0.0", "wheel"]
+#build-backend = "setuptools.build_meta"
+
+[project]
+name = "cag"
+version = "0.5.5"
+description='This is a general framework to create arango db graphs and annotate them.'
+readme = "README.md"
+authors = [{ name = "Roxanne El Baff", email = "roxanne.elbaff@dlr.de" },
+            { name = "Tobias Hecking", email = "tobias.hecking@dlr.de" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Science/Research',
+
+]
+keywords=['graph', 'architectural framework', 'graph creator', 'graph annotator']
+dependencies = ['dataclasses>=0.6',
+                    'spacy>=3.4.1',
+                    'spacy_arguing_lexicon>=0.0.3',
+                    'empath>=0.89',
+                    'pytest>=7.1.2',
+                    'networkx>=2.8.5',
+                    'nltk>=3.4.5',
+                    'pyvis>=0.2.1',
+                    'tqdm>=4.43.0',
+                    'python-arango>=7.4.1',
+                    #'arango==0.2.1',
+                    'pyArango>=2.0.1',
+                    'tomli>=2.0.1'
+                      ]
+requires-python = ">=3.7"
+
+[project.optional-dependencies]
+dev = [ "pip-tools", "pytest"]
+
+[project.urls]
+Homepage = 'https://github.com/DLR-SC/corpus-annotation-graph-builder'
+
+
+[project.scripts]
+cag="cag.cli:app"
