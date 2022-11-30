@@ -1,4 +1,4 @@
-# Corpus Analytics Graph (CAG)
+# Corpus Annotation Graph Builder (CAG)
 
 
 * [Overview](#overview)
@@ -34,4 +34,8 @@ This package is in the early development stages - to use/update it, clone the re
 ```
 pip install -e .
 ```
+## Usage
+
+* Graph Creation [[jupyter notebook](examples/1_create_graph.ipynb)]
+* Graph Annotation [[jupyter notebook](examples/2_annotate_graph.ipynb)]
 
