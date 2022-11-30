@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any
 
-from ..component import Component
+from cag.framework.component import Component
 from pyArango.collection import Document
 from pyArango.query import AQLQuery
 from cag.utils.config import Config
@@ -11,7 +11,7 @@ from cag.utils.config import Config
 class GenericAnnotator(ABC, Component):
     def __init__(self, query: str, run=False, params={}, conf: Config = None, fetch_args: "dict[str,Any]" = {}, filter_annotatable=False,
                  annotator_fieldname="_annotator_params"):
-        """the base class to extend your annotators from
+        """the base class to extend your annotator from
 
         :param query: an arango query valid on your DB, returing the `annotator_fieldname` on the root-elements as a field from the docs to update
         :type query: str
@@ -57,11 +57,11 @@ class GenericAnnotator(ABC, Component):
             return self.database.AQLQuery(self.query, **self.fetch_args)
 
     def complete_annotation(self, doc: Document):
-        return self.upsert_vert(doc.collection.name, doc.getStore())
+        return self.upsert_node(doc.collection.name, doc.getStore())
 
-    def upsert_vert(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> Document:
+    def upsert_node(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> Document:
         data[self.annotator_fieldname] = self.params
-        return super().upsert_vert(collectionName, data, alt_key)
+        return super().upsert_node(collectionName, data, alt_key)
 
     @abstractmethod
     def update_graph(self, timestamp, data: AQLQuery):

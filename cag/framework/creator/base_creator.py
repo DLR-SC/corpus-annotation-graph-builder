@@ -4,7 +4,7 @@ from cag import logger
 
 from cag.utils.config import Config
 
-from cag.graph_framework.components.component import Component
+from cag.framework.component import Component
 from datetime import datetime
 
 
@@ -77,7 +77,7 @@ class GraphCreatorBase(ABC, Component):
 
     ######### Generic func to create vertices ##########################################
 
-    def create_corpus_vertex(self, key, name, type, desc, created_on, timestamp=None):
+    def create_corpus_node(self, key, name, type, desc, created_on, timestamp=None):
 
         dict_ = {
             "_key": key,
@@ -87,50 +87,50 @@ class GraphCreatorBase(ABC, Component):
             "created_on": created_on,
             "timestamp": timestamp
         }
-        corpus = self.upsert_vert(GraphCreatorBase._CORPUS_NODE_NAME, dict_)
+        corpus = self.upsert_node(GraphCreatorBase._CORPUS_NODE_NAME, dict_)
         return corpus
 
-    def create_text_vertex(self, text, timestamp=None):
+    def create_text_node(self, text, timestamp=None):
 
         dict_ = {
             "text": text,
             "timestamp": timestamp
         }
 
-        txt = self.upsert_vert(
+        txt = self.upsert_node(
             GraphCreatorBase._TEXT_NODE_NAME, dict_, alt_key="text")
         return txt
 
-    def create_image_vertex(self, url, timestamp=None):
+    def create_image_node(self, url, timestamp=None):
 
         dict_ = {
             "url": url,
             "timestamp": timestamp
         }
 
-        img = self.upsert_vert(
+        img = self.upsert_node(
             GraphCreatorBase._IMAGE_NODE_NAME,  dict_, alt_key="url")
         return img
 
-    def create_author_vertex(self, author_name, timestamp=None):
+    def create_author_node(self, author_name, timestamp=None):
 
         dict_ = {
             "name": author_name,
             "timestamp": timestamp
         }
 
-        author = self.upsert_vert(
+        author = self.upsert_node(
             GraphCreatorBase._AUTHOR_NODE_NAME, dict_, alt_key="name")
 
         return author
 
-    def create_web_resource_vertex(self, url, timestamp=None):
+    def create_web_resource_node(self, url, timestamp=None):
 
         dict_ = {
             "url": url,
             "timestamp": timestamp
         }
 
-        web_resource = self.upsert_vert(
+        web_resource = self.upsert_node(
             GraphCreatorBase._WEB_RESOURCE_NODE_NAME, dict_, alt_key="url")
         return web_resource

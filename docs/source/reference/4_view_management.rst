@@ -16,7 +16,7 @@ Create an arango analyzer
 
     The valid attributes/values for the properties depend on the type used. For example, the delimiter type needs to know the desired delimiting character(s), whereas the text type takes a locale, stop-words, and more.
 
-    -- `source <https://www.arangodb.com/docs/stable/analyzers.html>`_
+    -- `source <https://www.arangodb.com/docs/stable/analyzer.html>`_
 
 The analyzer class loads the required attributes of an analyzer based on its type. The supported types are:
 
@@ -96,17 +96,17 @@ Create a *link* with *fields*
     # Create Link - a view can have 0 to * links
     link = Link(name="TextNode") # Name of a collection in the database
     linkAnalyzers = AnalyzerList(["identity"])
-    link.analyzers = linkAnalyzers
+    link.analyzer = linkAnalyzers
 
     # A link can have 0..* fields
-    # for the *text* field in the *textNode* collection, add the analyzers below
+    # for the *text* field in the *textNode* collection, add the analyzer below
     field = Field("text", AnalyzerList(["text_en", "invalid_analyzer", "analyzer_sample"])) # text_en is a predefined analyzer from arango
     
     # filters out the analyzer that are not defined in the database
-    field.analyzers.filter_invalid_analyzers(DB, verbose=1) 
-    print("current analyzers after filtering invalid ones: ", field.analyzers)
+    field.analyzer.filter_invalid_analyzer(DB, verbose=1) 
+    print("current analyzer after filtering invalid ones: ", field.analyzer)
 
-current analyzers after filtering invalid ones:  
+current analyzer after filtering invalid ones:  
     
 .. code-block:: python
     
@@ -122,7 +122,7 @@ current analyzers after filtering invalid ones:
 
 .. code-block:: python
     
-    {'text': {'analyzers': ['text_en', 'analyzer_sample']}}
+    {'text': {'analyzer': ['text_en', 'analyzer_sample']}}
 
 
 Create the *View*
@@ -169,12 +169,12 @@ Create the *View*
         },
         "links": {
             "TextNode": {
-                "analyzers": [
+                "analyzer": [
                     "identity"
                 ],
                 "fields": {
                     "text": {
-                        "analyzers": [
+                        "analyzer": [
                             "text_en",
                             "analyzer_sample"
                         ]

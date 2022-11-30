@@ -2,8 +2,8 @@ import logging
 from dataclasses import dataclass, field
 from arango.database import StandardDatabase
 
-from .. import logger
-from ..utils import utils
+from cag import logger
+from cag.utils import utils
 from arango import AnalyzerGetError
 from nltk.corpus import stopwords
 from typing import List, ClassVar
@@ -112,7 +112,7 @@ class ArangoAnalyzer():
     #############
     ## Getters ##
     #############
-    def get_type_fields(self) -> []:
+    def get_type_fields(self) -> List:
         '''
         Gets the list of fields needed and set for the Analyzer based on the Type
 

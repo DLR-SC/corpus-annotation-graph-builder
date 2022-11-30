@@ -1,5 +1,5 @@
-from cag.graph_framework.components import AnalyzerBase
-from cag.graph_framework.graph.base_graph import BaseGraph
+from cag.framework import AnalyzerBase
+from cag.graph_elements.base_graph import BaseGraph
 
 from pyArango.graph import EdgeDefinition
 
@@ -27,7 +27,7 @@ class AnylzerGC(GraphCreatorBase):
         super().__init__(corpus_dir, config, initialize)
 
     def init_graph(self):
-        corpus = self.create_corpus_vertex(key="analyzer_corpus",
+        corpus = self.create_corpus_node(key="analyzer_corpus",
                                            name=AnyGraphCreator._name,
                                            type="journal",
                                            desc=AnyGraphCreator._description,
@@ -38,8 +38,8 @@ class AnylzerGC(GraphCreatorBase):
                 '_key': f"test_{i}",
                 'text': f"TEST TEXT {i}"
             }
-            vert = self.upsert_vert(AnylzerGC._ANY_DATASET_NODE_NAME, doc)
-            self.upsert_link(AnylzerGC._ANY_EDGE_PUB_CORPUS, prev_vert, vert)
+            vert = self.upsert_node(AnylzerGC._ANY_DATASET_NODE_NAME, doc)
+            self.upsert_edge(AnylzerGC._ANY_EDGE_PUB_CORPUS, prev_vert, vert)
             prev_vert = vert
 
 

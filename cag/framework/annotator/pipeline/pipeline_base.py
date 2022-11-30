@@ -7,8 +7,8 @@ from pyArango.collection import Collection
 from spacy import Language
 
 from cag import logger
-from cag.graph_framework.components.annotators import registered_pipes
-from cag.graph_framework.components.annotators.element.orchestrator import PipeOrchestrator
+from cag.framework.annotator import registered_pipes
+from cag.framework.annotator.element.orchestrator import PipeOrchestrator
 from cag.utils import utils
 import spacy
 from tqdm import tqdm

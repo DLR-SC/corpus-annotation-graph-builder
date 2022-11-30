@@ -1,9 +1,9 @@
-from cag.graph_framework.graph.base_graph import BaseGraph
+from cag.graph_elements.base_graph import BaseGraph
 
 from pyArango.graph import Graph, EdgeDefinition
 
 import cag.utils as utils
-from cag.graph_framework.components import GraphCreatorBase
+from cag.framework import GraphCreatorBase
 import datetime
 import inspect
 class SampleGraph(BaseGraph):
@@ -32,7 +32,7 @@ class AnyGraphCreator(GraphCreatorBase):
         super().__init__(corpus_dir, config, initialize)
 
     def init_graph(self):
-        corpus = self.create_corpus_vertex(key="AnyCorpus",
+        corpus = self.create_corpus_node(key="AnyCorpus",
                                            name=AnyGraphCreator._name,
                                            type="journal",
                                            desc=AnyGraphCreator._description,

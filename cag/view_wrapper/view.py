@@ -3,8 +3,8 @@ from arango import ViewGetError
 from dataclasses import dataclass, field
 from typing import List, ClassVar
 from arango.database import StandardDatabase
-from ..utils import utils
-from ..view_wrapper.link import Link
+from cag.utils import utils
+from cag.view_wrapper.link import Link
 
 
 @dataclass()
@@ -46,7 +46,7 @@ class View():
     def add_primary_sort(self, field_name:str, asc:bool):
         self.primary_sort.append({"field": field_name, "asc": asc})
 
-    def add_stored_value(self, fields:[], compression ="lz4"):
+    def add_stored_value(self, fields, compression ="lz4"):
         for field_name in fields:
             self.stored_values.append({"fields": [field_name], "compression": compression})
 

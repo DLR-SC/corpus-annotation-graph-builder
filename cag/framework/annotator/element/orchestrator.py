@@ -3,7 +3,7 @@ from typing import ClassVar, Dict
 from pyArango.document import Document
 
 from cag import logger
-from cag.graph_framework.components.component import Component
+from cag.framework.component import Component
 from cag.utils import utils
 from cag.utils.config import Config
 
@@ -23,12 +23,12 @@ class PipeOrchestrator(ABC, Component):
         self.pipe_id_or_func = self.pipe_config["pipe_id_or_func"] if "pipe_id_or_func" in self.pipe_config.keys() else None
         self.pipe_path = self.pipe_config["pipe_path"] if "pipe_path" in self.pipe_config.keys() else None
 
-        self.vertex_class_path = self.pipe_config ["vertex_class"]
+        self.node_class_path = self.pipe_config ["node_class"]
         self.edge_class_path = self.pipe_config ["edge_class"]
-        self.annotated_vertex = self.pipe_config["annotated_vertex_name"]
+        self.annotated_node = self.pipe_config["annotated_node_name"]
 
 
-        self.vertex_name = self.vertex_class_path.split(".")[-1]
+        self.node_name = self.node_class_path.split(".")[-1]
         self.edge_name = self.edge_class_path.split(".")[-1]
 
         self.load_pipe_component()
@@ -39,16 +39,16 @@ class PipeOrchestrator(ABC, Component):
 
 
     def init_graph_elts(self):
-        self.vertex_class, annotation_vertex = utils.get_cls_from_path(self.vertex_class_path)
+        self.node_class, annotation_node = utils.get_cls_from_path(self.node_class_path)
         self.edge_class, relation = utils.get_cls_from_path(self.edge_class_path)
 
-        utils.load_module(".".join(self.vertex_class_path.split(".")[:-1]))
+        utils.load_module(".".join(self.node_class_path.split(".")[:-1]))
         utils.load_module(".".join(self.edge_class_path.split(".")[:-1]))
 
-        logger.info(f"saving relation {relation} to {annotation_vertex} and from {self.annotated_vertex}")
+        logger.info(f"saving relation {relation} to {annotation_node} and from {self.annotated_node}")
         self.graph.update_graph_structure(relation,
-                                          [self.annotated_vertex],
-                                          [annotation_vertex],
+                                          [self.annotated_node],
+                                          [annotation_node],
                                           create_collections=True
                                           )
 
@@ -79,13 +79,13 @@ class PipeOrchestrator(ABC, Component):
                                           format(str(PipeOrchestrator.ANNOTATION_LEVEL), self.annotation_level)
             logger.error(error_dict["annotation_level"])
 
-        if not self.database.hasCollection(self.annotated_vertex):
-            error_dict["annotated_vertex"] = "We couldnt find the *annotated_vertex* {}.".format(self.annotated_vertex)
-            logger.error(error_dict["annotated_vertex"])
+        if not self.database.hasCollection(self.annotated_node):
+            error_dict["annotated_node"] = "We couldnt find the *annotated_node* {}.".format(self.annotated_node)
+            logger.error(error_dict["annotated_node"])
 
-        if not self.database.hasCollection(self.vertex_name):
-            error_dict["vertex_class"] = "The vertex was not created, *vertex_class_path*: {}.".format(self.vertex_class_path)
-            logger.error(error_dict["vertex_class"])
+        if not self.database.hasCollection(self.node_name):
+            error_dict["node_class"] = "The node was not created, *node_class_path*: {}.".format(self.node_class_path)
+            logger.error(error_dict["node_class"])
 
         if not self.database.hasCollection(self.edge_name):
             error_dict["edge_class"] = "The edge was not created, *edge_class_path*: {}.".format(self.edge_class_path)
@@ -96,7 +96,7 @@ class PipeOrchestrator(ABC, Component):
 
 
     @abstractmethod
-    def create_vertex(self, **kwargs) -> Document:
+    def create_node(self, **kwargs) -> Document:
         pass
 
     @abstractmethod

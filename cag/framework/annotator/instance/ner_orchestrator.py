@@ -3,18 +3,18 @@ from typing import ClassVar, List
 from pyArango.document import Document
 import pyArango
 from cag.utils.config import Config
-from cag.graph_framework.components.annotators.element.orchestrator import PipeOrchestrator
+from cag.framework.annotator.element.orchestrator import PipeOrchestrator
 
 
 class NamedEntityPipeOrchestrator(PipeOrchestrator):
 
-    def create_vertex(self, ner_txt, ner_type) -> pyArango.document.Document:
+    def create_node(self, ner_txt, ner_type) -> pyArango.document.Document:
         data = {"name": ner_txt, "type": ner_type}
-        return self.upsert_vert(self.vertex_name, data, alt_key=["name", "type"])
+        return self.upsert_node(self.node_name, data, alt_key=["name", "type"])
 
     def create_edge(self, _from: Document, _to: Document, entity) -> Document:
         position = (entity.start_char, entity.end_char)
-        edge_dict: dict = self._get_edge_dict(self.edge_name, _from, _to)
+        edge_dict: dict = self.get_edge_attributes(self.edge_name, _from, _to)
         edge = self.get_document(self.edge_name, edge_dict)
 
         lst_positions = [position]
@@ -28,7 +28,7 @@ class NamedEntityPipeOrchestrator(PipeOrchestrator):
 
             else:
                 return edge
-        return self.upsert_link(self.edge_name,
+        return self.upsert_edge(self.edge_name,
                                 _from,
                                 _to,
                                 edge_attrs={"count": count,
@@ -42,9 +42,9 @@ class NamedEntityPipeOrchestrator(PipeOrchestrator):
             for ent in doc.ents:
                 ner_txt = ent.text
                 ner_type = ent.label_
-                ner_vertex:Document = self.create_vertex(ner_txt, ner_type)
-                text_vertex:Document = self.get_document(self.annotated_vertex, {"_key": text_key})
-                _ :Document = self.create_edge(text_vertex, ner_vertex, ent)
+                ner_node:Document = self.create_node(ner_txt, ner_type)
+                text_node:Document = self.get_document(self.annotated_node, {"_key": text_key})
+                _ :Document = self.create_edge(text_node, ner_node, ent)
 
 
 
