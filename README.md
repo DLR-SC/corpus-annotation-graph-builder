@@ -1,15 +1,37 @@
 
-[![PyPI version](https://badge.fury.io/py/cag.svg)](https://badge.fury.io/py/cag)
 
-# Corpus Annotation Graph Builder (CAG)
+<h1 align="center">Welcome to <code>Corpus Annotation Graph Builder (CAG)</code>! </h1>
+<p align="center">
+  <a href="https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/master/LICENSE">
+    <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-yellow.svg" target="_blank" />
+  </a>
+  <a href="https://img.shields.io/badge/Made%20with-Python-1f425f.svg">
+    <img src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg" alt="Badge: Made with Python"/>
+  </a>
+
+  <a href="https://pypi.org/project/cag/"><img src="https://badge.fury.io/py/cag.svg" alt="Badge: PyPI version" height="18"></a>
+  
+
+  <a href="https://twitter.com/dlr_software">
+    <img alt="Twitter: DLR Software" src="https://img.shields.io/twitter/follow/dlr_software.svg?style=social" target="_blank" />
+  </a>
+
+  <a href="https://open.vscode.dev/DLR-SC/corpus-annotation-graph-builder">
+    <img alt="Badge: Open in VSCode" src="https://img.shields.io/static/v1?logo=visualstudiocode&label=&message=open%20in%20visual%20studio%20code&labelColor=2c2c32&color=007acc&logoColor=007acc" target="_blank" />
+  </a>
+
+ 
+
+  <a href="https://citation-file-format.github.io/">
+    <img alt="Badge: Citation File Format Inside" src="https://img.shields.io/badge/-citable%20software-green" target="_blank" />
+  </a>
+</p>
 
 
-* [Overview](#overview)
-* [Installation](#installation)
-* [Usage](#usage)
+> `cag` is a Python Library offering an architectural frammework to employ the build-annotate pattern when building Graphs.
 
+---
 
-## Overview
 
 
 
@@ -32,7 +54,7 @@ This will allow you to use the module **`cag`** from any python script locally. 
 
 
 ### Manual cloning
-This package is in the early development stages - to use/update it, clone the repository, go to the root folder and then run:
+Clone the repository, go to the root folder and then run:
 
 ```
 pip install -e .

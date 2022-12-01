@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "If you use CAG in your research, please cite it using these metadata."
+title: CAG
+abstract: "CAG is a Python Library offering an architectural frammework to employ the build-annotate pattern when building Graphs."
+type: software
+authors: 
+  - family-names: "El Baff"
+    given-names: Roxanne
+    affiliation: "German Aerospace Center (DLR)"
+    orcid: "https://orcid.org/0000-0001-6661-8661"
+ 
+version: 6.0.1
+date-released: "2022-12-02"
+license: MIT
+repository-code: "https://github.com/DLR-SC/corpus-annotation-graph-builder"
+references:
+  - authors: 
+    - family-names: "El Baff"
+      given-names: Roxanne
+      affiliation: "German Aerospace Center (DLR)"
+      orcid: "https://orcid.org/0000-0001-6661-8661"
+    - family-names: Hecking
+      given-names: Tobias
+      affiliation: "German Aerospace Center (DLR)"
+      orcid: "https://orcid.org/0000-0003-0833-7989"
+    - family-names: Hamm
+      given-names: Andreas
+      affiliation: "German Aerospace Center (DLR)"
+      orcid: "https://orcid.org/0000-0001-5854-851X"
+    - family-names: Korte 
+      given-names: Jasper W.
+      affiliation: "German Aerospace Center (DLR)"
+      orcid: "https://orcid.org/0000-0002-5559-8842"
+    title: "Corpus Annotation Graph Builder (CAG): An Architectural Framework to Build and Annotate a Multi-source Graph"
+    type: demo-paper
+    #conference:
+    #  name: "13th  International  Workshop  on  Theory  and  Practice  of  Provenance  (TaPP  2021)"
+    year: 2022
+    #month: 7
+keywords: 
+  - 'graph'
+  - 'architectural framework'
+  - 'graph creator'
+  - 'graph annotator'
