@@ -1,6 +1,6 @@
 
 
-<h1 align="center">Welcome to <u>C</u>orpus <u>A</u>nnotation <u>G</u>raph Builder <code>(CAG)</code> </h1>
+<h1 align="center">Welcome to the <u>C</u>orpus <u>A</u>nnotation <u>G</u>raph Builder <code>(CAG)</code> </h1>
 
 <p align="center">
   <a href="https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/master/LICENSE">
