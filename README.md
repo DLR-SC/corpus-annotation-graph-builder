@@ -1,6 +1,6 @@
 
 
-<h1 align="center">Welcome to <code>Corpus Annotation Graph Builder (CAG)</code> </h1>
+<h1 align="center">Welcome to <u>C</u>orpus <u>A</u>nnotation <u>G</u>raph Builder <code>(CAG)</code> </h1>
 
 <p align="center">
   <a href="https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/master/LICENSE">
@@ -22,12 +22,12 @@
 </p>
 
 
-> `cag` is a Python Library offering an architectural frammework to employ the build-annotate pattern when building Graphs.
+> `cag` is a Python Library offering an architectural framework to employ the build-annotate pattern when building Graphs.
 
 ---
 
 
-**Corpus Annotation Graph builder (CAG)**  is an *architectural framework* that employs the *build-and-annotate* pattern for creating a graph. CAG is built on top of [ArangoDB](https://www.arangodb.com) and its Python drivers ([PyArango](https://pyarango.readthedocs.io/en/latest/)). The *build-and-annotate* pattern consists of two phases (see Figure above): (1) OOI data is collected from different sources (e.g., publication databases, online encyclopedias, news feeds, web portals, electronic libraries, repositories, media platforms) and preprocessed to build the core nodes. The component responsible for this phase is the **Graph-Creator**. (2) Annotations are extracted from the OOIs, and corresponding annotation nodes are created and linked to the core nodes. The component dealing with this phase is the **Graph-Annotator**.
+**Corpus Annotation Graph builder (CAG)**  is an *architectural framework* that employs the *build-and-annotate* pattern for creating a graph. CAG is built on top of [ArangoDB](https://www.arangodb.com) and its Python drivers ([PyArango](https://pyarango.readthedocs.io/en/latest/)). The *build-and-annotate* pattern consists of two phases (see Figure below): (1) data is collected from different sources (e.g., publication databases, online encyclopedias, news feeds, web portals, electronic libraries, repositories, media platforms) and preprocessed to build the core nodes, which we call *Objects of Interest*. The component responsible for this phase is the **Graph-Creator**. (2) Annotations are extracted from the OOIs, and corresponding annotation nodes are created and linked to the core nodes. The component dealing with this phase is the **Graph-Annotator**.
 
 
 ![cag](https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/main/docs/cag.png?raw=true)
