@@ -3,7 +3,7 @@ name: Python application
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: [ "test-github-actions " ]
   pull_request:
     branches: [ "main" ]
 
