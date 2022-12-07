@@ -1,0 +1,35 @@
+name: Python application
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      - name: arangodb:3.9.2
+        alias: arangodb_testserver
+        env:
+          ARANGO_NO_AUTH: 1
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.8"
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install ./
+    - name: Run pytest
+      run: |
+        pytest tests/
+    env:
+      ARANGO_URL: "http://arangodb_testserver:8529"
+      ARANGO_USER: ""
+      ARANGO_PW: ""
