@@ -12,10 +12,10 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     services:
-      - name: arangodb:3.9.2
-        alias: arangodb_testserver
-        env:
-          ARANGO_NO_AUTH: 1
+        arangodb_testserver:
+          image: arangodb:3.9.2
+          env:
+            ARANGO_NO_AUTH: 1
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
