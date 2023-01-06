@@ -8,10 +8,10 @@ from spacy import Language
 import spacy
 from tqdm import tqdm
 
-from nlpaf import logger, utils
-import nlpaf.annotator.registered_pipes as  registered
-from nlpaf.annotator.orchestrator import PipeOrchestrator
-from nlpaf.util.timer import Timer
+from cag import logger
+from cag.framework.annotator import registered_pipes
+from cag.framework.annotator.element.orchestrator import PipeOrchestrator
+from cag.utils import utils
 
 
 @dataclasses.dataclass
@@ -26,7 +26,7 @@ class Pipe:
 
 
 class Pipeline(ABC):
-    REGISTERED_PIPE_CONFIGS: ClassVar = registered._dict
+    REGISTERED_PIPE_CONFIGS: ClassVar = registered_pipes._dict
 
     def _load_registered_pipes(self, load_default_pipe_configs:bool = True,
                  extended_pipe_configs:dict = None):
@@ -189,7 +189,7 @@ class Pipeline(ABC):
             return
 
         logger.info(f"adding pipe with name {pipe.name}")
-        cls, _ = utils.get_cls_from_path(self.registered_pipes[pipe.name][registered.PipeConfigKeys._orchestrator_class])
+        cls, _ = utils.get_cls_from_path(self.registered_pipes[pipe.name][registered_pipes.PipeConfigKeys._orchestrator_class])
         instance = cls(self.registered_pipes, orchestrator_config_id= pipe.name)
         self.pipe_instance_dict[pipe.name] = instance
 
