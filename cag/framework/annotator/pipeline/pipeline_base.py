@@ -3,29 +3,30 @@ from abc import ABC, abstractmethod
 from typing import ClassVar
 
 import dataclasses
-from pyArango.collection import Collection
 from spacy import Language
 
-from cag import logger
-from cag.framework.annotator import registered_pipes
-from cag.framework.annotator.element.orchestrator import PipeOrchestrator
-from cag.utils import utils
 import spacy
 from tqdm import tqdm
-from cag.utils.config import Config
+
+from nlpaf import logger, utils
+import nlpaf.annotator.registered_pipes as  registered
+from nlpaf.annotator.orchestrator import PipeOrchestrator
+from nlpaf.util.timer import Timer
+
 
 @dataclasses.dataclass
 class Pipe:
     name: str
+    save_output: bool = True
     is_spacy:bool = False
-    save_output:bool = True
+    is_native:bool = False
     pipe_id_or_func:str = None # set internally from toml
 
 
 
 
 class Pipeline(ABC):
-    REGISTERED_PIPE_CONFIGS: ClassVar = registered_pipes._dict
+    REGISTERED_PIPE_CONFIGS: ClassVar = registered._dict
 
     def _load_registered_pipes(self, load_default_pipe_configs:bool = True,
                  extended_pipe_configs:dict = None):
@@ -36,10 +37,11 @@ class Pipeline(ABC):
             registered_pipes = _copy
         return registered_pipes
     def __init__(self,
-                 database_config: Config,
-                 input: "[Collection]" = None,
+                 input = None,
                  load_default_pipe_configs = True,
-                 extended_pipe_configs:dict = None
+                 extended_pipe_configs:dict = None,
+                 save_output= False,
+                 out_path = None
                  ):
         """
         The Pipeline class is responsible for taking a set of nodes as input, annotating them and saving them into
@@ -48,19 +50,23 @@ class Pipeline(ABC):
         """
 
         self.registered_pipes = self._load_registered_pipes(load_default_pipe_configs, extended_pipe_configs)
+        self.save_output = save_output
+        self.out_path = out_path
 
         self.pipe_instance_dict = {}
-        self.pipeline:[Pipe] = []
+        self.pipeline:list = []
 
-
-        self.database_config = database_config
 
         self.processed_input = None
         self.set_input(input)
 
         self.annotated_artifacts = None
+        self.out_df = None
 
         self.set_spacy_language_model()
+        self.pipe_stacks = None
+        self.stack = []
+        self.spacy_n_processors = 1
 
     ############################################
     #####      ABSTRACT METHODS            #####
@@ -75,17 +81,16 @@ class Pipeline(ABC):
     ############################################
     #####      MAIN. ANNOTATE and SAVE     #####
     ############################################
-
-    def annotate(self):
-        pipe_stacks = self.get_pipe_stacks()
-        input = self.processed_input
-        out = None
-        while not pipe_stacks.empty():
-            pipe_stack = pipe_stacks.get()
+    def init_pipe_stack(self):
+        self.pipe_stacks = self.get_pipe_stacks()
+        self.stack =[]
+        while not self.pipe_stacks.empty():
+            pipe_stack = self.pipe_stacks.get()
             if pipe_stack['stack_type'] == 'spacy':
                 nlp = self.init_spacy_nlp(pipe_stack['stack'])
-                out = list(nlp.pipe(input, as_tuples=True))
-                input = out
+                self.stack.append({"type": "spacy", "component": nlp})
+                #out = list(nlp.pipe(input, as_tuples=True, n_process=-1, batch_size=3000))
+                #input = out
             else:
                 while pipe_stack['stack']:
                     current_pipe: Pipe = pipe_stack['stack'].pop(0)
@@ -96,20 +101,50 @@ class Pipeline(ABC):
                                      "provide the implementation within the pipe path and a function with the name equivalent to the "
                                      "'pipe' name")
                     else:
-                        out = pipe_func(input)
-                        input = out
+                        self.stack.append({"type": "default", "component": pipe_func})
+        logger.debug(f"The stack has {len(self.stack)} component(s).")
+        return self.stack
+                        #out = pipe_func(input)
+                        #input = out
+        #self.annotated_artifacts = out
+    def annotate(self):
+        input = self.processed_input
+        logger.debug("Annotating - looping over stack")
+        for s in self.stack:
+            logger.debug(f"executing component of type {s['type']} ")
+            _component = s['component']
+            if s['type'] == 'spacy':
+                if self.spacy_n_processors != 1:
+                    logger.info(f"In case you are using transformer based pipe, set *spacy_n_processors* to 1 instead of {self.spacy_n_processors } or else the nlp.pipe will freeze")
+                out = list(s['component'].pipe(input, as_tuples=True, n_process=self.spacy_n_processors ))
+                input = out
+            else:
+                out = _component(input)
+                input = out
+        logger.debug("Ran all stack components")
         self.annotated_artifacts = out
 
 
     def save(self):
+        logger.debug("Saving annotations..")
         if self.annotated_artifacts is None:
             logger.error("Nothing to save, call annotate before saving")
             pass
         for pipe in tqdm(self.pipeline):
             if pipe.save_output:
                 logger.info("saving annotations of {}".format(pipe))
-                self.pipe_instance_dict[pipe.name].save_annotations(self.annotated_artifacts)
-
+                if self.out_df is None:
+                    self.out_df = self.pipe_instance_dict[pipe.name].save_annotations(self.annotated_artifacts)
+                else:
+                    _df = self.pipe_instance_dict[pipe.name].save_annotations(self.annotated_artifacts)
+                    self.out_df = self.out_df.merge(_df,
+                                                    how='outer',
+                                                    left_on="input_id",
+                                                    right_on="input_id")
+        if self.save_output:
+            logger.debug("Saving to parquet..")
+            self.out_df.to_parquet(self.out_path)
+        logger.debug("saved annotations")
 
     ############################################
     #####           SETTERS                #####
@@ -118,7 +153,7 @@ class Pipeline(ABC):
         self.set_input(None)
         self.annotated_artifacts = None
 
-    def set_input(self, nodes: [Collection]):
+    def set_input(self, nodes):
         self.input = nodes
         if self.input is not None:
             self.processed_input = self.process_input()
@@ -136,7 +171,8 @@ class Pipeline(ABC):
         #   en_core_web_trf (438)
 
     def add_annotation_pipe(self, pipe:Pipe=None,
-                            name:str="", save_output: bool = False, is_spacy:bool=False):
+                            name:str="", save_output: bool = False,
+                            is_spacy:bool=False, is_native: bool = False):
         """
             The add_annotation_pipe adds a pipe to the pipeline. the pipes are first in first out (FIFO).
             The corrisponding Annotator class (given from the toml)  to this pipe is initiated and saved, to be used
@@ -145,11 +181,16 @@ class Pipeline(ABC):
             *pipe_id_or_func*
             *pipeline*
         """
-        pipe = pipe if pipe is not None else Pipe(name, save_output, is_spacy)
+        pipe = pipe if pipe is not None else Pipe(name, save_output, is_spacy, is_native)
+
+        if is_native and is_spacy and not save_output:
+            pipe.pipe_id_or_func = name
+            self.pipeline.append(pipe)
+            return
 
         logger.info(f"adding pipe with name {pipe.name}")
-        cls, _ = utils.get_cls_from_path(self.registered_pipes[pipe.name][registered_pipes.PipeConfigKeys._orchestrator_class])
-        instance = cls(self.registered_pipes, orchestrator_config_id= pipe.name, conf=self.database_config)
+        cls, _ = utils.get_cls_from_path(self.registered_pipes[pipe.name][registered.PipeConfigKeys._orchestrator_class])
+        instance = cls(self.registered_pipes, orchestrator_config_id= pipe.name)
         self.pipe_instance_dict[pipe.name] = instance
 
         logger.info(f"adding pipe with code {instance.pipe_id_or_func}")
@@ -162,7 +203,7 @@ class Pipeline(ABC):
     ############################################
     def get_pipe_stacks(self):
         logger.info("Defining pipe default and spacy stacks")
-        pipe_queue: [Pipe] = self.pipeline.copy()
+        pipe_queue: list = self.pipeline.copy()
         pipe_stack: Queue = Queue()  # {"spacy": ["ner", "bla", "bloo], "default": ["da", "doo", "di"}
         task_collection = []
         previous_task_is_spacy = False
@@ -185,7 +226,7 @@ class Pipeline(ABC):
         return pipe_stack
 
     def init_spacy_nlp(self, subpipeline) -> Language:
-        nlp = spacy.load(self.spacy_language_model, disable=["ner"])
+        nlp:Language =  spacy.blank("en")#spacy.load(self.spacy_language_model, exclude=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer", "ner"])
         for pipe in subpipeline:
             if not nlp.has_pipe(pipe.pipe_id_or_func):
                 if pipe.pipe_id_or_func in nlp.disabled:
@@ -194,10 +235,9 @@ class Pipeline(ABC):
                     nlp.add_pipe(pipe.pipe_id_or_func)#, **kargs)
             else:
                 logger.debug("pipe already in pipeline")
+        logger.info(f"Pipes are {nlp.pipe_names}")
         return nlp
 
     def load_spacy_model(self):
         if not spacy.util.is_package(self.spacy_language_model):
             spacy.cli.download(self.spacy_language_model)
-
-
