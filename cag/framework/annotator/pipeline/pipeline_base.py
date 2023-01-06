@@ -5,13 +5,18 @@ from typing import ClassVar
 import dataclasses
 from spacy import Language
 
-import spacy
-from tqdm import tqdm
+from typing import ClassVar
+
+import dataclasses
+from spacy import Language
 
 from cag import logger
 from cag.framework.annotator import registered_pipes
 from cag.framework.annotator.element.orchestrator import PipeOrchestrator
 from cag.utils import utils
+import spacy
+from tqdm import tqdm
+from cag.utils.config import Config
 
 
 @dataclasses.dataclass
@@ -37,6 +42,7 @@ class Pipeline(ABC):
             registered_pipes = _copy
         return registered_pipes
     def __init__(self,
+                database_config: Config,
                  input = None,
                  load_default_pipe_configs = True,
                  extended_pipe_configs:dict = None,
@@ -52,7 +58,7 @@ class Pipeline(ABC):
         self.registered_pipes = self._load_registered_pipes(load_default_pipe_configs, extended_pipe_configs)
         self.save_output = save_output
         self.out_path = out_path
-
+        self.database_config = database_config
         self.pipe_instance_dict = {}
         self.pipeline:list = []
 
@@ -190,7 +196,7 @@ class Pipeline(ABC):
 
         logger.info(f"adding pipe with name {pipe.name}")
         cls, _ = utils.get_cls_from_path(self.registered_pipes[pipe.name][registered_pipes.PipeConfigKeys._orchestrator_class])
-        instance = cls(self.registered_pipes, orchestrator_config_id= pipe.name)
+        instance = cls(self.registered_pipes, orchestrator_config_id= pipe.name, conf=self.database_config)
         self.pipe_instance_dict[pipe.name] = instance
 
         logger.info(f"adding pipe with code {instance.pipe_id_or_func}")
