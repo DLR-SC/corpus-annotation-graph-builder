@@ -25,8 +25,5 @@ class HasAbstract(GenericEdge):
 class HasTerm(GenericEdge):
     _fields = GenericEdge._fields
 
-class HasAbstract(GenericEdge):
-    _fields = GenericEdge._fields
-
 class KeyTermRelation(GenericEdge):
     _fields = GenericEdge._fields
