@@ -18,14 +18,14 @@ class GraphCreatorBase(ABC, Component):
     _IMAGE_NODE_NAME = 'ImageNode'
     _DATA_NODE_NAME = 'DataNode'
     _KEY_TERM_NODE_NAME = 'KeyTerm'
-    _ABSTRACT_NODE_NAME = 'Abstract'
+    _ABSTRACT_NODE_NAME = 'AbstractNode'
 
     _BELONGS_TO_RELATION_NAME = 'BelongsTo'
     _REFERS_TO_RELATION_NAME = 'RefersTo'
     _HAS_AUTHOR_RELATION_NAME = 'HasAuthor'
     _PUBLISHED_AT_RELATION_NAME = 'PublishedAt'
-    _EDGE_ABSTRACT_TEXT = 'AbstractText'
-    _EDGE_TEXT_TERM = 'TextTerm'
+    _EDGE_ABSTRACT_TEXT = 'HasAbstract'
+    _EDGE_TEXT_TERM = 'HasTerm'
     _EDGE_KEYTERM_RELATION = 'KeyTermRelation'
 
     _COMPONENT_NAME = 'Graph Creator'
