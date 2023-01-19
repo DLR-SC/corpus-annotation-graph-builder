@@ -18,3 +18,15 @@ class IsIdenticalTo(GenericEdge):
 
 class HasAuthor(GenericEdge):
     _fields = GenericEdge._fields
+
+class HasAbstract(GenericEdge):
+    _fields = GenericEdge._fields
+
+class HasTerm(GenericEdge):
+    _fields = GenericEdge._fields
+
+class HasAbstract(GenericEdge):
+    _fields = GenericEdge._fields
+
+class KeyTermRelation(GenericEdge):
+    _fields = GenericEdge._fields
