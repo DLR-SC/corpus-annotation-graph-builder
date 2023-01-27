@@ -166,7 +166,7 @@ class Pipeline(ABC):
         else:
             self.processed_input = None
 
-    def set_spacy_language_model(self, language_package = "en_core_web_sm"):
+    def set_spacy_language_model(self, language_package: 'str|None' = None):
         self.spacy_language_model = language_package
         self.load_spacy_model()
         # English pipeline optimized for CPU. Components: tok2vec, tagger, parser, senter, ner, attribute_ruler, lemmatizer:
@@ -232,7 +232,9 @@ class Pipeline(ABC):
         return pipe_stack
 
     def init_spacy_nlp(self, subpipeline) -> Language:
-        nlp:Language =  spacy.blank("en")#spacy.load(self.spacy_language_model, exclude=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer", "ner"])
+
+        nlp:Language =  spacy.blank("en") if self.spacy_language_model is None else\
+            spacy.load(self.spacy_language_model, disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer", "ner"])
         for pipe in subpipeline:
             if not nlp.has_pipe(pipe.pipe_id_or_func):
                 if pipe.pipe_id_or_func in nlp.disabled:
