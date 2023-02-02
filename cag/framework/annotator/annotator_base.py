@@ -9,8 +9,16 @@ from cag.utils.config import Config
 
 
 class GenericAnnotator(ABC, Component):
-    def __init__(self, query: str, run=False, params={}, conf: Config = None, fetch_args: "dict[str,Any]" = {}, filter_annotatable=False,
-                 annotator_fieldname="_annotator_params"):
+    def __init__(
+        self,
+        query: str,
+        run=False,
+        params={},
+        conf: Config = None,
+        fetch_args: "dict[str,Any]" = {},
+        filter_annotatable=False,
+        annotator_fieldname="_annotator_params",
+    ):
         """the base class to extend your annotator from
 
         :param query: an arango query valid on your DB, returing the `annotator_fieldname` on the root-elements as a field from the docs to update
@@ -52,14 +60,18 @@ class GenericAnnotator(ABC, Component):
                 FILTER dp.{self.annotator_fieldname} == NULL or dp.{self.annotator_fieldname}!=@params
                 RETURN dp
             """
-            return self.database.AQLQuery(query_modified, bindVars={'params': self.params}, **self.fetch_args)
+            return self.database.AQLQuery(
+                query_modified, bindVars={"params": self.params}, **self.fetch_args
+            )
         else:
             return self.database.AQLQuery(self.query, **self.fetch_args)
 
     def complete_annotation(self, doc: Document):
         return self.upsert_node(doc.collection.name, doc.getStore())
 
-    def upsert_node(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> Document:
+    def upsert_node(
+        self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None
+    ) -> Document:
         data[self.annotator_fieldname] = self.params
         return super().upsert_node(collectionName, data, alt_key)
 
@@ -67,18 +79,21 @@ class GenericAnnotator(ABC, Component):
     def update_graph(self, timestamp, data: AQLQuery):
         g = self.graph
 
-    def query_count(self)->int:
+    def query_count(self) -> int:
         """Get the total count of the query provided
 
         :return: the count of documents that *would* be returned
         :rtype: int
-        """        """"""
+        """ """"""
         if self.query is None:
             return -1
-        count_query = self.database.AQLQuery(f"""
+        count_query = self.database.AQLQuery(
+            f"""
 LET query=({self.query})
 RETURN COUNT(query)
-        """, rawResults=True)
+        """,
+            rawResults=True,
+        )
         return count_query[0]
 
     def load_page(self, offset: int = 0, limit: int = 500) -> AQLQuery:
@@ -90,13 +105,18 @@ RETURN COUNT(query)
         :type limit: int, optional
         :return: the executed query with the page (batchSize=limit, rawResults=True)
         :rtype: AQLQuery
-        """""""""
+        """ """"""
         if self.query is None:
             return -1
-        page_query = self.database.AQLQuery(f"""
+        page_query = self.database.AQLQuery(
+            f"""
 LET query=({self.query})
 FOR d IN query
     LIMIT @offset,@limit
     RETURN d
-        """, bindVars={'offset': offset, 'limit': limit}, rawResults=True, batch_size=limit)
+        """,
+            bindVars={"offset": offset, "limit": limit},
+            rawResults=True,
+            batch_size=limit,
+        )
         return page_query

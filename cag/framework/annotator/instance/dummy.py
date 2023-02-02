@@ -4,10 +4,8 @@ from cag.framework.annotator.element.orchestrator import PipeOrchestrator
 
 
 class DummyPipeOrchestrator(PipeOrchestrator):
-
     def create_edge(self, _from: Document, _to: Document, **kwargs) -> Document:
         pass
-
 
     def create_node(self, **kwargs) -> Document:
         pass

@@ -25,7 +25,7 @@ class Config:
         if self.password is None:
             self.password = getenv("ARANGO_PW", "")
         if self.database is None:
-            self.database = getenv("ARANGO_DB",  "_system")
+            self.database = getenv("ARANGO_DB", "_system")
         if self.graph is None:
             self.graph = getenv("ARANGO_GRAPH", "GenericGraph")
         if self.autoconnect:
@@ -38,27 +38,30 @@ class Config:
 
         self.db: Database = None
         self.__connection = Connection(self.url, self.user, self.password)
-        self.arango_client = ArangoClient(
-            self.url, http_client=ArangoHTTPClient())
+        self.arango_client = ArangoClient(self.url, http_client=ArangoHTTPClient())
         if self.__connection.hasDatabase(self.database):
             self.db = self.__connection[self.database]
         else:
-            self.db: Database = self.__connection.createDatabase(
-                self.database)
+            self.db: Database = self.__connection.createDatabase(self.database)
 
-        self.arango_db = self.arango_client.db(name=self.database,
-                                               username=self.user,
-                                               password=self.password)
+        self.arango_db = self.arango_client.db(
+            name=self.database, username=self.user, password=self.password
+        )
 
 
 global_conf = None
 
 
-def configuration(url: "str | None" = None,
-                  user: "str | None" = None,
-                  password: "str | None" = None,
-                  database: "str | None" = None,
-                  graph: "str | None" = None, connect=True, use_global_conf=False, timeout=120) -> Config:
+def configuration(
+    url: "str | None" = None,
+    user: "str | None" = None,
+    password: "str | None" = None,
+    database: "str | None" = None,
+    graph: "str | None" = None,
+    connect=True,
+    use_global_conf=False,
+    timeout=120,
+) -> Config:
     """Start a new conenction using the provided config
 
     :param url: the adress of the ArangoDB, defaults to "http://127.0.0.1:8529"
@@ -74,7 +77,7 @@ def configuration(url: "str | None" = None,
     :param connect: whether to automatically connect, can be done later, defaults to True
     :type connect: bool, optional
     :param use_global_conf: if you want re-use one global config, defaults to False
-    :type use_global_conf: bool, optional 
+    :type use_global_conf: bool, optional
     :return: the connected config
     :rtype: Config
     """
@@ -82,8 +85,9 @@ def configuration(url: "str | None" = None,
     if use_global_conf:
         if global_conf is not None:
             return global_conf
-    conf = Config(url, user, password, database, graph,
-                  autoconnect=connect, timeout=timeout)
+    conf = Config(
+        url, user, password, database, graph, autoconnect=connect, timeout=timeout
+    )
     if use_global_conf:
         global_conf = conf
     return conf

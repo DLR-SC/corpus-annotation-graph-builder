@@ -1,4 +1,3 @@
-
 #### HELPERS ####
 from collections import defaultdict
 
@@ -16,36 +15,42 @@ class EmpathExtended(Empath):
     def __init__(self):
         super().__init__()
 
-    def analyze(self,doc,categories=None,tokenizer="default",normalize=False):
-        if isinstance(doc,list):
+    def analyze(self, doc, categories=None, tokenizer="default", normalize=False):
+        if isinstance(doc, list):
             doc = "\n".join(doc)
         if tokenizer == "default":
             tokenizer = helpers.default_tokenizer
         elif tokenizer == "bigrams":
             tokenizer = helpers.bigram_tokenizer
-        if not hasattr(tokenizer,"__call__"):
+        if not hasattr(tokenizer, "__call__"):
             raise Exception("invalid tokenizer")
         if not categories:
             categories = self.cats.keys()
         invcats = defaultdict(list)
         for k in categories:
-           for t in self.cats[k]: invcats[t].append(k)
+            for t in self.cats[k]:
+                invcats[t].append(k)
         count = {}
         ratio = {}
         tokens = 0.0
-        for cat in categories: count[cat] = 0.0
+        for cat in categories:
+            count[cat] = 0.0
         words_position = {}
         words = {}
         for tk in tokenizer(doc):
             tokens += 1.0
             for cat in invcats[tk]:
-                count[cat]+=1.0
+                count[cat] += 1.0
                 if cat not in words_position.keys():
-                    words_position[cat] = [(i, (i+len(tk))) for i in range(len(doc)) if doc.startswith(tk, i)]
+                    words_position[cat] = [
+                        (i, (i + len(tk)))
+                        for i in range(len(doc))
+                        if doc.startswith(tk, i)
+                    ]
                     words[cat] = []
                 words[cat].append(tk)
 
-        #if normalize:
+        # if normalize:
         for cat in count.keys():
             if tokens == 0:
                 return None
@@ -56,7 +61,12 @@ class EmpathExtended(Empath):
 
 @Language.factory("empath_component")
 class EmpathFactory:
-    EMPATH_CUSTOM_LABEL_LST = ["empath_count", "empath_ratio", "empath_positions", "empath_words"]
+    EMPATH_CUSTOM_LABEL_LST = [
+        "empath_count",
+        "empath_ratio",
+        "empath_positions",
+        "empath_words",
+    ]
 
     def __init__(self, nlp: Language, name: str):
         self.nlp = nlp
@@ -64,7 +74,7 @@ class EmpathFactory:
         self.lexicon = EmpathExtended()
 
         for cat in self.lexicon.cats:
-            ext: str  = f"empath_{cat}"
+            ext: str = f"empath_{cat}"
             if not Doc.has_extension(ext):
                 Doc.set_extension(ext, default=None)
 
@@ -75,11 +85,20 @@ class EmpathFactory:
     def __call__(self, doc):
         empath_dic, ratios, positions, words = self.lexicon.analyze(doc.text)
 
-        empath_caregories = [k for k,v in empath_dic.items() if v > 0.0]
-        doc._.set("empath_count",    {k:v for k,v in empath_dic.items() if k in empath_caregories})
-        doc._.set("empath_ratio",    {k:v for k,v in ratios.items() if k in empath_caregories})
-        doc._.set("empath_positions", {k:v for k,v in positions.items() if k in empath_caregories})
-        doc._.set("empath_words",    {k:v for k,v in words.items() if k in empath_caregories})
-
+        empath_caregories = [k for k, v in empath_dic.items() if v > 0.0]
+        doc._.set(
+            "empath_count",
+            {k: v for k, v in empath_dic.items() if k in empath_caregories},
+        )
+        doc._.set(
+            "empath_ratio", {k: v for k, v in ratios.items() if k in empath_caregories}
+        )
+        doc._.set(
+            "empath_positions",
+            {k: v for k, v in positions.items() if k in empath_caregories},
+        )
+        doc._.set(
+            "empath_words", {k: v for k, v in words.items() if k in empath_caregories}
+        )
 
         return doc
