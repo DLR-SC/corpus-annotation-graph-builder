@@ -23,7 +23,7 @@ def setup_project_dir(project_name: str):
         print(f"Aborting. {project_dir} already existent!")
         raise typer.Abort()
     if not typer.confirm(
-            f"Set {project_dir} as the project directory. Is this correct?", default=True
+        f"Set {project_dir} as the project directory. Is this correct?", default=True
     ):
         print("Aborting...")
         raise typer.Abort()
@@ -37,12 +37,12 @@ def show_info():
     """
     Use this info when opening issues!
     """
-    command = ['pip', 'show', 'cag']
+    command = ["pip", "show", "cag"]
     result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True)
     print(f"Package info\n{result.stdout}")
-    print(10*"=")
+    print(10 * "=")
     print(f"Python version {platform.python_version()}")
-    print(10*"=")
+    print(10 * "=")
     print(f"OS: {platform.platform(aliased=True)}")
 
 

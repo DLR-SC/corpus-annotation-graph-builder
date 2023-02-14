@@ -12,7 +12,6 @@ from typing import Any, Optional
 from cag import logger
 
 
-
 class Component(object):
     """The class from witch all more specialized components must derive."""
 
@@ -31,7 +30,7 @@ class Component(object):
     _name = "Component"
 
     def __init__(self, conf: Config = None):
-        edges = self._base_edge_definitions+self._edge_definitions
+        edges = self._base_edge_definitions + self._edge_definitions
 
         if conf is None:
             conf = configuration(use_global_conf=True)
@@ -39,37 +38,46 @@ class Component(object):
         self.database = conf.db
         self.graph_name = conf.graph
         if self.database.hasGraph(self.graph_name):
-            self.graph : BaseGraph= self.database.graphs[self.graph_name]
-            
-        else:
+            self.graph: BaseGraph = self.database.graphs[self.graph_name]
 
+        else:
             edge_def_arr = []
             for ed in edges:
-                for col in [ed['relation']] + ed['from_collections'] + ed['to_collections']:
+                for col in (
+                    [ed["relation"]] + ed["from_collections"] + ed["to_collections"]
+                ):
                     if not self.database.hasCollection(col):
                         self.database.createCollection(col)
 
-                edge_def_arr.append(EdgeDefinition(ed['relation'],
-                                                   fromCollections=ed['from_collections'],
-                                                   toCollections=ed['to_collections']))
+                edge_def_arr.append(
+                    EdgeDefinition(
+                        ed["relation"],
+                        fromCollections=ed["from_collections"],
+                        toCollections=ed["to_collections"],
+                    )
+                )
             if len(edge_def_arr) == 0:
-                raise CreationError("You have to define an edge for your graph in the your graph creator")
-            _ = type(self.graph_name, (BaseGraph,), {'_edgeDefinitions': edge_def_arr})
-            self.graph: BaseGraph = self.database.createGraph(
-                self.graph_name)
+                raise CreationError(
+                    "You have to define an edge for your graph in the your graph creator"
+                )
+            _ = type(self.graph_name, (BaseGraph,), {"_edgeDefinitions": edge_def_arr})
+            self.graph: BaseGraph = self.database.createGraph(self.graph_name)
 
         self.graph.__class__ = BaseGraph
         self.arango_db = conf.arango_db
 
         # Setup graph structure
         for ed in edges:
-            self.graph.update_graph_structure(ed['relation'],
-                                              ed['from_collections'],
-                                              ed['to_collections'],
-                                              create_collections=True
-                                              )
+            self.graph.update_graph_structure(
+                ed["relation"],
+                ed["from_collections"],
+                ed["to_collections"],
+                create_collections=True,
+            )
 
-    def get_document(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> "Optional[Document]":
+    def get_document(
+        self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None
+    ) -> "Optional[Document]":
         """Gets the node if it exists.
         In case alt_key is provided, it queries the node based on the alt_key keys and values in the data dict.
         In case alt_key is not provided and _key is part of the data dict, it fetches the document based on it.
@@ -84,46 +92,54 @@ class Component(object):
         :return: the found document, if not exists: None
         :rtype: Document, optional
         """
-        '''
+        """
 
-        '''
+        """
         coll: Collection = self.database[collectionName]
         node = None
         try:
             if type(alt_key) == str:
                 alt_key = [alt_key]
 
-            if alt_key is None and '_key' in data.keys() and data['_key'] in coll:
-                node: Document = coll.fetchDocument(data['_key'])
+            if alt_key is None and "_key" in data.keys() and data["_key"] in coll:
+                node: Document = coll.fetchDocument(data["_key"])
             elif alt_key is not None and all(x in data.keys() for x in alt_key):
                 coll.ensureHashIndex(alt_key, unique=True)
 
                 query = {k: v for k, v in data.items() if k in alt_key}
 
-                resp = coll.fetchByExample(
-                    query,
-                    batchSize=1)
+                resp = coll.fetchByExample(query, batchSize=1)
                 if len(resp) > 0:
                     node: Document = resp[0]
             else:
-                logger.debug("node does not exist - make sure you provide _key as part of data dict "
-                             "or alt_key as a lst and part of the data dict")
+                logger.debug(
+                    "node does not exist - make sure you provide _key as part of data dict "
+                    "or alt_key as a lst and part of the data dict"
+                )
         except (DocumentNotFoundError, SimpleQueryError) as e:
-            logger.debug("Document was not found for data {} and node {} - message: {}".format(
-                collectionName, str(data), e.message))
+            logger.debug(
+                "Document was not found for data {} and node {} - message: {}".format(
+                    collectionName, str(data), e.message
+                )
+            )
         except Exception as unknown_e:
-            logger.error("An unknown error was thrown for data {} and node {} - message: {}".format(
-                collectionName, str(data), str(unknown_e)))
+            logger.error(
+                "An unknown error was thrown for data {} and node {} - message: {}".format(
+                    collectionName, str(data), str(unknown_e)
+                )
+            )
         return node
 
-    def upsert_node(self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None) -> Document:
+    def upsert_node(
+        self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None
+    ) -> Document:
         """Upsert an item in a collection based on a _key or any other property
 
         :param collectionName: the collection to work on
         :type collectionName: str
         :param data: a dictionary with your data
         :type data: dict[str, Any]
-        :param alt_key: on which key the upsert should look for existing data (if there are multiple, 
+        :param alt_key: on which key the upsert should look for existing data (if there are multiple,
         the first match will return and it combines all key into a fetch-by-example-query), defaults to None
         :type alt_key: str | [], optional
         :return: the upserted Document
@@ -131,8 +147,8 @@ class Component(object):
         """
         coll: Collection = self.database[collectionName]
 
-        if 'timestamp' not in data.keys() or data['timestamp'] is None:
-            data['timestamp'] = datetime.now().isoformat()
+        if "timestamp" not in data.keys() or data["timestamp"] is None:
+            data["timestamp"] = datetime.now().isoformat()
 
         node = None
         try:
@@ -148,11 +164,20 @@ class Component(object):
 
         except Exception as e:
             logger.error(
-                "An unknown error was thrown for data {} and node {} - message: {}".format(collectionName, str(data),
-                                                                                             str(e)))
+                "An unknown error was thrown for data {} and node {} - message: {}".format(
+                    collectionName, str(data), str(e)
+                )
+            )
         return node
 
-    def get_edge_attributes(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id=""):
+    def get_edge_attributes(
+        self,
+        relationName: str,
+        from_doc: Document,
+        to_doc: Document,
+        edge_attrs={},
+        add_id="",
+    ):
         """Gets a edge
 
         :param relationName: which edge collection to create this edge on
@@ -171,16 +196,27 @@ class Component(object):
         from_key = re.sub("/", "-", from_doc._id)
         to_key = re.sub("/", "-", to_doc._id)
         add_id = re.sub("/", "-", add_id)
-        add_id = f'-{add_id}' if len(add_id) > 0 else ''
-        edge_key = f'{from_key}-{to_key}{add_id}'
+        add_id = f"-{add_id}" if len(add_id) > 0 else ""
+        edge_key = f"{from_key}-{to_key}{add_id}"
         self.database[relationName].validatePrivate("_from", from_doc._id)
         self.database[relationName].validatePrivate("_to", to_doc._id)
 
-        edge_dic = {'_key': edge_key, '_from': from_doc._id,
-                    '_to': to_doc._id, **edge_attrs}
+        edge_dic = {
+            "_key": edge_key,
+            "_from": from_doc._id,
+            "_to": to_doc._id,
+            **edge_attrs,
+        }
         return edge_dic
 
-    def upsert_edge(self, relationName: str, from_doc: Document, to_doc: Document, edge_attrs={}, add_id=""):
+    def upsert_edge(
+        self,
+        relationName: str,
+        from_doc: Document,
+        to_doc: Document,
+        edge_attrs={},
+        add_id="",
+    ):
         """Upsert a edge (will generate a synthetic key from the provided documents, can optionally add something to these keys and edges)
 
         :param relationName: which edge collection to create this edge on
@@ -198,18 +234,21 @@ class Component(object):
         """
 
         data = self.get_edge_attributes(
-            relationName, from_doc, to_doc, edge_attrs, add_id)
+            relationName, from_doc, to_doc, edge_attrs, add_id
+        )
 
         coll: Collection = self.database[relationName]
 
-        if 'timestamp' not in data.keys() or data['timestamp'] is None:
-            data['timestamp'] = datetime.now().isoformat()
+        if "timestamp" not in data.keys() or data["timestamp"] is None:
+            data["timestamp"] = datetime.now().isoformat()
 
         edge = None
         try:
             edge: Document = self.get_document(relationName, data)
             if edge is None:
-                edge = self.graph.createEdge(relationName, from_doc._id, to_doc._id, data)
+                edge = self.graph.createEdge(
+                    relationName, from_doc._id, to_doc._id, data
+                )
             else:
                 logger.debug("updating existing node")
                 for key, d in data.items():
@@ -219,10 +258,9 @@ class Component(object):
 
         except Exception as e:
             logger.error(
-                "An unknown error was thrown for data {} and node {} - message: {}".format(relationName, str(data),
-                                                                                             str(e)))
-
+                "An unknown error was thrown for data {} and node {} - message: {}".format(
+                    relationName, str(data), str(e)
+                )
+            )
 
         return edge
-
-

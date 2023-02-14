@@ -30,12 +30,19 @@ class EdgeDoc(Doc):
 
 @dataclass
 class PathElement:
-    vertices: 'list[Doc]'
-    edges: 'list[EdgeDoc]'
+    vertices: "list[Doc]"
+    edges: "list[EdgeDoc]"
 
 
 class AnalyzerBase(ABC, Component):
-    def __init__(self, config: Config, mode: AnalyzerMode = AnalyzerMode.NOTEBOOK, run=False, query: "None|str" = None, params={'rawResults': True}) -> None:
+    def __init__(
+        self,
+        config: Config,
+        mode: AnalyzerMode = AnalyzerMode.NOTEBOOK,
+        run=False,
+        query: "None|str" = None,
+        params={"rawResults": True},
+    ) -> None:
         super().__init__(config)
         self.mode = mode
         self.data = []
@@ -49,23 +56,30 @@ class AnalyzerBase(ABC, Component):
     def run(data):
         pass
 
-    def create_networkx(self, graph_data: 'list[PathElement]', weight_edges=False) -> nx.Graph:
+    def create_networkx(
+        self, graph_data: "list[PathElement]", weight_edges=False
+    ) -> nx.Graph:
         G = nx.Graph()
         for p in graph_data:
-            for v in p['vertices']:
-                G.add_node(v['_id'], **v)
-            for e in p['edges']:
-                f_t = (e['_from'], e['_to'],)
+            for v in p["vertices"]:
+                G.add_node(v["_id"], **v)
+            for e in p["edges"]:
+                f_t = (
+                    e["_from"],
+                    e["_to"],
+                )
                 if weight_edges:
                     G.add_edge(*f_t, **e)
                 else:
                     if G.has_edge(*f_t):
-                        G.get_edge_data(*f_t)['weight'] += 1
+                        G.get_edge_data(*f_t)["weight"] += 1
                     else:
                         G.add_edge(*f_t, weight=1, **e)
         return G
 
-    def visualize_graph(self, graph_data: 'list[PathElement]', weight_edges=False) -> Network:
+    def visualize_graph(
+        self, graph_data: "list[PathElement]", weight_edges=False
+    ) -> Network:
         G = self.create_networkx(graph_data, weight_edges)
         g = Network(notebook=(self.mode == AnalyzerMode.NOTEBOOK))
         g.from_nx(G)

@@ -15,7 +15,10 @@ def get_hash_from_str(str: str) -> str:
     :rtype: str
     """
     hashing_func = hashlib.sha256
-    def str2int(s): return int(hashing_func(s.encode()).hexdigest(), 16)
+
+    def str2int(s):
+        return int(hashing_func(s.encode()).hexdigest(), 16)
+
     return str2int(str)
 
 
@@ -46,13 +49,16 @@ def to_dictionary(obj: object) -> dict:
 def camel_case(s) -> str:
     # source: https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-96.php
     s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
-    return ''.join([s[0].lower(), s[1:]])
+    return "".join([s[0].lower(), s[1:]])
 
 
 def filter_dic(obj, fields=None) -> dict:
     dict_ = to_dictionary(obj)
-    dict_ = {k: v for k, v in dict_.items() if (
-        (fields is None or k in fields) and v is not None)}
+    dict_ = {
+        k: v
+        for k, v in dict_.items()
+        if ((fields is None or k in fields) and v is not None)
+    }
     return dict_
 
 
@@ -68,8 +74,10 @@ def camel_nest_dict(dict_) -> dict:
                 res[camel_case(k)] = v
     return res
 
-def load_module(module_name:str):
+
+def load_module(module_name: str):
     return importlib.import_module(module_name)
+
 
 def get_cls_from_path(path: str):
     module_name, class_name = path.rsplit(".", 1)
@@ -80,8 +88,8 @@ def get_cls_from_path(path: str):
 
 def load_sub_packages(package):
     prefix = package.__name__ + "."
-    #print(f"prefix {prefix}")
+    # print(f"prefix {prefix}")
     for importer, modname, ispkg in pkgutil.iter_modules(package.__path__, prefix):
-        #print(f"Found submodule {modname} (is a package: {ispkg})" )
+        # print(f"Found submodule {modname} (is a package: {ispkg})" )
         module = load_module(modname)
-        #print (f"Imported {module}")
+        # print (f"Imported {module}")

@@ -11,7 +11,9 @@ def run_sample(config):
 
     # Create analyzer
     analyzer = ArangoAnalyzer("analyzer_sample")
-    analyzer.set_stopwords(language="english", custom_stopwords=['stop', 'word'], include_default=False)
+    analyzer.set_stopwords(
+        language="english", custom_stopwords=["stop", "word"], include_default=False
+    )
     analyzer.type = ArangoAnalyzer._TYPE_TEXT
 
     analyzer.create(db)
@@ -22,11 +24,13 @@ def run_sample(config):
     link.analyzers = linkAnalyzers
 
     # A link can have 0..* fields
-    field = Field("text", AnalyzerList(
-        ["text_en", "invalid_analyzer", "analyzer_sample"]))  # text_en is a predifined analyzer from arango
+    field = Field(
+        "text", AnalyzerList(["text_en", "invalid_analyzer", "analyzer_sample"])
+    )  # text_en is a predifined analyzer from arango
     logger.info(field.analyzers)
-    field.analyzers.filter_invalid_analyzers(db,
-                                             verbose=1)  # filters out the analyzer that are not defined in the database
+    field.analyzers.filter_invalid_analyzers(
+        db, verbose=1
+    )  # filters out the analyzer that are not defined in the database
     print("current analyzers after filtering invalid ones: ", field.analyzers)
     ## current analyzers after filtering invalid ones:  AnalyzerList(analyzerList=['text_en', 'analyzer_sample'])
 
@@ -37,8 +41,7 @@ def run_sample(config):
     # {'text': {'analyzers': ['text_en', 'analyzer_sample']}}
 
     # create view
-    view = View('sample_view',
-                view_type="arangosearch")
+    view = View("sample_view", view_type="arangosearch")
     ## add the link (can have 0 or 1 link)
     view.add_link(link)
 
@@ -48,8 +51,5 @@ def run_sample(config):
 
     print("Prints the *view* as a dict:", view.summary())
 
-
     ## creates the view in the database
     view.create(db)
-
-
