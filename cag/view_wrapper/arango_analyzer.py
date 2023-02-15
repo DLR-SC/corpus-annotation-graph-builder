@@ -136,7 +136,8 @@ class ArangoAnalyzer():
         try:
             info = database.analyzer(self.name)
             logger.error("Analyzer {} already exists with the following info: {}".format(self.name, info))
-            logger.error("You can delete it first using *database.delete_analyzer({})* and that create".format(self.name))
+            logger.error("You can delete it first using database.delete_analyzer({}) and then create".format(self.name))
+            
         except AnalyzerGetError:
             result = database.create_analyzer(self.name,
                                               self.type,
