@@ -3,6 +3,7 @@ from typing import ClassVar
 
 _dict = {}
 
+
 ########## Dictionary Keys ##########
 @dataclasses.dataclass
 class PipeConfigKeys:

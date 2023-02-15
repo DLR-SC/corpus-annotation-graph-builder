@@ -29,7 +29,6 @@ class HedgeFactory:
             Doc.set_extension("hedge", default=None)
 
     def __call__(self, doc):
-
         logging.disable_progress_bar()
         results, _ = self.model.predict([doc.text])
 

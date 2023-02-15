@@ -1,8 +1,5 @@
-from typing import ClassVar, List
-
 from pyArango.document import Document
 import pyArango
-from cag.utils.config import Config
 from cag.framework.annotator.element.orchestrator import PipeOrchestrator
 
 

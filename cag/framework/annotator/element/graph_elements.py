@@ -35,16 +35,69 @@ class EmpathNode(parent_nodes.GenericNode):
         self.ensurePersistentIndex(["category"], unique=True)
 
 
-class HasAnnotation(GenericEdge):
+class EmotionNode(parent_nodes.GenericNode):
+    """A class to define a Named Entity node in arangodb - This is used by pyarango to create the Collection"""
+
+    _fields = {
+        "label": parent_nodes.Field(),
+    }
+
+    def __init__(self, database, jsonData):
+        super().__init__(database, jsonData)
+        self.ensurePersistentIndex(["label"], unique=True)
+
+
+class GenericAnnotationEdge(GenericEdge):
     """A class to define an annotation edge in arangodb - This is used by pyarango to create the Collection"""
 
     _fields = {
-        "count": Field(),
-        "ratio": Field(),
+        "count": Field(default=0),
+        "ratio": Field(default=0.0),
+        "metadata": Field(),
+    }
+
+    def __init__(self, database, jsonData):
+        super().__init__(database, jsonData)
+        self.ensurePersistentIndex(
+            ["_from", "_to"], unique=True
+        )  # , deduplicate=True)
+
+
+class HasTokenLevelAnnotation(GenericAnnotationEdge):
+    """This is an Edge for annotations on the token level"""
+
+    _fields = {
+        **GenericAnnotationEdge._fields,
         "token_position_lst": Field(),  # array of tuples [(start, end), (start, end)]
         "token_lst": Field(),  # array of tuples [(start, end), (start, end)]
     }
 
     def __init__(self, database, jsonData):
         super().__init__(database, jsonData)
-        self.ensurePersistentIndex(["_from", "_to"], unique=True)  # , deduplicate=True)
+        self.ensurePersistentIndex(
+            ["_from", "_to"], unique=True
+        )  # , deduplicate=True)
+
+
+# TODO: Below class is for backward compatibility - remove
+class HasAnnotation(HasTokenLevelAnnotation):
+    _fields = HasTokenLevelAnnotation._fields
+
+
+class HasEmpathAnnotation(HasTokenLevelAnnotation):
+    _fields = HasTokenLevelAnnotation._fields
+
+
+class HasNERAnnotation(HasTokenLevelAnnotation):
+    _fields = HasTokenLevelAnnotation._fields
+
+
+class HasEmotion(GenericAnnotationEdge):
+    """A class to define an annotation edge in arangodb - This is used by pyarango to create the Collection"""
+
+    _fields = {
+        **GenericAnnotationEdge._fields,
+        "mean_score": Field(default=0.0),
+        "sentence_index_w_highest_score": Field(default=-1),
+        "highest_score": Field(),
+    }

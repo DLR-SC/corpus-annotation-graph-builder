@@ -63,7 +63,6 @@ class AnyAnalyzer(AnalyzerBase):
 
 class TestAnnotatorBasics:
     def test_create_nx(self):
-
         conf = configuration(graph="SampleGraph", database=whoami())
         gc = AnylzerGC("", config=conf)
         # act

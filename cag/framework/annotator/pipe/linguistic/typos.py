@@ -4,6 +4,7 @@ from transformers import AutoConfig, AutoTokenizer, AutoModelForTokenClassificat
 from transformers import pipeline
 from transformers.utils import logging
 
+
 # REQUIRES sentencizer
 # https://huggingface.co/m3hrdadfi/typo-detector-distilbert-en?text=The+review+thoroughla+assessed+all+aspects+of+JLENS+SuR+and+CPG+esign+maturit+and+confidence+.
 @Language.factory("typo_component")

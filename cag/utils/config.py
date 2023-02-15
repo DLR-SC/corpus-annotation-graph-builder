@@ -1,6 +1,7 @@
 import dataclasses
 from os import getenv
-from pyArango.connection import *
+
+from pyArango.connection import Database, Connection
 from arango import ArangoClient
 
 from arango.http import DefaultHTTPClient
@@ -8,7 +9,6 @@ from arango.http import DefaultHTTPClient
 
 @dataclasses.dataclass
 class Config:
-
     url: "str | None" = None
     user: "str | None" = None
     password: "str | None" = None

@@ -1,14 +1,16 @@
 from statistics import mean
+from typing import ClassVar
 
-from simpletransformers.ner import NERModel
 from spacy.language import Language
-from spacy.tokens import Token, Span, Doc
-import torch
+from spacy.tokens import Span, Doc
 from transformers import pipeline
 from transformers.utils import logging
-from nlpaf import logger
+from cag import logger
+import numpy as np
 import pandas as pd
-from nlpaf.util.timer import Timer
+from cag.framework.annotator.pipe.linguistic.emotion import (
+    EmotionHartmannFactory,
+)
 
 # REQUIRES sentencizer
 
@@ -16,7 +18,16 @@ from nlpaf.util.timer import Timer
 @Language.factory("emotion_hartmann_component")
 class EmotionHartmannFactory:
     _EMOTION_DOC_KEY: str = "emotions"
-    _EMOTIONS = ["anger", "disgust", "fear", "joy", "neutral", "sadness", "surprise"]
+    _EMOTIONS = [
+        "anger",
+        "disgust",
+        "fear",
+        "joy",
+        "neutral",
+        "sadness",
+        "surprise",
+    ]
+    _METADATA_: ClassVar = "Hartmann Emotion on HuggingFace"
 
     def __init__(self, nlp: Language, name: str):
         self.nlp = nlp
@@ -39,11 +50,10 @@ class EmotionHartmannFactory:
         for emotion in EmotionHartmannFactory._EMOTIONS:
             if not Span.has_extension(f"emotion_{emotion}"):
                 Span.set_extension(f"emotion_{emotion}", default=None)
-        if not Span.has_extension(f"emotion_dominant"):
-            Span.set_extension(f"emotion_dominant", default=None)
+        if not Span.has_extension("emotion_dominant"):
+            Span.set_extension("emotion_dominant", default=None)
 
     def __call__(self, doc):
-
         all_scores = {}
         for em in EmotionHartmannFactory._EMOTIONS:
             all_scores[em] = []
@@ -69,13 +79,20 @@ class EmotionHartmannFactory:
 
                 sentence._.set(f"emotion_{label}", score)
             dominant_lbl = res_df.iloc[res_df["score"].argmax()]["label"]
-            sentence._.set(f"emotion_dominant", dominant_lbl)
-            logger.debug(f"appending")
+            sentence._.set(f"emotion_dominant {dominant_lbl}")
+            logger.debug("appending")
             sentence_lbls.append(dominant_lbl)
 
         doc_mean_df = pd.DataFrame(
             [
-                {"label": x, "score_mean": mean(y) if len(y) > 0 else 0.0}
+                {
+                    "label": x,
+                    "score_mean": mean(y) if len(y) > 0 else 0.0,
+                    "highest_score": max(y),
+                    "sentence_index_w_highest_score": np.asarray(y).argmax()
+                    if max(y) > 0.0
+                    else -1,
+                }
                 for x, y in all_scores.items()
             ]
         ).set_index("label")
@@ -85,12 +102,14 @@ class EmotionHartmannFactory:
                 {
                     "label": x,
                     "count": sentence_lbls.count(x),
-                    "ratio": round(sentence_lbls.count(x) / len(sentence_lbls), 5),
+                    "ratio": round(
+                        float(sentence_lbls.count(x)) / len(sentence_lbls), 4
+                    ),
                 }
                 for x in set(sentence_lbls)
             ]
         ).set_index("label")
-        logger.debug(f"setting prediction")
+        logger.debug("setting prediction")
         predictions_df = doc_scores_df.merge(
             doc_mean_df, how="outer", left_index=True, right_index=True
         )
@@ -98,9 +117,9 @@ class EmotionHartmannFactory:
         doc._.set("emotions", predictions_df.reset_index().to_dict("records"))
         doc._.set(
             "emotion_label",
-            predictions_df.reset_index().iloc[predictions_df["count"].argmax()][
-                "label"
-            ],
+            predictions_df.reset_index().iloc[
+                predictions_df["count"].argmax()
+            ]["label"],
         )
         logger.debug("1 emotion call done")
         # all_.stop()

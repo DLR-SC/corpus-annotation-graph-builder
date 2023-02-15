@@ -19,7 +19,6 @@ class AnnotationNode(Collection):
 
 
 class Corpus(GenericOOSNode):
-
     _fields = {
         "name": Field(),
         "type": Field(),

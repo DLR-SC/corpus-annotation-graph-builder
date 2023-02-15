@@ -266,7 +266,6 @@ class Pipeline(ABC):
         return pipe_stack
 
     def init_spacy_nlp(self, subpipeline) -> Language:
-
         nlp: Language = (
             spacy.blank("en")
             if self.spacy_language_model is None

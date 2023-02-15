@@ -6,6 +6,16 @@ from spacy.tokens import Doc
 
 
 class MpqaPipeOrchestrator(PipeOrchestrator):
+    def create_node(self, emotion_label: str) -> pyArango.document.Document:
+        data = {"label": emotion_label}
+        return self.upsert_node(self.node_name, data, alt_key=["label"])
+
+    def create_edge(self, _from: Document, _to: Document, emotion_attrs) -> Document:
+        # edge_dict: dict = self.get_edge_attributes(self.edge_name, _from, _to)
+        # edge = self.get_document(self.edge_name, edge_dict)
+
+        return self.upsert_edge(self.edge_name, _from, _to, emotion_attrs)
+
     def save_annotations(self, annotated_texts: list) -> pd.DataFrame:
         out_arr = []
 

@@ -46,7 +46,6 @@ class BaseGraph(Graph):
         """
 
         if relation in self.definitions.keys():
-
             existings_froms = set(self.definitions[relation].fromCollections)
             existing_tos = set(self.definitions[relation].toCollections)
 

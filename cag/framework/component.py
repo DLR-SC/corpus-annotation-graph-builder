@@ -41,7 +41,6 @@ class Component(object):
             self.graph: BaseGraph = self.database.graphs[self.graph_name]
 
         else:
-
             edge_def_arr = []
             for ed in edges:
                 for col in (

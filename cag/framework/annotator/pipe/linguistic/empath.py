@@ -15,7 +15,9 @@ class EmpathExtended(Empath):
     def __init__(self):
         super().__init__()
 
-    def analyze(self, doc, categories=None, tokenizer="default", normalize=False):
+    def analyze(
+        self, doc, categories=None, tokenizer="default", normalize=False
+    ):
         if isinstance(doc, list):
             doc = "\n".join(doc)
         if tokenizer == "default":
@@ -91,14 +93,16 @@ class EmpathFactory:
             {k: v for k, v in empath_dic.items() if k in empath_caregories},
         )
         doc._.set(
-            "empath_ratio", {k: v for k, v in ratios.items() if k in empath_caregories}
+            "empath_ratio",
+            {k: v for k, v in ratios.items() if k in empath_caregories},
         )
         doc._.set(
             "empath_positions",
             {k: v for k, v in positions.items() if k in empath_caregories},
         )
         doc._.set(
-            "empath_words", {k: v for k, v in words.items() if k in empath_caregories}
+            "empath_words",
+            {k: v for k, v in words.items() if k in empath_caregories},
         )
 
         return doc
