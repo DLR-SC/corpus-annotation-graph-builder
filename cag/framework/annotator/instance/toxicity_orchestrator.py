@@ -1,43 +1,53 @@
 import pandas as pd
-
-from nlpaf.annotator.orchestrator import PipeOrchestrator
+from pyArango.document import Document
+from ..element.orchestrator import PipeOrchestrator
+from ..pipe.linguistic.toxicity import ToxicityFactory
 
 
 class ToxicityOrchestrator(PipeOrchestrator):
-    def create_node(self, emotion_label: str) -> pyArango.document.Document:
-        data = {"label": emotion_label}
+    def create_node(self, label: str) -> Document:
+        data = {"label": label}
         return self.upsert_node(self.node_name, data, alt_key=["label"])
 
-    def create_edge(self, _from: Document, _to: Document, emotion_attrs) -> Document:
-        # edge_dict: dict = self.get_edge_attributes(self.edge_name, _from, _to)
-        # edge = self.get_document(self.edge_name, edge_dict)
-
-        return self.upsert_edge(self.edge_name, _from, _to, emotion_attrs)
+    def create_edge(self, _from: Document, _to: Document, attrs) -> Document:
+        return self.upsert_edge(self.edge_name, _from, _to, attrs)
 
     def save_annotations(self, annotated_texts: list) -> pd.DataFrame:
         out_arr = []
         for doc, context in annotated_texts:
-            row = {self.input_id: context[self.input_id]}
-
+            text_key = context["_key"]
+            text_node: Document = self.get_document(
+                self.annotated_node, {"_key": text_key}
+            )
+            res_df = pd.DataFrame(doc._.toxicity)
+            dominant = res_df.iloc[res_df["count"].argmax()]["label"]
             if doc._.toxicity is not None:
                 for toxicity_dict in doc._.toxicity:
-                    row[f"toxicity_{toxicity_dict['label']}_count"] = toxicity_dict[
-                        "count"
-                    ]
-                    row[f"toxicity_{toxicity_dict['label']}_ratio"] = toxicity_dict[
-                        "ratio"
-                    ]
-                    row[f"toxicity_{toxicity_dict['label']}"] = toxicity_dict[
-                        "score_mean"
-                    ]
+                    if toxicity_dict["count"] > 0:
+                        toxicity_label = toxicity_dict["label"]
+                        toxicity_node: Document = self.create_node(
+                            toxicity_label
+                        )
 
-                res_df = pd.DataFrame(doc._.toxicity)
+                        entry = {}
+                        entry["count"] = toxicity_dict["count"]
+                        entry["ratio"] = toxicity_dict["ratio"]
+                        entry["score_mean"] = toxicity_dict["score_mean"]
+                        entry["is_dominant"] = (
+                            True if toxicity_label == dominant else False
+                        )
+                        entry["metadata"] = ToxicityFactory._METADATA_
+                        entry[
+                            "sentence_index_w_highest_score"
+                        ] = toxicity_dict["sentence_index_w_highest_score"]
 
-                row[f"toxicity_dominant"] = res_df.iloc[res_df["count"].argmax()][
-                    "label"
-                ]
-                out_arr.append(row)
+                        entry["highest_score"] = toxicity_dict["highest_score"]
+                        _ = self.create_edge(text_node, toxicity_node, entry)
+
+                        record = {f"toxicity_{x}": y for x, y in entry.items()}
+                        record["label"] = toxicity_label
+                        record["text_key"] = text_key
+                        out_arr.append(record)
         out_df: pd.DataFrame = pd.DataFrame(out_arr)
 
-        out_df.fillna(0, inplace=True)
         return out_df

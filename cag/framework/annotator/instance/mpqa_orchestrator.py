@@ -1,9 +1,7 @@
 import pandas as pd
 from pyArango.document import Document
-from cag.framework.annotator.element.orchestrator import PipeOrchestrator
-import pandas as pd
-
-from cag.framework.annotator.pipe.linguistic.mpqa import MpqaArgFactory
+from ..element.orchestrator import PipeOrchestrator
+from ..pipe.linguistic.mpqa import MpqaArgFactory
 
 
 class MpqaPipeOrchestrator(PipeOrchestrator):

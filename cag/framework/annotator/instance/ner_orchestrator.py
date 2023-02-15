@@ -42,3 +42,4 @@ class NamedEntityPipeOrchestrator(PipeOrchestrator):
                     self.annotated_node, {"_key": text_key}
                 )
                 _: Document = self.create_edge(text_node, ner_node, ent)
+        return None

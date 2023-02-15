@@ -8,9 +8,6 @@ from transformers.utils import logging
 from cag import logger
 import numpy as np
 import pandas as pd
-from cag.framework.annotator.pipe.linguistic.emotion import (
-    EmotionHartmannFactory,
-)
 
 # REQUIRES sentencizer
 
@@ -31,7 +28,7 @@ class EmotionHartmannFactory:
 
     def __init__(self, nlp: Language, name: str):
         self.nlp = nlp
-        logging.disable_progress_bar()  # https://huggingface.co/docs/transformers/main/en/main_classes/logging#transformers.utils.logging.disable_default_handler
+        logging.disable_progress_bar()
         logger.debug("init emotion_hartmann_component")
 
         self.transformer_nlp = pipeline(

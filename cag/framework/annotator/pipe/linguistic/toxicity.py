@@ -1,4 +1,5 @@
 from statistics import mean
+from typing import ClassVar
 
 import pandas as pd
 from spacy.language import Language
@@ -6,8 +7,8 @@ from spacy.tokens import Span, Doc
 from transformers.utils import logging
 from transformers import pipeline
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
-from nlpaf.util.timer import Timer
-from nlpaf import logger
+from cag import logger
+import numpy as np
 
 # REQUIRES sentencizer
 # https://huggingface.co/SkolkovoInstitute/roberta_toxicity_classifier?text=I+like+you.+I+love+you
@@ -15,6 +16,10 @@ from nlpaf import logger
 
 @Language.factory("toxicity_component")
 class ToxicityFactory:
+    _METADATA_: ClassVar = (
+        "SkolkovoInstitute/roberta_toxicity_classifier huggingface"
+    )
+
     def __init__(self, nlp: Language, name: str):
         self.nlp = nlp
         logging.disable_progress_bar()
@@ -57,8 +62,6 @@ class ToxicityFactory:
             [sentence.text for sentence in doc.sents]
         )
         for sent_toxicity_result in sent_toxicity_result_arr:
-            # txt = sentence.text
-            # sent_toxicity_result = self.transformer_nlp(txt)
 
             for sent_toxicity_score in sent_toxicity_result:
                 label = sent_toxicity_score["label"]
@@ -68,13 +71,22 @@ class ToxicityFactory:
 
                 # sentence._.set(f"toxicity_{label}", score)
             sent_scores = pd.DataFrame(sent_toxicity_result)
-            dominant_lbl = sent_scores.iloc[sent_scores["score"].argmax()]["label"]
+            dominant_lbl = sent_scores.iloc[sent_scores["score"].argmax()][
+                "label"
+            ]
             # sentence._.set(f"toxicity_dominant", dominant_lbl)
             sentence_lbls.append(dominant_lbl)
 
         doc_mean_df = pd.DataFrame(
             [
-                {"label": x, "score_mean": mean(y) if len(y) > 0 else 0.0}
+                {
+                    "label": x,
+                    "score_mean": mean(y) if len(y) > 0 else 0.0,
+                    "highest_score": max(y),
+                    "sentence_index_w_highest_score": np.asarray(y).argmax()
+                    if max(y) > 0.0
+                    else -1,
+                }
                 for x, y in all_scores.items()
             ]
         ).set_index("label")
@@ -84,7 +96,9 @@ class ToxicityFactory:
                 {
                     "label": x,
                     "count": sentence_lbls.count(x),
-                    "ratio": round(sentence_lbls.count(x) / len(sentence_lbls), 3),
+                    "ratio": round(
+                        sentence_lbls.count(x) / len(sentence_lbls), 4
+                    ),
                 }
                 for x in set(sentence_lbls)
             ]
