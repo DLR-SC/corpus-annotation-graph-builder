@@ -68,7 +68,9 @@ class HasTokenLevelAnnotation(GenericAnnotationEdge):
 
     _fields = {
         **GenericAnnotationEdge._fields,
-        "token_position_lst": Field(),  # array of tuples [(start, end), (start, end)]
+        "token_position_lst": Field(
+            default=None
+        ),  # array of tuples [(start, end), (start, end)]
         "token_lst": Field(),  # array of tuples [(start, end), (start, end)]
     }
 
@@ -90,6 +92,13 @@ class HasEmpathAnnotation(HasTokenLevelAnnotation):
 
 class HasNERAnnotation(HasTokenLevelAnnotation):
     _fields = HasTokenLevelAnnotation._fields
+
+
+class HasHedgeAnnotation(HasTokenLevelAnnotation):
+    _fields = {
+        **HasTokenLevelAnnotation._fields,
+        "is_dominant": Field(default=False),
+    }
 
 
 class HasEmotion(GenericAnnotationEdge):

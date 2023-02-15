@@ -1,3 +1,4 @@
+from typing import ClassVar
 import pandas as pd
 from simpletransformers.ner import NERModel, NERArgs
 from spacy.language import Language
@@ -9,6 +10,9 @@ from nlpaf.util.timer import Timer
 
 @Language.factory("hedge_component")
 class HedgeFactory:
+
+    _METADATA_: ClassVar = "Hedge jeniakim/hedgehog HuggingFace"
+
     def __init__(self, nlp: Language, name: str):
         self.nlp = nlp
         logging.disable_progress_bar()
@@ -34,8 +38,12 @@ class HedgeFactory:
 
         df_ = pd.DataFrame(
             {
-                "words": [list(x.keys())[0] for x in utils.flatten_list(results)],
-                "label": [list(x.values())[0] for x in utils.flatten_list(results)],
+                "words": [
+                    list(x.keys())[0] for x in utils.flatten_list(results)
+                ],
+                "label": [
+                    list(x.values())[0] for x in utils.flatten_list(results)
+                ],
             }
         )
 
@@ -44,7 +52,9 @@ class HedgeFactory:
             .agg({"words": ",".join})
             .set_index("label")
         )
-        count_labels = df_.groupby(["label"], as_index=False).size().set_index("label")
+        count_labels = (
+            df_.groupby(["label"], as_index=False).size().set_index("label")
+        )
         count_labels["ratio"] = round(
             count_labels["size"] / count_labels["size"].sum(), 3
         )

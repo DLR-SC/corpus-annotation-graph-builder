@@ -10,7 +10,9 @@ class MpqaPipeOrchestrator(PipeOrchestrator):
         data = {"label": emotion_label}
         return self.upsert_node(self.node_name, data, alt_key=["label"])
 
-    def create_edge(self, _from: Document, _to: Document, emotion_attrs) -> Document:
+    def create_edge(
+        self, _from: Document, _to: Document, emotion_attrs
+    ) -> Document:
         # edge_dict: dict = self.get_edge_attributes(self.edge_name, _from, _to)
         # edge = self.get_document(self.edge_name, edge_dict)
 
@@ -21,7 +23,9 @@ class MpqaPipeOrchestrator(PipeOrchestrator):
 
         for doc, context in annotated_texts:
             d: Doc = doc
-            mpqa_exts = [x for x in d._.doc_extensions if x.startswith("mpqa_")]
+            mpqa_exts = [
+                x for x in d._.doc_extensions if x.startswith("mpqa_")
+            ]
             # logger.debug(mpqa_exts
             row = {self.input_id: context[self.input_id]}
 

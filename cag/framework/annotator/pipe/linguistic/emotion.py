@@ -27,7 +27,7 @@ class EmotionHartmannFactory:
         "sadness",
         "surprise",
     ]
-    _METADATA_: ClassVar = "Hartmann Emotion on HuggingFace"
+    _METADATA_: ClassVar = "Emotion Hartmann HuggingFace"
 
     def __init__(self, nlp: Language, name: str):
         self.nlp = nlp
