@@ -22,7 +22,8 @@ def setup_project_dir(project_name: str):
         print(f"Aborting. {project_dir} already existent!")
         raise typer.Abort()
     if not typer.confirm(
-        f"Set {project_dir} as the project directory. Is this correct?", default=True
+        f"Set {project_dir} as the project directory. Is this correct?",
+        default=True,
     ):
         print("Aborting...")
         raise typer.Abort()
@@ -53,7 +54,9 @@ def start_project():
     name = setup_project_name()
     project_dir = setup_project_dir(name)
     path = Path(os.path.dirname(__file__))  # get path where the module is
-    with zipfile.ZipFile(f"{path.joinpath('cag_sample_project.zip')}", "r") as zip_ref:
+    with zipfile.ZipFile(
+        f"{path.joinpath('cag_sample_project.zip')}", "r"
+    ) as zip_ref:
         zip_ref.extractall(project_dir)
     print(f"[green] Creating scaffold in {project_dir}[/green]")
 

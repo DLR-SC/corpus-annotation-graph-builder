@@ -1,13 +1,16 @@
+from typing import ClassVar
 from spacy_arguing_lexicon import ArguingLexiconParser
 
 from spacy.language import Language
-from spacy.tokens import Token, Span, Doc
+from spacy.tokens import Doc
 
 from transformers.utils import logging
 
 
 @Language.factory("mpqa_arg_component")
 class MpqaArgFactory:
+    __METADATA__: ClassVar = "MPQA"
+
     MPQA_ARG_LABEL_LST = [
         "assessments",
         "doubt",
@@ -56,7 +59,9 @@ class MpqaArgFactory:
 
             total_arg_words += arg_span.__len__()
 
-        doc._.mpqa_token_ratio = round(float(total_arg_words) / float(doc.__len__()), 3)
+        doc._.mpqa_token_ratio = round(
+            float(total_arg_words) / float(doc.__len__()), 3
+        )
         doc._.mpqa_args_count = len(arguments)
 
         return doc

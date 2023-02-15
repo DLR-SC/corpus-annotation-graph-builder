@@ -71,7 +71,9 @@ class HasTokenLevelAnnotation(GenericAnnotationEdge):
         "token_position_lst": Field(
             default=None
         ),  # array of tuples [(start, end), (start, end)]
-        "token_lst": Field(),  # array of tuples [(start, end), (start, end)]
+        "token_lst": Field(
+            default=None
+        ),  # array of tuples [(start, end), (start, end)]
     }
 
     def __init__(self, database, jsonData):
@@ -101,7 +103,7 @@ class HasHedgeAnnotation(HasTokenLevelAnnotation):
     }
 
 
-class HasEmotion(GenericAnnotationEdge):
+class HasEmotionAnnotation(GenericAnnotationEdge):
     """A class to define an annotation edge in arangodb - This is used by pyarango to create the Collection"""
 
     _fields = {
@@ -110,3 +112,7 @@ class HasEmotion(GenericAnnotationEdge):
         "sentence_index_w_highest_score": Field(default=-1),
         "highest_score": Field(),
     }
+
+
+class HasMPQAAnnotation(GenericAnnotationEdge):
+    _fields = GenericAnnotationEdge._fields
