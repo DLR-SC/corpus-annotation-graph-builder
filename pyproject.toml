@@ -33,9 +33,10 @@ dependencies = ['dataclasses>=0.6',
                     'tqdm>=4.43.0',
                     'python-arango>=7.4.1',
                     'pyArango>=2.0.1',
-                    'tomli>=2.0.1'
+                    'tomli>=2.0.1',
+                    'transformers>=4.26.1'
                       ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 [project.optional-dependencies]
 dev = [ "pip-tools", "pytest"]

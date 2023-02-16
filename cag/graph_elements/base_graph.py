@@ -18,10 +18,12 @@ class BaseGraph(Graph):
     _orphanedCollections = []
 
     def _check_and_update_collections(self, collections):
-        """Creates new collections from the given collections list if not yet existant."""
+        """Creates new collections from the given collections"
+        "list if not yet existant."""
         for col in collections:
             if not self.database.hasCollection(col):
                 self.database.createCollection(col)
+                # self.database.reloadCollections()
 
     def update_graph_structure(
         self,
@@ -32,17 +34,27 @@ class BaseGraph(Graph):
         waitForSync=False,
     ):
         """
-        Adds an edge definition to the graph if it not already exists. Otherwhise the existing edge definition becomes updated if necessary based on the given collections.
-        In case of an update, this method never deletes collections from an edge definition but creates a union of the existing and provided collections.
+        Adds an edge definition to the graph if it not already exists.
+        Otherwhise the existing edge definition becomes updated if necessary
+        based on the given collections.
+        In case of an update, this method never deletes collections from an
+        edge definition but creates a union of the existing and provided
+        collections.
 
         Parameters:
-            relation (required string): Name of the edge collection defining the relation.
-            from_collections (required [string]): List of names of node collections appearing as origin of edges.
-            to_collections (required [string]): List of names of node collections appearing as destination of edges.
-            create_collections (optional boolean, default: true): If true collections will be created if they not exist.
-            waitForSync (optional boolean, default: False): See ArangoDBs doc for possible col arguments.
+            relation (required string): Name of the edge collection defining
+            the relation.
+            from_collections (required [string]): List of names of node
+            collections appearing as origin of edges.
+            to_collections (required [string]): List of names of node
+            collections appearing as destination of edges.
+            create_collections (optional boolean, default: true): If true
+            collections will be created if they not exist.
+            waitForSync (optional boolean, default: False): See ArangoDBs doc
+            for possible col arguments.
         Returns:
-            Boolean value indicating if the edge definitions of this graph have been updated.
+            Boolean value indicating if the edge definitions of this graph
+            have been updated.
         """
 
         if relation in self.definitions.keys():
@@ -101,10 +113,23 @@ class BaseGraph(Graph):
         data = r.json()
         if r.status_code == 201 or r.status_code == 202:
             self.definitions[relation] = EdgeDefinition(
-                relation, fromCollections=from_collections, toCollections=to_collections
+                relation,
+                fromCollections=from_collections,
+                toCollections=to_collections,
             )
+            self.database.reloadCollections()
             return True
 
         raise CreationError(
-            "Unable to modify edge definitions., %s" % data["errorMessage"], data
+            "Unable to modify edge definitions., %s" % data["errorMessage"],
+            data,
         )
+
+    def get_collection(self, collection_name):
+        response = self.connection.session.get(
+            f"/_api/collection/{collection_name}",
+        )
+        if response.status != 3:
+            logger.debug("Collection failed to be retrieved")
+        else:
+            logger.debug(f"collection {collection_name} retrieved")

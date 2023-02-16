@@ -72,7 +72,10 @@ class PipeOrchestrator(ABC, Component):
             [self.annotated_node],
             [annotation_node],
             create_collections=True,
+            waitForSync=True,
         )
+        logger.info("RELOADING")
+        self.database.reload()
 
     def load_pipe_component(self):
         module = None
