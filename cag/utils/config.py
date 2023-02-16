@@ -1,6 +1,7 @@
 import dataclasses
 from os import getenv
-from pyArango.connection import *
+
+from pyArango.connection import Database, Connection
 from arango import ArangoClient
 
 from arango.http import DefaultHTTPClient

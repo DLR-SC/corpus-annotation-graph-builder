@@ -28,6 +28,7 @@ from cag.graph_elements.relations import (
 
 
 class GraphCreatorBase(ABC, Component):
+
     # constant NODE and Edge NAMES ####
     _TEXT_NODE_NAME = TextNode.__name__
     _WEB_RESOURCE_NODE_NAME = WebResource.__name__
@@ -45,6 +46,7 @@ class GraphCreatorBase(ABC, Component):
     _EDGE_ABSTRACT_TEXT = HasAbstract.__name__
     _EDGE_TEXT_TERM = HasTerm.__name__
     _EDGE_KEYTERM_RELATION = KeyTermRelation.__name__
+
 
     _COMPONENT_NAME = "Graph Creator"
     _base_edge_definitions = [

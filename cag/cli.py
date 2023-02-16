@@ -1,6 +1,5 @@
 import os
 import platform
-import sys
 import zipfile
 from pathlib import Path
 from subprocess import PIPE, run

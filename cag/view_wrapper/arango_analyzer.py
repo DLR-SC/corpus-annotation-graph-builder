@@ -1,4 +1,3 @@
-import logging
 from dataclasses import dataclass, field
 from arango.database import StandardDatabase
 
@@ -22,9 +21,11 @@ class EdgeNGram:
 
 @dataclass
 class ArangoAnalyzer:
+
     ###################
     # Instance Vars ###
     ###################
+    
     name: str
     type: str = "identity"
     features: List = field(
@@ -38,7 +39,7 @@ class ArangoAnalyzer:
     stopwords: List = field(default_factory=lambda: [])
     accent: bool = False  # text,  norm
     stemming: bool = True
-    edge_ngram: EdgeNGram = None  #
+    edge_ngram: EdgeNGram = None
     delimiter: str = ","
 
     # type ngram
@@ -51,13 +52,13 @@ class ArangoAnalyzer:
         default_factory=lambda: ArangoAnalyzer._STEM_TYPE_BINARY
     )
 
-    #################
-    ### CONSTANTS ###
-    #################
+    #############
+    # CONSTANTS #
+    #############
 
-    ######################################
-    ### Main types of arango analyzer ###
-    #####################################
+    #################################
+    # Main types of arango analyzer #
+    #################################
     _TYPE_IDENTITY: ClassVar = "identity"
     _TYPE_TEXT: ClassVar = "text"
     _TYPE_NGRAM: ClassVar = "ngram"

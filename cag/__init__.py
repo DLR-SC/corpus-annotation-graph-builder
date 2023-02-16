@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-__version__ = "0.25.0"
+__version__ = "1.3.0"
 
 logs_folder_name = "cag_logs"
 # User home dir detection. Linux and Windows compatible
