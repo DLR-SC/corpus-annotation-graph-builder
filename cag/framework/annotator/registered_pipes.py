@@ -9,9 +9,13 @@ _dict = {}
 class PipeConfigKeys:
     _orchestrator_class: ClassVar = "orchestrator_class"
     _pipe_id_or_func: ClassVar = "pipe_id_or_func"
-    _pipe_path: ClassVar = "pipe_path"  # leave empty if the pipe is a spacy native pipe
+    _pipe_path: ClassVar = (
+        "pipe_path"  # leave empty if the pipe is a spacy native pipe
+    )
     _level: ClassVar = "level"  # node or set
-    _data_type: ClassVar = "data_type"  # for now we support text - later url, image
+    _data_type: ClassVar = (
+        "data_type"  # for now we support text - later url, image
+    )
     _annotated_column: ClassVar = "annotated_column"
     _input_id: ClassVar = "input_id"
     _node_class: ClassVar = "node_class"

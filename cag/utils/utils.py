@@ -89,7 +89,9 @@ def get_cls_from_path(path: str):
 def load_sub_packages(package):
     prefix = package.__name__ + "."
     # print(f"prefix {prefix}")
-    for importer, modname, ispkg in pkgutil.iter_modules(package.__path__, prefix):
+    for importer, modname, ispkg in pkgutil.iter_modules(
+        package.__path__, prefix
+    ):
         # print(f"Found submodule {modname} (is a package: {ispkg})" )
         module = load_module(modname)
         # print (f"Imported {module}")

@@ -31,7 +31,9 @@ class Link:
     track_list_positions: bool = False
     in_background: bool = False
     fields: List[Field] = field(default_factory=lambda: [])
-    analyzers: AnalyzerList = field(default_factory=lambda: AnalyzerList(["identity"]))
+    analyzers: AnalyzerList = field(
+        default_factory=lambda: AnalyzerList(["identity"])
+    )
 
     def add_field(self, field: Field):
         self.fields.append(field)
@@ -57,6 +59,8 @@ class Link:
         dict_[self.name] = {}
         dict_[self.name]["analyzers"] = self.analyzers.analyzerList
         dict_[self.name]["fields"] = self.get_fields_dict()
-        dict_[self.name].update(utils.camel_nest_dict(utils.filter_dic(self, keep)))
+        dict_[self.name].update(
+            utils.camel_nest_dict(utils.filter_dic(self, keep))
+        )
 
         return dict_

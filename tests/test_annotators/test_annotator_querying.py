@@ -10,7 +10,9 @@ from ..test_nodes import *
 
 
 class AnyAnnotator(GenericAnnotator):
-    def __init__(self, conf: Config, params={"mode": "run-1"}, filter_annotatable=True):
+    def __init__(
+        self, conf: Config, params={"mode": "run-1"}, filter_annotatable=True
+    ):
         super().__init__(
             query=f"""FOR dp IN {AnyGraphCreator._ANY_DATASET_NODE_NAME}
         RETURN dp
@@ -42,9 +44,9 @@ class TestAnnotatorBasics:
         assert len(annotator.fetch_annotator_data()) == 4
 
         docs = list(annotator.fetch_annotator_data())
-        docs[0]["ann"] = base64.b64encode(docs[0]["name"].encode("utf-8")).decode(
-            "utf-8"
-        )
+        docs[0]["ann"] = base64.b64encode(
+            docs[0]["name"].encode("utf-8")
+        ).decode("utf-8")
         annotator.complete_annotation(docs[0])
 
         # after completing one annotation only three docs should remain

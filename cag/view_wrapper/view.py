@@ -38,7 +38,9 @@ class ViewProperties:
 class View:
     name: str
     view_type: str = "arangosearch"
-    properties: ViewProperties = field(default_factory=lambda: ViewProperties())
+    properties: ViewProperties = field(
+        default_factory=lambda: ViewProperties()
+    )
     links: List[Link] = field(default_factory=lambda: [])
     primary_sort: List = field(default_factory=lambda: [])
     stored_values: List = field(default_factory=lambda: [])
@@ -77,7 +79,9 @@ class View:
         return result
 
     def create(self, database: StandardDatabase):
-        result = database.create_view(self.name, self.view_type, self.get_properties())
+        result = database.create_view(
+            self.name, self.view_type, self.get_properties()
+        )
         return result
 
     def create_or_update(self, database: StandardDatabase):
