@@ -19,6 +19,7 @@
   <a href="https://citation-file-format.github.io/">
     <img alt="Badge: Citation File Format Inside" src="https://img.shields.io/badge/-citable%20software-green" target="_blank" />
   </a>
+     <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Badge: Black" height="18"></a>
 </p>
 
 
