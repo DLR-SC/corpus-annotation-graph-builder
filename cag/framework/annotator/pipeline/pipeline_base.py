@@ -32,7 +32,9 @@ class Pipeline(ABC):
     REGISTERED_PIPE_CONFIGS: ClassVar = registered_pipes._dict
 
     def _load_registered_pipes(
-        self, load_default_pipe_configs: bool = True, extended_pipe_configs: dict = None
+        self,
+        load_default_pipe_configs: bool = True,
+        extended_pipe_configs: dict = None,
     ):
         if load_default_pipe_configs:
             _copy = Pipeline.REGISTERED_PIPE_CONFIGS.copy()
@@ -76,9 +78,9 @@ class Pipeline(ABC):
         self.stack = []
         self.spacy_n_processors = 1
 
-    ############################################
-    #####      ABSTRACT METHODS            #####
-    ############################################
+    ####################################
+    #      ABSTRACT METHODS            #
+    ####################################
     @abstractmethod
     def process_input(self) -> object:
         pass
@@ -98,8 +100,6 @@ class Pipeline(ABC):
             if pipe_stack["stack_type"] == "spacy":
                 nlp = self.init_spacy_nlp(pipe_stack["stack"])
                 self.stack.append({"type": "spacy", "component": nlp})
-                # out = list(nlp.pipe(input, as_tuples=True, n_process=-1, batch_size=3000))
-                # input = out
             else:
                 while pipe_stack["stack"]:
                     current_pipe: Pipe = pipe_stack["stack"].pop(0)
@@ -109,17 +109,18 @@ class Pipeline(ABC):
                     pipe_func = pipe_instance.get_pipe_func()
                     if pipe_func is None:
                         logger.error(
-                            "The pipe is not a spacy pipe. Make sure to define the pipe_path and pipe code and "
-                            "provide the implementation within the pipe path and a function with the name equivalent to the "
-                            "'pipe' name"
+                            "The pipe is not a spacy pipe."
+                            " Make sure to define the pipe_path and pipe code"
+                            " and provide the implementation within the pipe"
+                            " path and a function with the name equivalent "
+                            " to the 'pipe' name"
                         )
                     else:
-                        self.stack.append({"type": "default", "component": pipe_func})
+                        self.stack.append(
+                            {"type": "default", "component": pipe_func}
+                        )
         logger.debug(f"The stack has {len(self.stack)} component(s).")
         return self.stack
-        # out = pipe_func(input)
-        # input = out
-        # self.annotated_artifacts = out
 
     def annotate(self):
         input = self.processed_input
@@ -130,11 +131,16 @@ class Pipeline(ABC):
             if s["type"] == "spacy":
                 if self.spacy_n_processors != 1:
                     logger.info(
-                        f"In case you are using transformer based pipe, set *spacy_n_processors* to 1 instead of {self.spacy_n_processors } or else the nlp.pipe will freeze"
+                        f"In case you are using transformer based pipe, "
+                        "set *spacy_n_processors* to 1 instead of"
+                        " {self.spacy_n_processors } or else the nlp.pipe"
+                        " will freeze"
                     )
                 out = list(
                     s["component"].pipe(
-                        input, as_tuples=True, n_process=self.spacy_n_processors
+                        input,
+                        as_tuples=True,
+                        n_process=self.spacy_n_processors,
                     )
                 )
                 input = out
@@ -153,27 +159,32 @@ class Pipeline(ABC):
             if pipe.save_output:
                 logger.info("saving annotations of {}".format(pipe))
                 if self.out_df is None:
-                    self.out_df = self.pipe_instance_dict[pipe.name].save_annotations(
-                        self.annotated_artifacts
-                    )
+                    self.out_df = self.pipe_instance_dict[
+                        pipe.name
+                    ].save_annotations(self.annotated_artifacts)
                 else:
                     _df = self.pipe_instance_dict[pipe.name].save_annotations(
                         self.annotated_artifacts
                     )
-                    self.out_df = self.out_df.merge(
-                        _df, how="outer", left_on="input_id", right_on="input_id"
-                    )
-        if self.save_output:
+                    if _df is not None:
+                        self.out_df = self.out_df.merge(
+                            _df,
+                            how="outer",
+                            left_on="text_key",
+                            right_on="text_key",
+                        )
+        if self.out_path is not None and self.out_path != "":
             logger.debug("Saving to parquet..")
             self.out_df.to_parquet(self.out_path)
         logger.debug("saved annotations")
 
-    ############################################
-    #####           SETTERS                #####
-    ############################################
+    ####################################
+    #           SETTERS                #
+    ####################################
     def reset_input_output(self):
         self.set_input(None)
         self.annotated_artifacts = None
+        self.out_df = None
 
     def set_input(self, nodes):
         self.input = nodes
@@ -182,7 +193,7 @@ class Pipeline(ABC):
         else:
             self.processed_input = None
 
-    def set_spacy_language_model(self, language_package: "str|None" = None):
+    def set_spacy_language_model(self, language_package="en_core_web_sm"):
         self.spacy_language_model = language_package
         self.load_spacy_model()
         # English pipeline optimized for CPU. Components: tok2vec, tagger, parser, senter, ner, attribute_ruler, lemmatizer:
@@ -209,7 +220,9 @@ class Pipeline(ABC):
         *pipeline*
         """
         pipe = (
-            pipe if pipe is not None else Pipe(name, save_output, is_spacy, is_native)
+            pipe
+            if pipe is not None
+            else Pipe(name, save_output, is_spacy, is_native)
         )
 
         if is_native and is_spacy and not save_output:
@@ -235,9 +248,9 @@ class Pipeline(ABC):
 
         self.pipeline.append(pipe)
 
-    ############################################
-    #####       HELPER METHODS             #####
-    ############################################
+    ####################################
+    #       HELPER METHODS             #
+    ####################################
     def get_pipe_stacks(self):
         logger.info("Defining pipe default and spacy stacks")
         pipe_queue: list = self.pipeline.copy()
@@ -255,13 +268,17 @@ class Pipeline(ABC):
                 task_collection.append(current)
             else:
                 stack_type = "spacy" if previous_task_is_spacy else "default"
-                pipe_stack.put({"stack_type": stack_type, "stack": task_collection})
+                pipe_stack.put(
+                    {"stack_type": stack_type, "stack": task_collection}
+                )
                 task_collection = [current]
             previous_task_is_spacy = current_is_spacy
 
         if len(task_collection) > 0:
             stack_type = "spacy" if previous_task_is_spacy else "default"
-            pipe_stack.put({"stack_type": stack_type, "stack": task_collection})
+            pipe_stack.put(
+                {"stack_type": stack_type, "stack": task_collection}
+            )
 
         return pipe_stack
 
