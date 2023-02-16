@@ -4,7 +4,7 @@ from ..element.orchestrator import PipeOrchestrator
 from ..pipe.linguistic.toxicity import ToxicityFactory
 
 
-class ToxicityOrchestrator(PipeOrchestrator):
+class ToxicityPipeOrchestrator(PipeOrchestrator):
     def create_node(self, label: str) -> Document:
         data = {"label": label}
         return self.upsert_node(self.node_name, data, alt_key=["label"])

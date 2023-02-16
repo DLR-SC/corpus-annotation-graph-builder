@@ -86,7 +86,7 @@ _dict["MpqaPipeOrchestrator"] = {
 
 
 _dict["ToxicityPipeOrchestrator"] = {
-    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.mpqa_orchestrator.ToxicityPipeOrchestrator",
+    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.toxicity_orchestrator.ToxicityPipeOrchestrator",
     PipeConfigKeys._pipe_id_or_func: "toxicity_component",  # id in case of space, function name otherwise
     PipeConfigKeys._pipe_path: "cag.framework.annotator.pipe.linguistic.toxicity",  # leave empty if the pipe is a spacy native pipe, otherwise provide the path of where the pipe_id_or_func exists
     PipeConfigKeys._level: "node",  # node or set

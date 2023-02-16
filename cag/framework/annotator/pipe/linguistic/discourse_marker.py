@@ -1,4 +1,3 @@
-from simpletransformers.ner import NERModel
 from spacy.language import Language
 from spacy.tokens import Token, Span, Doc
 

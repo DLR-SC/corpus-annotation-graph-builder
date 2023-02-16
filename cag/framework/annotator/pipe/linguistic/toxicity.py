@@ -62,7 +62,6 @@ class ToxicityFactory:
             [sentence.text for sentence in doc.sents]
         )
         for sent_toxicity_result in sent_toxicity_result_arr:
-
             for sent_toxicity_score in sent_toxicity_result:
                 label = sent_toxicity_score["label"]
                 score = sent_toxicity_score["score"]

@@ -82,7 +82,9 @@ class GraphCreatorBase(ABC, Component):
 
     ######### Generic func to create vertices ##########################################
 
-    def create_corpus_node(self, key, name, type, desc, created_on, timestamp=None):
+    def create_corpus_node(
+        self, key, name, type, desc, created_on, timestamp=None
+    ):
         dict_ = {
             "_key": key,
             "name": name,
@@ -97,13 +99,17 @@ class GraphCreatorBase(ABC, Component):
     def create_text_node(self, text, timestamp=None):
         dict_ = {"text": text, "timestamp": timestamp}
 
-        txt = self.upsert_node(GraphCreatorBase._TEXT_NODE_NAME, dict_, alt_key="text")
+        txt = self.upsert_node(
+            GraphCreatorBase._TEXT_NODE_NAME, dict_, alt_key="text"
+        )
         return txt
 
     def create_image_node(self, url, timestamp=None):
         dict_ = {"url": url, "timestamp": timestamp}
 
-        img = self.upsert_node(GraphCreatorBase._IMAGE_NODE_NAME, dict_, alt_key="url")
+        img = self.upsert_node(
+            GraphCreatorBase._IMAGE_NODE_NAME, dict_, alt_key="url"
+        )
         return img
 
     def create_author_node(self, author_name, timestamp=None):

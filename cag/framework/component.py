@@ -44,7 +44,9 @@ class Component(object):
             edge_def_arr = []
             for ed in edges:
                 for col in (
-                    [ed["relation"]] + ed["from_collections"] + ed["to_collections"]
+                    [ed["relation"]]
+                    + ed["from_collections"]
+                    + ed["to_collections"]
                 ):
                     if not self.database.hasCollection(col):
                         self.database.createCollection(col)
@@ -60,7 +62,11 @@ class Component(object):
                 raise CreationError(
                     "You have to define an edge for your graph in the your graph creator"
                 )
-            _ = type(self.graph_name, (BaseGraph,), {"_edgeDefinitions": edge_def_arr})
+            _ = type(
+                self.graph_name,
+                (BaseGraph,),
+                {"_edgeDefinitions": edge_def_arr},
+            )
             self.graph: BaseGraph = self.database.createGraph(self.graph_name)
 
         self.graph.__class__ = BaseGraph
@@ -76,7 +82,10 @@ class Component(object):
             )
 
     def get_document(
-        self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None
+        self,
+        collectionName: str,
+        data: "dict[str, Any]",
+        alt_key: "str | []" = None,
     ) -> "Optional[Document]":
         """Gets the node if it exists.
         In case alt_key is provided, it queries the node based on the alt_key keys and values in the data dict.
@@ -101,9 +110,15 @@ class Component(object):
             if type(alt_key) == str:
                 alt_key = [alt_key]
 
-            if alt_key is None and "_key" in data.keys() and data["_key"] in coll:
+            if (
+                alt_key is None
+                and "_key" in data.keys()
+                and data["_key"] in coll
+            ):
                 node: Document = coll.fetchDocument(data["_key"])
-            elif alt_key is not None and all(x in data.keys() for x in alt_key):
+            elif alt_key is not None and all(
+                x in data.keys() for x in alt_key
+            ):
                 coll.ensureHashIndex(alt_key, unique=True)
 
                 query = {k: v for k, v in data.items() if k in alt_key}
@@ -131,7 +146,10 @@ class Component(object):
         return node
 
     def upsert_node(
-        self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None
+        self,
+        collectionName: str,
+        data: "dict[str, Any]",
+        alt_key: "str | []" = None,
     ) -> Document:
         """Upsert an item in a collection based on a _key or any other property
 

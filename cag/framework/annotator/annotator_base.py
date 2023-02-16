@@ -61,7 +61,9 @@ class GenericAnnotator(ABC, Component):
                 RETURN dp
             """
             return self.database.AQLQuery(
-                query_modified, bindVars={"params": self.params}, **self.fetch_args
+                query_modified,
+                bindVars={"params": self.params},
+                **self.fetch_args,
             )
         else:
             return self.database.AQLQuery(self.query, **self.fetch_args)
@@ -70,7 +72,10 @@ class GenericAnnotator(ABC, Component):
         return self.upsert_node(doc.collection.name, doc.getStore())
 
     def upsert_node(
-        self, collectionName: str, data: "dict[str, Any]", alt_key: "str | []" = None
+        self,
+        collectionName: str,
+        data: "dict[str, Any]",
+        alt_key: "str | []" = None,
     ) -> Document:
         data[self.annotator_fieldname] = self.params
         return super().upsert_node(collectionName, data, alt_key)

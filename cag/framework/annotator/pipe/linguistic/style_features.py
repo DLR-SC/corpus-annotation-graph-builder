@@ -24,7 +24,9 @@ class EmpathExtended(Empath):
     def __init__(self):
         super().__init__()
 
-    def analyze(self, doc, categories=None, tokenizer="default", normalize=False):
+    def analyze(
+        self, doc, categories=None, tokenizer="default", normalize=False
+    ):
         if isinstance(doc, list):
             doc = "\n".join(doc)
         if tokenizer == "default":
@@ -85,13 +87,19 @@ def empath_component_function(doc: Doc):
 
     empath_caregories = [k for k, v in empath_dic.items() if v > 0.0]
     doc._.set(
-        col_count, {k: v for k, v in empath_dic.items() if k in empath_caregories}
+        col_count,
+        {k: v for k, v in empath_dic.items() if k in empath_caregories},
     )
-    doc._.set(col_ratio, {k: v for k, v in ratios.items() if k in empath_caregories})
     doc._.set(
-        col_position, {k: v for k, v in positions.items() if k in empath_caregories}
+        col_ratio, {k: v for k, v in ratios.items() if k in empath_caregories}
     )
-    doc._.set(col_words, {k: v for k, v in words.items() if k in empath_caregories})
+    doc._.set(
+        col_position,
+        {k: v for k, v in positions.items() if k in empath_caregories},
+    )
+    doc._.set(
+        col_words, {k: v for k, v in words.items() if k in empath_caregories}
+    )
 
     return doc
 
@@ -116,7 +124,9 @@ def mpqa_counter_function(doc):
     set_extension_("mpqa_token_ratio", default=0.0)
     set_extension_("count_mpqa_args", default=0)
 
-    doc._.mpqa_token_ratio = round(float(total_arg_words) / float(doc.__len__()), 3)
+    doc._.mpqa_token_ratio = round(
+        float(total_arg_words) / float(doc.__len__()), 3
+    )
     doc._.count_mpqa_args = len(arguments)
 
     return doc

@@ -1,9 +1,31 @@
+from typing import ClassVar
 from pyArango.document import Document
 import pyArango
 from cag.framework.annotator.element.orchestrator import PipeOrchestrator
 
 
 class NamedEntityPipeOrchestrator(PipeOrchestrator):
+    _NER_TYPES_: ClassVar = [
+        # "CARDINAL",
+        # "DATE",
+        "EVENT",
+        "FAC",
+        "GPE",
+        "LANGUAGE",
+        "LAW",
+        "LOC",
+        # "MONEY",
+        "NORP",
+        # "ORDINAL",
+        "ORG",
+        # "PERCENT",
+        "PERSON",
+        "PRODUCT",
+        # "QUANTITY",
+        # "TIME",
+        "WORK_OF_ART",
+    ]
+
     def create_node(self, ner_txt, ner_type) -> pyArango.document.Document:
         data = {"name": ner_txt, "type": ner_type}
         return self.upsert_node(self.node_name, data, alt_key=["name", "type"])
@@ -37,9 +59,10 @@ class NamedEntityPipeOrchestrator(PipeOrchestrator):
             for ent in doc.ents:
                 ner_txt = ent.text
                 ner_type = ent.label_
-                ner_node: Document = self.create_node(ner_txt, ner_type)
-                text_node: Document = self.get_document(
-                    self.annotated_node, {"_key": text_key}
-                )
-                _: Document = self.create_edge(text_node, ner_node, ent)
+                if ner_type in NamedEntityPipeOrchestrator._NER_TYPES_:
+                    ner_node: Document = self.create_node(ner_txt, ner_type)
+                    text_node: Document = self.get_document(
+                        self.annotated_node, {"_key": text_key}
+                    )
+                    _: Document = self.create_edge(text_node, ner_node, ent)
         return None

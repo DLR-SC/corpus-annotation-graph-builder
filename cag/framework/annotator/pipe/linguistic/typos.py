@@ -1,6 +1,10 @@
 from spacy.language import Language
 from spacy.tokens import Span, Doc
-from transformers import AutoConfig, AutoTokenizer, AutoModelForTokenClassification
+from transformers import (
+    AutoConfig,
+    AutoTokenizer,
+    AutoModelForTokenClassification,
+)
 from transformers import pipeline
 from transformers.utils import logging
 
@@ -16,7 +20,8 @@ class TypoFactory:
         model_name_or_path = "m3hrdadfi/typo-detector-distilbert-en"
         tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
         self.model = AutoModelForTokenClassification.from_pretrained(
-            model_name_or_path, config=AutoConfig.from_pretrained(model_name_or_path)
+            model_name_or_path,
+            config=AutoConfig.from_pretrained(model_name_or_path),
         )
         self.transformer_nlp = pipeline(
             "token-classification",
@@ -35,7 +40,9 @@ class TypoFactory:
         all_typos = []
         for sentence in doc.sents:
             txt = sentence.text
-            typos = [txt[r["start"] : r["end"]] for r in self.transformer_nlp(txt)]
+            typos = [
+                txt[r["start"] : r["end"]] for r in self.transformer_nlp(txt)
+            ]
             all_typos.extend(typos)
             sentence._.set("typos", {"count": len(typos), "words": typos})
         doc._.set(

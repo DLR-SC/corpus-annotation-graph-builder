@@ -12,14 +12,12 @@ class MpqaPipeOrchestrator(PipeOrchestrator):
     def create_edge(
         self, _from: Document, _to: Document, mpqa_attrs
     ) -> Document:
-
         return self.upsert_edge(self.edge_name, _from, _to, mpqa_attrs)
 
     def save_annotations(self, annotated_texts: list) -> pd.DataFrame:
         out_arr = []
 
         for doc, context in annotated_texts:
-
             text_key = context["_key"]
 
             text_node: Document = self.get_document(

@@ -9,7 +9,9 @@ from pyArango.collection import Collection
 
 
 class AnyAnnotator(GenericAnnotator):
-    def __init__(self, conf: Config, params={"mode": "run-1"}, filter_annotatable=True):
+    def __init__(
+        self, conf: Config, params={"mode": "run-1"}, filter_annotatable=True
+    ):
         super().__init__(
             query=f"""FOR dp IN {AnyGraphCreator._ANY_DATASET_NODE_NAME}
         RETURN dp

@@ -34,11 +34,15 @@ class Config:
     def __connect(self):
         # https://stackoverflow.com/questions/71838934/arangodb-read-timed-out-read-timeout-60
         class ArangoHTTPClient(DefaultHTTPClient):
-            REQUEST_TIMEOUT = self.timeout  # Set the timeout you want in seconds here
+            REQUEST_TIMEOUT = (
+                self.timeout
+            )  # Set the timeout you want in seconds here
 
         self.db: Database = None
         self.__connection = Connection(self.url, self.user, self.password)
-        self.arango_client = ArangoClient(self.url, http_client=ArangoHTTPClient())
+        self.arango_client = ArangoClient(
+            self.url, http_client=ArangoHTTPClient()
+        )
         if self.__connection.hasDatabase(self.database):
             self.db = self.__connection[self.database]
         else:
@@ -86,7 +90,13 @@ def configuration(
         if global_conf is not None:
             return global_conf
     conf = Config(
-        url, user, password, database, graph, autoconnect=connect, timeout=timeout
+        url,
+        user,
+        password,
+        database,
+        graph,
+        autoconnect=connect,
+        timeout=timeout,
     )
     if use_global_conf:
         global_conf = conf

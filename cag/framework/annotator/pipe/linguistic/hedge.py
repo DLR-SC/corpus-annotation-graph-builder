@@ -10,7 +10,6 @@ from nlpaf.util.timer import Timer
 
 @Language.factory("hedge_component")
 class HedgeFactory:
-
     _METADATA_: ClassVar = "Hedge jeniakim/hedgehog HuggingFace"
 
     def __init__(self, nlp: Language, name: str):
