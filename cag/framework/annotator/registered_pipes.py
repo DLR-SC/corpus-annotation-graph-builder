@@ -4,7 +4,7 @@ from typing import ClassVar
 _dict = {}
 
 
-########## Dictionary Keys ##########
+# Dictionary Keys #
 @dataclasses.dataclass
 class PipeConfigKeys:
     _orchestrator_class: ClassVar = "orchestrator_class"
@@ -24,19 +24,23 @@ class PipeConfigKeys:
 
 
 _dict["NamedEntityPipeOrchestrator"] = {
-    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.ner_orchestrator.NamedEntityPipeOrchestrator",
+    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance."
+    "ner_orchestrator.NamedEntityPipeOrchestrator",
     PipeConfigKeys._pipe_id_or_func: "ner",  # id in case of space, function name otherwise
     PipeConfigKeys._pipe_path: "",  # leave empty if the pipe is a spacy native pipe, otherwise provide the path of where the pipe_id_or_func exists
     PipeConfigKeys._level: "node",  # node or set
     PipeConfigKeys._data_type: "text",  # for now we support text - later url, image
     PipeConfigKeys._annotated_node_name: "TextNode",
-    PipeConfigKeys._node_class: "cag.framework.annotator.element.graph_elements.NamedEntityAnnotationNode",
-    PipeConfigKeys._edge_class: "cag.framework.annotator.element.graph_elements.HasNERAnnotation",
+    PipeConfigKeys._node_class: "cag.framework.annotator.element."
+    "graph_elements.NamedEntityAnnotationNode",
+    PipeConfigKeys._edge_class: "cag.framework.annotator.element."
+    "graph_elements.HasNERAnnotation",
 }
 
 
 _dict["EmpathPipeOrchestrator"] = {
-    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.empath_orchestrator.EmpathPipeOrchestrator",
+    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance."
+    "empath_orchestrator.EmpathPipeOrchestrator",
     PipeConfigKeys._pipe_id_or_func: "empath_component",  # id in case of space, function name otherwise
     PipeConfigKeys._pipe_path: "cag.framework.annotator.pipe.linguistic.empath",  # leave empty if the pipe is a spacy native pipe, otherwise provide the path of where the pipe_id_or_func exists
     PipeConfigKeys._level: "node",  # node or set

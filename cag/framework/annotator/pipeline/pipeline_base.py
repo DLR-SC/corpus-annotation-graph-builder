@@ -1,12 +1,6 @@
 from queue import Queue
 from abc import ABC, abstractmethod
 from typing import ClassVar
-
-import dataclasses
-from spacy import Language
-
-from typing import ClassVar
-
 import dataclasses
 from spacy import Language
 
@@ -53,7 +47,8 @@ class Pipeline(ABC):
         out_path=None,
     ):
         """
-        The Pipeline class is responsible for taking a set of nodes as input, annotating them and saving them into
+        The Pipeline class is responsible for taking a set of nodes as input,
+         annotating them and saving them into
         the database.
 
         """
@@ -89,9 +84,9 @@ class Pipeline(ABC):
     def init_and_run(self) -> list:
         pass
 
-    ############################################
-    #####      MAIN. ANNOTATE and SAVE     #####
-    ############################################
+    ####################################
+    #      MAIN. ANNOTATE and SAVE     #
+    ####################################
     def init_pipe_stack(self):
         self.pipe_stacks = self.get_pipe_stacks()
         self.stack = []
@@ -131,9 +126,9 @@ class Pipeline(ABC):
             if s["type"] == "spacy":
                 if self.spacy_n_processors != 1:
                     logger.info(
-                        f"In case you are using transformer based pipe, "
+                        "In case you are using transformer based pipe, "
                         "set *spacy_n_processors* to 1 instead of"
-                        " {self.spacy_n_processors } or else the nlp.pipe"
+                        f" {self.spacy_n_processors } or else the nlp.pipe"
                         " will freeze"
                     )
                 out = list(
@@ -196,11 +191,13 @@ class Pipeline(ABC):
     def set_spacy_language_model(self, language_package="en_core_web_sm"):
         self.spacy_language_model = language_package
         self.load_spacy_model()
-        # English pipeline optimized for CPU. Components: tok2vec, tagger, parser, senter, ner, attribute_ruler, lemmatizer:
+        # English pipeline optimized for CPU. Components: tok2vec, tagger,
+        #     parser, senter, ner, attribute_ruler, lemmatizer:
         #   en_core_web_sm (12MB)
         #   en_core_web_md (31MB)
         #   en_core_web_lg (382MB)
-        # English transformer pipeline (roberta-base). Components: transformer, tagger, parser, ner, attribute_ruler, lemmatizer.
+        # English transformer pipeline (roberta-base). Components: transformer,
+        # tagger, parser, ner, attribute_ruler, lemmatizer.
         #   en_core_web_trf (438)
 
     def add_annotation_pipe(
@@ -212,8 +209,10 @@ class Pipeline(ABC):
         is_native: bool = False,
     ):
         """
-        The add_annotation_pipe adds a pipe to the pipeline. the pipes are first in first out (FIFO).
-        The corrisponding Annotator class (given from the toml)  to this pipe is initiated and saved, to be used
+        The add_annotation_pipe adds a pipe to the pipeline.
+        The pipes are first in first out (FIFO).
+        The corrisponding Annotator class (given from the registered pipes)
+        to this pipe is initiated and saved, to be used
         for annotating and saving to the database.
         *annotator_instances*
         *pipe_id_or_func*
