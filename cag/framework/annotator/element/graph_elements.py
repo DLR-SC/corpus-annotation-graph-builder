@@ -47,4 +47,6 @@ class HasAnnotation(GenericEdge):
 
     def __init__(self, database, jsonData):
         super().__init__(database, jsonData)
-        self.ensurePersistentIndex(["_from", "_to"], unique=True)  # , deduplicate=True)
+        self.ensurePersistentIndex(
+            ["_from", "_to"], unique=True
+        )  # , deduplicate=True)

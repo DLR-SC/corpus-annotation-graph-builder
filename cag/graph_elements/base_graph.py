@@ -101,10 +101,13 @@ class BaseGraph(Graph):
         data = r.json()
         if r.status_code == 201 or r.status_code == 202:
             self.definitions[relation] = EdgeDefinition(
-                relation, fromCollections=from_collections, toCollections=to_collections
+                relation,
+                fromCollections=from_collections,
+                toCollections=to_collections,
             )
             return True
 
         raise CreationError(
-            "Unable to modify edge definitions., %s" % data["errorMessage"], data
+            "Unable to modify edge definitions., %s" % data["errorMessage"],
+            data,
         )

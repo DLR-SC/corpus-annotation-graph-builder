@@ -53,8 +53,12 @@ class PipeOrchestrator(ABC, Component):
         logger.debug(f"orchestrator is validated: {errors}")
 
     def init_graph_elts(self):
-        self.node_class, annotation_node = utils.get_cls_from_path(self.node_class_path)
-        self.edge_class, relation = utils.get_cls_from_path(self.edge_class_path)
+        self.node_class, annotation_node = utils.get_cls_from_path(
+            self.node_class_path
+        )
+        self.edge_class, relation = utils.get_cls_from_path(
+            self.edge_class_path
+        )
 
         utils.load_module(".".join(self.node_class_path.split(".")[:-1]))
         utils.load_module(".".join(self.edge_class_path.split(".")[:-1]))
@@ -63,7 +67,10 @@ class PipeOrchestrator(ABC, Component):
             f"saving relation {relation} to {annotation_node} and from {self.annotated_node}"
         )
         self.graph.update_graph_structure(
-            relation, [self.annotated_node], [annotation_node], create_collections=True
+            relation,
+            [self.annotated_node],
+            [annotation_node],
+            create_collections=True,
         )
 
     def load_pipe_component(self):
@@ -94,7 +101,8 @@ class PipeOrchestrator(ABC, Component):
             error_dict["annotation_level"] = (
                 "The annotation level should have one of the following values: {} "
                 "but has the value {}".format(
-                    str(PipeOrchestrator.ANNOTATION_LEVEL), self.annotation_level
+                    str(PipeOrchestrator.ANNOTATION_LEVEL),
+                    self.annotation_level,
                 )
             )
             logger.error(error_dict["annotation_level"])
@@ -102,7 +110,9 @@ class PipeOrchestrator(ABC, Component):
         if not self.database.hasCollection(self.annotated_node):
             error_dict[
                 "annotated_node"
-            ] = "We couldnt find the *annotated_node* {}.".format(self.annotated_node)
+            ] = "We couldnt find the *annotated_node* {}.".format(
+                self.annotated_node
+            )
             logger.error(error_dict["annotated_node"])
 
         if not self.database.hasCollection(self.node_name):
@@ -129,7 +139,9 @@ class PipeOrchestrator(ABC, Component):
         pass
 
     @abstractmethod
-    def create_edge(self, _from: Document, _to: Document, **kwargs) -> Document:
+    def create_edge(
+        self, _from: Document, _to: Document, **kwargs
+    ) -> Document:
         pass
 
     @abstractmethod

@@ -32,7 +32,9 @@ class Pipeline(ABC):
     REGISTERED_PIPE_CONFIGS: ClassVar = registered_pipes._dict
 
     def _load_registered_pipes(
-        self, load_default_pipe_configs: bool = True, extended_pipe_configs: dict = None
+        self,
+        load_default_pipe_configs: bool = True,
+        extended_pipe_configs: dict = None,
     ):
         if load_default_pipe_configs:
             _copy = Pipeline.REGISTERED_PIPE_CONFIGS.copy()
@@ -114,7 +116,9 @@ class Pipeline(ABC):
                             "'pipe' name"
                         )
                     else:
-                        self.stack.append({"type": "default", "component": pipe_func})
+                        self.stack.append(
+                            {"type": "default", "component": pipe_func}
+                        )
         logger.debug(f"The stack has {len(self.stack)} component(s).")
         return self.stack
         # out = pipe_func(input)
@@ -134,7 +138,9 @@ class Pipeline(ABC):
                     )
                 out = list(
                     s["component"].pipe(
-                        input, as_tuples=True, n_process=self.spacy_n_processors
+                        input,
+                        as_tuples=True,
+                        n_process=self.spacy_n_processors,
                     )
                 )
                 input = out
@@ -153,15 +159,18 @@ class Pipeline(ABC):
             if pipe.save_output:
                 logger.info("saving annotations of {}".format(pipe))
                 if self.out_df is None:
-                    self.out_df = self.pipe_instance_dict[pipe.name].save_annotations(
-                        self.annotated_artifacts
-                    )
+                    self.out_df = self.pipe_instance_dict[
+                        pipe.name
+                    ].save_annotations(self.annotated_artifacts)
                 else:
                     _df = self.pipe_instance_dict[pipe.name].save_annotations(
                         self.annotated_artifacts
                     )
                     self.out_df = self.out_df.merge(
-                        _df, how="outer", left_on="input_id", right_on="input_id"
+                        _df,
+                        how="outer",
+                        left_on="input_id",
+                        right_on="input_id",
                     )
         if self.save_output:
             logger.debug("Saving to parquet..")
@@ -209,7 +218,9 @@ class Pipeline(ABC):
         *pipeline*
         """
         pipe = (
-            pipe if pipe is not None else Pipe(name, save_output, is_spacy, is_native)
+            pipe
+            if pipe is not None
+            else Pipe(name, save_output, is_spacy, is_native)
         )
 
         if is_native and is_spacy and not save_output:
@@ -255,13 +266,17 @@ class Pipeline(ABC):
                 task_collection.append(current)
             else:
                 stack_type = "spacy" if previous_task_is_spacy else "default"
-                pipe_stack.put({"stack_type": stack_type, "stack": task_collection})
+                pipe_stack.put(
+                    {"stack_type": stack_type, "stack": task_collection}
+                )
                 task_collection = [current]
             previous_task_is_spacy = current_is_spacy
 
         if len(task_collection) > 0:
             stack_type = "spacy" if previous_task_is_spacy else "default"
-            pipe_stack.put({"stack_type": stack_type, "stack": task_collection})
+            pipe_stack.put(
+                {"stack_type": stack_type, "stack": task_collection}
+            )
 
         return pipe_stack
 

@@ -12,7 +12,9 @@ class TestGCUpserts:
             AnyGraphCreator._ANY_DATASET_NODE_NAME,
             {"_key": "test_1", "name": "before_upsert"},
         )
-        vert = config.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME]["test_1"]
+        vert = config.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME][
+            "test_1"
+        ]
         assert vert is not None
         assert vert["name"] == "before_upsert"
 
@@ -21,7 +23,9 @@ class TestGCUpserts:
             {"_key": "test_1", "name": "after_upsert"},
         )
         # other connection, should still be updated
-        vert = config_2.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME]["test_1"]
+        vert = config_2.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME][
+            "test_1"
+        ]
         assert vert is not None
         assert vert["name"] == "after_upsert"
 
@@ -30,7 +34,9 @@ class TestGCUpserts:
             AnyGraphCreator._ANY_DATASET_NODE_NAME,
             {"_key": "test_1", "name": "before_insert"},
         )
-        vert = config.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME]["test_1"]
+        vert = config.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME][
+            "test_1"
+        ]
         assert vert is not None
         assert vert["name"] == "before_insert"
 
@@ -39,10 +45,14 @@ class TestGCUpserts:
             {"_key": "test_2", "name": "after_insert"},
         )
         # other connection, should still be updated
-        vert = config_2.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME]["test_1"]
+        vert = config_2.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME][
+            "test_1"
+        ]
         assert vert is not None
         assert vert["name"] == "before_insert"
-        vert = config_2.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME]["test_2"]
+        vert = config_2.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME][
+            "test_2"
+        ]
         assert vert is not None
         assert vert["name"] == "after_insert"
 
@@ -54,7 +64,9 @@ class TestGCUpserts:
             AnyGraphCreator._ANY_DATASET_NODE_NAME,
             {"_key": "test_1", "key_alt": "test_alt", "name": "before_upsert"},
         )
-        vert = config.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME]["test_1"]
+        vert = config.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME][
+            "test_1"
+        ]
         assert vert is not None
         assert vert["name"] == "before_upsert"
         gc.upsert_node(
@@ -63,6 +75,8 @@ class TestGCUpserts:
             alt_key="key_alt",
         )
         # other connection, should still be updated (on the alt key)
-        vert = config_2.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME]["test_1"]
+        vert = config_2.arango_db[AnyGraphCreator._ANY_DATASET_NODE_NAME][
+            "test_1"
+        ]
         assert vert is not None
         assert vert["name"] == "after_upsert"

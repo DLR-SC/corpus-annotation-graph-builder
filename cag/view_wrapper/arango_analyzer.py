@@ -27,7 +27,9 @@ class ArangoAnalyzer:
     ###################
     name: str
     type: str = "identity"
-    features: List = field(default_factory=lambda: ["frequency", "norm", "position"])
+    features: List = field(
+        default_factory=lambda: ["frequency", "norm", "position"]
+    )
 
     # Properties - loaded based on type
     # TEXT
@@ -45,7 +47,9 @@ class ArangoAnalyzer:
     preserve_original: bool = False
     start_marker: str = ""
     end_marker: str = ""
-    stem_type: str = field(default_factory=lambda: ArangoAnalyzer._STEM_TYPE_BINARY)
+    stem_type: str = field(
+        default_factory=lambda: ArangoAnalyzer._STEM_TYPE_BINARY
+    )
 
     #################
     ### CONSTANTS ###
@@ -69,7 +73,14 @@ class ArangoAnalyzer:
 
     FIELDS: ClassVar = {
         _TYPE_IDENTITY: [],
-        _TYPE_TEXT: ["locale", "case", "stopwords", "accent", "stemming", "edge_ngram"],
+        _TYPE_TEXT: [
+            "locale",
+            "case",
+            "stopwords",
+            "accent",
+            "stemming",
+            "edge_ngram",
+        ],
         _TYPE_NGRAM: [
             "min",
             "max",
@@ -137,7 +148,9 @@ class ArangoAnalyzer:
         return result
 
     def summary(self) -> dict:
-        keep = ArangoAnalyzer._MANDATORY_FIELDS + ArangoAnalyzer.FIELDS[self.type]
+        keep = (
+            ArangoAnalyzer._MANDATORY_FIELDS + ArangoAnalyzer.FIELDS[self.type]
+        )
         result = utils.camel_nest_dict(utils.filter_dic(self, keep))
         return result
 
@@ -179,7 +192,9 @@ class AnalyzerList:
                 invalid_analyzer.append(analyzer)
         return invalid_analyzer
 
-    def filter_invalid_analyzers(self, database: StandardDatabase, verbose: int = 0):
+    def filter_invalid_analyzers(
+        self, database: StandardDatabase, verbose: int = 0
+    ):
         invalid_analyzer = self.get_invalid_analyzers(database)
         if verbose == 1:
             if len(invalid_analyzer) > 0:
@@ -187,7 +202,9 @@ class AnalyzerList:
                     "Filtered out the following invalid analyzers: "
                     + str(invalid_analyzer)
                 )
-        self.analyzerList = [a for a in self.analyzerList if a not in invalid_analyzer]
+        self.analyzerList = [
+            a for a in self.analyzerList if a not in invalid_analyzer
+        ]
 
     def add_analyzer(self, analyzer_name: str, force_add=False):
         """

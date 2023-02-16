@@ -12,7 +12,9 @@ def run_sample(config):
     # Create analyzer
     analyzer = ArangoAnalyzer("analyzer_sample")
     analyzer.set_stopwords(
-        language="english", custom_stopwords=["stop", "word"], include_default=False
+        language="english",
+        custom_stopwords=["stop", "word"],
+        include_default=False,
     )
     analyzer.type = ArangoAnalyzer._TYPE_TEXT
 
@@ -25,7 +27,8 @@ def run_sample(config):
 
     # A link can have 0..* fields
     field = Field(
-        "text", AnalyzerList(["text_en", "invalid_analyzer", "analyzer_sample"])
+        "text",
+        AnalyzerList(["text_en", "invalid_analyzer", "analyzer_sample"]),
     )  # text_en is a predifined analyzer from arango
     logger.info(field.analyzers)
     field.analyzers.filter_invalid_analyzers(
