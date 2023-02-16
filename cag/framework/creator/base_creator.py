@@ -6,26 +6,47 @@ from cag.utils.config import Config
 
 from cag.framework.component import Component
 from datetime import datetime
+from cag.graph_elements.nodes import (
+    TextNode,
+    WebResource,
+    Author,
+    Corpus,
+    ImageNode,
+    DataNode,
+    KeyTerm,
+    AbstractNode,
+)
+from cag.graph_elements.relations import (
+    BelongsTo,
+    RefersTo,
+    HasAuthor,
+    PublishedAt,
+    HasAbstract,
+    HasTerm,
+    KeyTermRelation,
+)
 
 
 class GraphCreatorBase(ABC, Component):
-    #### Constant NODE and Edge NAMES ####
-    _TEXT_NODE_NAME = "TextNode"
-    _WEB_RESOURCE_NODE_NAME = "WebResource"
-    _AUTHOR_NODE_NAME = "Author"
-    _CORPUS_NODE_NAME = "Corpus"
-    _IMAGE_NODE_NAME = "ImageNode"
-    _DATA_NODE_NAME = "DataNode"
-    _KEY_TERM_NODE_NAME = "KeyTerm"
-    _ABSTRACT_NODE_NAME = "AbstractNode"
 
-    _BELONGS_TO_RELATION_NAME = "BelongsTo"
-    _REFERS_TO_RELATION_NAME = "RefersTo"
-    _HAS_AUTHOR_RELATION_NAME = "HasAuthor"
-    _PUBLISHED_AT_RELATION_NAME = "PublishedAt"
-    _EDGE_ABSTRACT_TEXT = "HasAbstract"
-    _EDGE_TEXT_TERM = "HasTerm"
-    _EDGE_KEYTERM_RELATION = "KeyTermRelation"
+    # constant NODE and Edge NAMES ####
+    _TEXT_NODE_NAME = TextNode.__name__
+    _WEB_RESOURCE_NODE_NAME = WebResource.__name__
+    _AUTHOR_NODE_NAME = Author.__name__
+    _CORPUS_NODE_NAME = Corpus.__name__
+    _IMAGE_NODE_NAME = ImageNode.__name__
+    _DATA_NODE_NAME = DataNode.__name__
+    _KEY_TERM_NODE_NAME = KeyTerm.__name__
+    _ABSTRACT_NODE_NAME = AbstractNode.__name__
+
+    _BELONGS_TO_RELATION_NAME = BelongsTo.__name__
+    _REFERS_TO_RELATION_NAME = RefersTo.__name__
+    _HAS_AUTHOR_RELATION_NAME = HasAuthor.__name__
+    _PUBLISHED_AT_RELATION_NAME = PublishedAt.__name__
+    _EDGE_ABSTRACT_TEXT = HasAbstract.__name__
+    _EDGE_TEXT_TERM = HasTerm.__name__
+    _EDGE_KEYTERM_RELATION = KeyTermRelation.__name__
+
 
     _COMPONENT_NAME = "Graph Creator"
     _base_edge_definitions = [

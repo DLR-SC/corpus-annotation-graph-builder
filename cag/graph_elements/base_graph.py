@@ -23,7 +23,7 @@ class BaseGraph(Graph):
         for col in collections:
             if not self.database.hasCollection(col):
                 self.database.createCollection(col)
-                # self.database.reloadCollections()
+
 
     def update_graph_structure(
         self,
@@ -118,18 +118,10 @@ class BaseGraph(Graph):
                 toCollections=to_collections,
             )
             self.database.reloadCollections()
+
             return True
 
         raise CreationError(
             "Unable to modify edge definitions., %s" % data["errorMessage"],
             data,
         )
-
-    def get_collection(self, collection_name):
-        response = self.connection.session.get(
-            f"/_api/collection/{collection_name}",
-        )
-        if response.status != 3:
-            logger.debug("Collection failed to be retrieved")
-        else:
-            logger.debug(f"collection {collection_name} retrieved")

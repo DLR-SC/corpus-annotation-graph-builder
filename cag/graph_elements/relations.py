@@ -36,3 +36,7 @@ class HasTerm(GenericEdge):
 
 class KeyTermRelation(GenericEdge):
     _fields = GenericEdge._fields
+
+
+class PublishedAt(GenericEdge):
+    _fields = GenericEdge._fields

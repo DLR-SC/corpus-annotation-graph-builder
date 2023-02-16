@@ -21,9 +21,11 @@ class EdgeNGram:
 
 @dataclass
 class ArangoAnalyzer:
-    #####################
-    ### Instance Vars ###
-    #####################
+
+    ###################
+    # Instance Vars ###
+    ###################
+    
     name: str
     type: str = "identity"
     features: List = field(
@@ -38,7 +40,6 @@ class ArangoAnalyzer:
     accent: bool = False  # text,  norm
     stemming: bool = True
     edge_ngram: EdgeNGram = None
-
     delimiter: str = ","
 
     # type ngram
@@ -164,11 +165,10 @@ class ArangoAnalyzer:
                 )
             )
             logger.error(
-                "You can delete it first using database.delete_analyzer({}) and then create".format(
+                "You can delete it first using *database.delete_analyzer({})* and that create".format(
                     self.name
                 )
             )
-
         except AnalyzerGetError:
             result = database.create_analyzer(
                 self.name, self.type, self.get_properties(), self.features
