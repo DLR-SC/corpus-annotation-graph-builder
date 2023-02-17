@@ -93,5 +93,5 @@ def load_sub_packages(package):
         package.__path__, prefix
     ):
         # print(f"Found submodule {modname} (is a package: {ispkg})" )
-        module = load_module(modname)
+        _ = load_module(modname)
         # print (f"Imported {module}")
