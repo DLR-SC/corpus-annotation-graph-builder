@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  pytest:
+    build: .
+    command: pytest --verbose -s tests/test_graph_creator
+    volumes:
+      - '.:/app'
+    networks:
+      - arango-net
+    depends_on:
+      - arangodb
+  arangodb:
+    image: arangodb
+    environment:
+      ARANGO_NO_AUTH: 1
+    networks:
+      - arango-net
+networks:
+  arango-net:
