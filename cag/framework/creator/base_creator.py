@@ -73,6 +73,7 @@ class GraphCreatorBase(ABC, Component):
         conf: Config = None,
         initialize=False,
         load_generic_graph=True,
+        **kwargs
     ):
         """Creates a graph and provides some general helper methods
 
@@ -83,6 +84,8 @@ class GraphCreatorBase(ABC, Component):
         :param initialize: whether to initaialze the DB using init_graph(), defaults to False
         :type initialize: bool, optional
         :type load_generic_graph: bool, optional whether to load the predefined nodes and relations
+        :param kwargs: Any user supplied arguments, which the user can access throughout using this class
+        :type kwargs: object
         """
         if not load_generic_graph:
             self._base_edge_definitions = []
