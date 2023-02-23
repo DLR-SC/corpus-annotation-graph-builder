@@ -2,7 +2,7 @@ version: "3.3"
 services:
   pytest:
     build: .
-    command: pytest --verbose -s tests/test_graph_creator
+    command: pytest --verbose -s tests
     volumes:
       - '.:/app'
     networks:
