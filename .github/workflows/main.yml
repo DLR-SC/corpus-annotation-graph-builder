@@ -9,7 +9,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     services:
-      arangodb:
+      arango:
         image: arangodb/arangodb:latest
         ports:
           - 8529:8529
@@ -35,8 +35,16 @@ jobs:
           pip install -r requirements.txt
       - name: Wait for ArangoDB to start
         run: |
-          while ! curl -sSf http://arangodb:8529/_api/version; do
+          while ! curl -sSf http://$(ARANGO_HOST):$(ARANGO_PORT)/_api/version; do
             sleep 1
           done
+        env:
+          ARANGO_HOST: arango
+          # The default Redis port
+          ARANGO_PORT: 8529
       - name: Run Pytest
         run: pytest tests/
+        env:
+          ARANGO_HOST: arango
+          # The default Redis port
+          ARANGO_PORT: 8529
