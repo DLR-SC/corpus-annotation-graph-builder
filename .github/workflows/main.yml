@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install ArangoDB
-        uses: docker://arangodb/arangodb:3.7.13
+        uses: docker://arangodb/arangodb:latest
         with:
           args: >
             --name my-arangodb-container
