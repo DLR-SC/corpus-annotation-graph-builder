@@ -1,9 +1,9 @@
 from cag.utils.config import Config
 
 config = Config(
-    url="http://arangodb:8529",
-    user="root",
-    password="secret",
+    url="http://arangodb_testserver:8529",
+    user="",
+    password="",
     graph="SampleGraph",
     database="test"
 )
