@@ -8,21 +8,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    container: ubuntu
+    services:
+      arango:
+        image: arangodb/arangodb:latest
+        ports:
+          - 8529:8529
+        env:
+          ARANGO_NO_AUTH: 1
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Install ArangoDB
-        uses: docker://arangodb/arangodb:latest
-        with:
-          args: >
-            --name my-arangodb-container
-            -p 8529:8529
-            -e ARANGO_NO_AUTH=1
-      - name: Wait for ArangoDB to start
-        run: |
-          while ! curl -sSf http://localhost:8529/_api/version; do
-            sleep 1
-          done
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -31,5 +27,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+      - name: Wait for ArangoDB to start
+        run: |
+          while ! curl -sSf http://$ARANGO_HOST:$ARANGO_PORT/_api/version; do
+            sleep 1
+          done
+        env:
+          ARANGO_HOST: arango
+          ARANGO_PORT: 8529
       - name: Run Pytest
         run: pytest tests/
+        env:
+          ARANGO_HOST: arango
+          ARANGO_PORT: 8529
