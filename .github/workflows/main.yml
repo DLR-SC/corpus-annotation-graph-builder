@@ -17,16 +17,6 @@ jobs:
         env:
           ARANGO_NO_AUTH: 1
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
       - name: Wait for ArangoDB to start
         run: |
           while ! curl -sSf http://$ARANGO_HOST:$ARANGO_PORT/_api/version; do
@@ -35,6 +25,17 @@ jobs:
         env:
           ARANGO_HOST: arango
           ARANGO_PORT: 8529
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install ./
+
       - name: Run Pytest
         run: pytest tests/
         env:
