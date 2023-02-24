@@ -17,7 +17,7 @@ jobs:
         env:
           ARANGO_NO_AUTH: 1
     steps:
-      - run: apt-get update; apt-get install curl -y
+      - run: apt-get update; apt-get install curl python3-pip -y
       - name: Wait for ArangoDB to start
         run: |
           while ! curl -sSf http://$ARANGO_HOST:$ARANGO_PORT/_api/version; do
