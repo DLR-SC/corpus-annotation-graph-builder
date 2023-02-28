@@ -39,7 +39,7 @@ dependencies = ['dataclasses>=0.6',
 requires-python = ">=3.8"
 
 [project.optional-dependencies]
-dev = [ "pip-tools", "pytest"]
+dev = [ "pip-tools", "pytest", "sphinx"]
 
 [project.urls]
 Homepage = 'https://github.com/DLR-SC/corpus-annotation-graph-builder'

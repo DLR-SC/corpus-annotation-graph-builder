@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Arango Views &#8212; Corpus Annotation Graph (CAG) 1.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Analyzers" href="3_analyzers.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="3_analyzers.html" title="Analyzers"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Corpus Annotation Graph (CAG) 1.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Arango Views</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="arango-views">
+<h1>Arango Views<a class="headerlink" href="#arango-views" title="Permalink to this heading">¶</a></h1>
+<p>The arango view wrapper (<code class="xref py py-mod docutils literal notranslate"><span class="pre">cag.view_wrapper</span></code>) is a tool to simplify the creation of Arango Analyzers. This tool can be used by the <em>Analyzer</em> component mentioned above. This wrapper has classes that facilitate the creation of arango view and all its properties and components.</p>
+<p>The full example can be found <a class="reference external" href="examples/view_creation_example.py">in the examples folder</a></p>
+<section id="create-an-arango-analyzer">
+<h2>Create an arango analyzer<a class="headerlink" href="#create-an-arango-analyzer" title="Permalink to this heading">¶</a></h2>
+<blockquote class="epigraph">
+<div><p>The valid attributes/values for the properties depend on the type used. For example, the delimiter type needs to know the desired delimiting character(s), whereas the text type takes a locale, stop-words, and more.</p>
+<p class="attribution">—<a class="reference external" href="https://www.arangodb.com/docs/stable/analyzer.html">source</a></p>
+</div></blockquote>
+<p>The analyzer class loads the required attributes of an analyzer based on its type. The supported types are:</p>
+<ul class="simple">
+<li><p>_TYPE_IDENTITY -&gt; “identity”, <strong>attributes to set:</strong> None</p></li>
+<li><p>_TYPE_TEXT -&gt; “text”, <strong>attributes to set:</strong> ‘locale’, ‘case’, ‘stopwords’, ‘accent’, ‘stemming’, ‘edge_ngram’</p></li>
+<li><p>_TYPE_NGRAM -&gt; “ngram”, <strong>attributes to set:</strong>  ‘min’, ‘max’, ‘preserve_original’, ‘start_marker’, ‘end_marker’, ‘stem_type’</p></li>
+<li><p>_TYPE_STEM -&gt; “stem”, <strong>attributes to set:</strong> locale</p></li>
+<li><p>_TYPE_DELIMITE -&gt; “delimiter”, <strong>attributes to set:</strong> delimiter</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cag.view_wrapper.arango_analyzer</span> <span class="kn">import</span> <span class="n">ArangoAnalyzer</span><span class="p">,</span> <span class="n">EdgeNGram</span>
+
+<span class="n">analyzer</span> <span class="o">=</span> <span class="n">ArangoAnalyzer</span><span class="p">(</span><span class="s2">&quot;sample_analyzer&quot;</span><span class="p">)</span>
+<span class="n">analyzer</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ArangoAnalyzer</span><span class="o">.</span><span class="n">_TYPE_TEXT</span>
+<span class="n">analyzer</span><span class="o">.</span><span class="n">set_stopwords</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="s2">&quot;english&quot;</span><span class="p">,</span> <span class="n">custom_stopwords</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">],</span> <span class="n">include_default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">analyzer</span><span class="o">.</span><span class="n">get_type_fields</span><span class="p">())</span>
+<span class="c1">## Returns: [&#39;locale&#39;, &#39;case&#39;, &#39;stopwords&#39;, &#39;accent&#39;, &#39;stemming&#39;, &#39;edge_ngram&#39;]</span>
+
+<span class="n">analyzer</span><span class="o">.</span><span class="n">set_features</span><span class="p">(</span><span class="n">frequency</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># by defaults, all the features are set to True</span>
+<span class="n">analyzer</span><span class="o">.</span><span class="n">set_edge_ngrams</span><span class="p">(</span><span class="n">EdgeNGram</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                            <span class="nb">max</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                            <span class="n">preserve_original</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">analyzer</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The summary returns the dictionary used to create the Analyzer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;sample_analyzer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Frequency&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;norm&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;position&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;locale&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;case&quot;</span><span class="p">:</span> <span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;stopwords&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;hello&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;accent&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;stemming&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;edgeNgram&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;preserveOriginal&quot;</span><span class="p">:</span> <span class="kc">False</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">&quot;preserveOriginal&quot;</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The analyzer can simply be created as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">## Create</span>
+<span class="kn">from</span> <span class="nn">arango</span> <span class="kn">import</span> <span class="n">ArangoClient</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">ArangoClient</span><span class="p">()</span>
+<span class="n">database</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">db</span><span class="p">(</span><span class="s1">&#39;_System&#39;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">)</span>
+<span class="n">analyzer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-link-with-fields">
+<h2>Create a <em>link</em> with <em>fields</em><a class="headerlink" href="#create-a-link-with-fields" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create Link - a view can have 0 to * links</span>
+<span class="n">link</span> <span class="o">=</span> <span class="n">Link</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;TextNode&quot;</span><span class="p">)</span> <span class="c1"># Name of a collection in the database</span>
+<span class="n">linkAnalyzers</span> <span class="o">=</span> <span class="n">AnalyzerList</span><span class="p">([</span><span class="s2">&quot;identity&quot;</span><span class="p">])</span>
+<span class="n">link</span><span class="o">.</span><span class="n">analyzer</span> <span class="o">=</span> <span class="n">linkAnalyzers</span>
+
+<span class="c1"># A link can have 0..* fields</span>
+<span class="c1"># for the *text* field in the *textNode* collection, add the analyzer below</span>
+<span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">AnalyzerList</span><span class="p">([</span><span class="s2">&quot;text_en&quot;</span><span class="p">,</span> <span class="s2">&quot;invalid_analyzer&quot;</span><span class="p">,</span> <span class="s2">&quot;analyzer_sample&quot;</span><span class="p">]))</span> <span class="c1"># text_en is a predefined analyzer from arango</span>
+
+<span class="c1"># filters out the analyzer that are not defined in the database</span>
+<span class="n">field</span><span class="o">.</span><span class="n">analyzer</span><span class="o">.</span><span class="n">filter_invalid_analyzer</span><span class="p">(</span><span class="n">DB</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;current analyzer after filtering invalid ones: &quot;</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">analyzer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>current analyzer after filtering invalid ones:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">AnalyzerList</span><span class="p">(</span><span class="n">analyzerList</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;text_en&#39;</span><span class="p">,</span> <span class="s1">&#39;analyzer_sample&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">link</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+
+<span class="c1">## Show the dict format of all the fields in a link</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">link</span><span class="o">.</span><span class="n">get_fields_dict</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;analyzer&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;text_en&#39;</span><span class="p">,</span> <span class="s1">&#39;analyzer_sample&#39;</span><span class="p">]}}</span>
+</pre></div>
+</div>
+</section>
+<section id="create-the-view">
+<h2>Create the <em>View</em><a class="headerlink" href="#create-the-view" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">view</span> <span class="o">=</span> <span class="n">View</span><span class="p">(</span><span class="s1">&#39;sample_view&#39;</span><span class="p">,</span>
+            <span class="n">view_type</span><span class="o">=</span><span class="s2">&quot;arangosearch&quot;</span><span class="p">)</span>
+<span class="c1">## add the link (can have 0 or 1 link)</span>
+<span class="n">view</span><span class="o">.</span><span class="n">add_link</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+
+<span class="c1">## can have 0..* primary sort</span>
+<span class="n">view</span><span class="o">.</span><span class="n">add_primary_sort</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">asc</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">view</span><span class="o">.</span><span class="n">add_stored_value</span><span class="p">([</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">],</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;lz4&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Prints the *view* as a dict:&quot;</span><span class="p">,</span> <span class="n">view</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>!!! Note: The links might need a few minutes to be created and to show in ArangoDB.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;sample_view&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;viewType&quot;</span><span class="p">:</span> <span class="s2">&quot;arangosearch&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;cleanupintervalstep&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;cleanupIntervalStep&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;commitIntervalMsec&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;consolidationIntervalMsec&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;consolidationPolicy&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;tier&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;segmentsMin&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;segmentsMax&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;segmentsBytesMax&quot;</span><span class="p">:</span> <span class="mi">5368709120</span><span class="p">,</span>
+            <span class="s2">&quot;segmentsBytesFloor&quot;</span><span class="p">:</span> <span class="mi">2097152</span><span class="p">,</span>
+            <span class="s2">&quot;minScore&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;primarySortCompression&quot;</span><span class="p">:</span> <span class="s2">&quot;lz4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;writebufferIdle&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+        <span class="s2">&quot;writebufferActive&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;writebufferMaxSize&quot;</span><span class="p">:</span> <span class="mi">33554432</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;links&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;TextNode&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;analyzer&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;identity&quot;</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;analyzer&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="s2">&quot;text_en&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;analyzer_sample&quot;</span>
+                    <span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;includeAllFields&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;trackListPositions&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;inBackground&quot;</span><span class="p">:</span> <span class="kc">False</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;primarySort&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;asc&quot;</span><span class="p">:</span> <span class="kc">False</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;storedValues&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;text&quot;</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;compression&quot;</span><span class="p">:</span> <span class="s2">&quot;lz4&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;timestamp&quot;</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;compression&quot;</span><span class="p">:</span> <span class="s2">&quot;lz4&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Arango Views</a><ul>
+<li><a class="reference internal" href="#create-an-arango-analyzer">Create an arango analyzer</a></li>
+<li><a class="reference internal" href="#create-a-link-with-fields">Create a <em>link</em> with <em>fields</em></a></li>
+<li><a class="reference internal" href="#create-the-view">Create the <em>View</em></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="3_analyzers.html"
+                          title="previous chapter">Analyzers</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/4_view_management.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="3_analyzers.html" title="Analyzers"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Corpus Annotation Graph (CAG) 1.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Arango Views</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Roxanne El Baff. Tobias Hecking.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+  </body>
+</html>

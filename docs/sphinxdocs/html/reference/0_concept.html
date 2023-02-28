@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>CAG Concepts &#8212; Corpus Annotation Graph (CAG) 1.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Get Started" href="1_get_started.html" />
+    <link rel="prev" title="Welcome to Corpus Analytics Graph’s documentation!" href="../index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="1_get_started.html" title="Get Started"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Corpus Analytics Graph’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Corpus Annotation Graph (CAG) 1.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CAG Concepts</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="cag-concepts">
+<h1>CAG Concepts<a class="headerlink" href="#cag-concepts" title="Permalink to this heading">¶</a></h1>
+<p>The graph is, both, object of analysis as well as result container. This means that annotation runs evaluate the graph and enrich it with annoations.</p>
+<p>In the example below object of study (OOS) nodes are depicted as white and blue boxes and annoation nodes as grey boxes. OOS nodes are created by <a class="reference internal" href="#graph-creators"><span class="std std-ref">Graph Creators</span></a> that read raw corpus data and map it to the OOS graph. Graph builders also create some basic self-evident annotations (e.g. methods, provided keywords, categories, etc.). The OOS nodes are analysed by automatic <a class="reference internal" href="#annotator"><span class="std std-ref">annotator</span></a>, which add or update annoations to the graph.</p>
+<img alt="../_images/cag.png" src="../_images/cag.png" />
+<p>The enriched graph can be further analysed or queried by <a class="reference internal" href="#analyzer"><span class="std std-ref">Analyzers</span></a> for producing results to be presented to the end-users.</p>
+<section id="graph-creators">
+<span id="id1"></span><h2>Graph Creators<a class="headerlink" href="#graph-creators" title="Permalink to this heading">¶</a></h2>
+<p>The Graph Creators has the tools and infrastructure to allow the user to build and maintain a graph with its defined nodes. This framework defines some generic nodes and relations (a.k.a edges): <code class="xref py py-mod docutils literal notranslate"><span class="pre">cag.graph_elements.nodes</span></code>  and <code class="xref py py-mod docutils literal notranslate"><span class="pre">cag.graph_elements.relations</span></code> which should apply to most knowledge corpus.</p>
+<p>Graph creator components evaluate raw corpus data and map it to the graph by creating OOS nodes and corresponding relations.</p>
+<p><strong>Input:</strong> Raw corpus data</p>
+<p><strong>Output:</strong> Object of study (OOS) nodes, self-evident annotations and relations in ArangoDB</p>
+<p><strong>Metadata stored in nodes and edges:</strong></p>
+<ul class="simple">
+<li><p>Timestamp</p></li>
+</ul>
+<p>You can learn about how to create one in the <a class="reference internal" href="1_get_started.html"><span class="doc">get started guide</span></a></p>
+</section>
+<section id="annotator">
+<span id="id2"></span><h2>annotator<a class="headerlink" href="#annotator" title="Permalink to this heading">¶</a></h2>
+<p>Annotator components enrich the graph by analysing OOS nodes and edge them to newly created annotation nodes. Annotations can be on different levels. For example, corpus level (e.g. corpus statistics, topics), text nodes (e.g. named entities, keyphrases), image nodes (e.g. generated caption), etc.</p>
+<p><strong>Input:</strong> Knowledge Graph, Subgraph selection query</p>
+<p><strong>Output:</strong> Annotation nodes and relations in ArangoDB</p>
+<p><strong>Metadata stored in annotation nodes and annotated edges:</strong></p>
+<ul class="simple">
+<li><p>Timestamp</p></li>
+<li><p>Component that created the annotation</p></li>
+<li><p>Parameters used for analysing content nodes</p></li>
+</ul>
+<p>The annotator is responsible for adding levels of abstractions to create a edgeable graph. More precisely, this component is responsible for taking a set of nodes (e.g., TextNodes) and applying a pipeline (e.g., text mining pipeline) to extract features on the level of a single node or a collection. These extracted features are then saved in an <em>annotation node</em> or directly on the annotated node.</p>
+<p>As a start, we support the creation of a text-mining pipeline that the user can customize. The package contains some samples of features extractions <code class="xref py py-mod docutils literal notranslate"><span class="pre">cag.framework.annotator.textmining_pipes</span></code>.  Alternatively, we provide some functionality in a low-level extensible class, similar to the graph creator. You can read about how to use it in the <a class="reference internal" href="2_annotator.html"><span class="doc">annotator guide</span></a></p>
+<p><strong>Gradual update rules:</strong></p>
+<p>The annotation metadata is used to keep the annoation graph consistent and to avoid unneccessary computations.</p>
+<p>An annotation of a OOS node is only computed once. To this end, before an annotator (parameterized by algorithm and settings) analyzes an OOS node, it first checks if there exists already an attached annotation node that has matching parameter settings in its metadata. In this way annotations can be created on demand for specific subgraphs depending on the analysis goal and re-used where possible. The more analysis runs performed, the less likely it is that a OOS node has to be evaluated.</p>
+<p>However, since the corpus builder can modify the OOS part of the graph annotations may need to be updated after graph updates. The timestamp propagation mechanism of the graph builder components described above ensures that the timestamp of OOS nodes is updated if it was affected by a graph update. If the timestamp of an annotation is smaller than the timestamp of its attached OOS node, it might be outdated and needs re-computation.</p>
+<p>Two options for annotation updates <em>(open issue)</em>:</p>
+<ol class="arabic simple">
+<li><p>Compute new delete old (Pro: No legacy information, Con: Graph is not fully reversible to a prior state).</p></li>
+<li><p>Compute new flag old as outdated (Pro: Graph is fully reversible to any prior state, Con: Graph may contain much useless information, e.g. results from trial runs)</p></li>
+</ol>
+<p>These are open to change, so please open an issue to discuss how this system should handle these updates in the future!</p>
+</section>
+<section id="analyzers">
+<span id="analyzer"></span><h2>Analyzers<a class="headerlink" href="#analyzers" title="Permalink to this heading">¶</a></h2>
+<p>The analyzer component is responsible for extracting insights from the graph. These insights can be in the form of visualization or a curated list of items ranked and processed based on user queries. Some analysers may simply read out information from the graph (e.g. corpus topics) and create a representation for the end user. Others can perform analyses based on specific queries (e.g. determining collocates of a given query term).</p>
+<p><strong>Input:</strong> Updated Knowledge Graph, Subgraph selection query</p>
+<p><strong>Output:</strong> Analysis results and visualisations</p>
+<p>You can read more on how to use them in the <span class="xref std std-doc">analyzer guide</span></p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">CAG Concepts</a><ul>
+<li><a class="reference internal" href="#graph-creators">Graph Creators</a></li>
+<li><a class="reference internal" href="#annotator">annotator</a></li>
+<li><a class="reference internal" href="#analyzers">Analyzers</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../index.html"
+                          title="previous chapter">Welcome to Corpus Analytics Graph’s documentation!</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="1_get_started.html"
+                          title="next chapter">Get Started</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/0_concept.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="1_get_started.html" title="Get Started"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Corpus Analytics Graph’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Corpus Annotation Graph (CAG) 1.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CAG Concepts</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Roxanne El Baff. Tobias Hecking.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+  </body>
+</html>
