@@ -7,9 +7,8 @@ Get Started
 
 This package is based on the concept of using 3 stages for graph management:
 
-1. Graph creation: :python:`GraphCreatorBase`: creates or updates a graph from a a datasource
+1. Graph creation: :python:`GraphCreatorBase`: creates or updates a graph from a  datasource
 2. Graph annotation: :python:`AnnotatorBase`: annotate (extend) graphs by running various algorithms over them
-3. Graph anaylzers: :python:`AnalyzerBase`: run queries, analysis over graphs to gain insights and visualize the graph or parts of it.
 
 
 Installation
@@ -36,15 +35,6 @@ Make sure you have an up-to-date ArangoDB instance running and can connect to it
 
 In order to connect, you have to have the graph created and imported somewhere (note: the relations defined here are not relevant, you have to define them in the Graph Creator):
 
-.. code-block:: python
-
-
-    from cag.graph_elements.base_graph import BaseGraph
-    from pyArango.graph import Graph, EdgeDefinition
-
-    class KnowledgeGraph(BaseGraph):
-        _edgeDefinitions=[EdgeDefinition('GenericEdge', fromCollections=['GenericNode'], toCollections=['GenericNode'])] 
-        _orphanedCollections = []
 
 The next step is to create the graph creator and the graph definition. This basically defines your data model and how the nodes should be able to be connected, similar to an ER-model:
 
