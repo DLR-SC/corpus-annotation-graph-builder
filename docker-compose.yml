@@ -3,6 +3,9 @@ services:
   pytest:
     build: .
     command: pytest --verbose -s tests
+    environment:
+      ARANGO_HOST: arangodb
+      ARANGO_PORT: 8529
     volumes:
       - '.:/app'
     networks:
