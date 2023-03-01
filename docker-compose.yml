@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+  pytest:
+    build: .
+    command: pytest --verbose -s tests
+    environment:
+      ARANGO_HOST: arangodb
+      ARANGO_PORT: 8529
+    volumes:
+      - '.:/app'
+    networks:
+      - arango-net
+    depends_on:
+      - arangodb
+  arangodb:
+    image: arangodb
+    environment:
+      ARANGO_NO_AUTH: 1
+    networks:
+      - arango-net
+networks:
+  arango-net:

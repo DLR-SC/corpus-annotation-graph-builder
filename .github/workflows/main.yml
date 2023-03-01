@@ -1,35 +1,44 @@
-name: Python application
+name: Run Pytest
 
 on:
   workflow_dispatch:
   push:
   pull_request:
 
-permissions:
-  contents: read
-
 jobs:
-  tests:
+  test:
     runs-on: ubuntu-latest
+    container: ubuntu
     services:
-        arangodb_testserver:
-          image: arangodb:3.9.2
-          env:
-            ARANGO_NO_AUTH: 1
+      arango:
+        image: arangodb/arangodb:latest
+        ports:
+          - 8529:8529
+        env:
+          ARANGO_NO_AUTH: 1
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.8"
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install ./
-    - name: Run pytest
-      run: |
-        pytest tests/
-    env:
-      ARANGO_URL: "http://arangodb_testserver:8529"
-      ARANGO_USER: ""
-      ARANGO_PW: ""
+      - run: apt-get update; apt-get install curl python3-pip -y
+      - name: Wait for ArangoDB to start
+        run: |
+          while ! curl -sSf http://$ARANGO_HOST:$ARANGO_PORT/_api/version; do
+            sleep 1
+          done
+        env:
+          ARANGO_HOST: arango
+          ARANGO_PORT: 8529
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install ./
+
+      - name: Run Pytest
+        run: pytest tests/
+        env:
+          ARANGO_HOST: arango
+          ARANGO_PORT: 8529
