@@ -21,11 +21,10 @@ class EdgeNGram:
 
 @dataclass
 class ArangoAnalyzer:
-
     ###################
     # Instance Vars ###
     ###################
-    
+
     name: str
     type: str = "identity"
     features: List = field(

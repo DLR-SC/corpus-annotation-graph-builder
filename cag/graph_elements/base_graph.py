@@ -24,7 +24,6 @@ class BaseGraph(Graph):
             if not self.database.hasCollection(col):
                 self.database.createCollection(col)
 
-
     def update_graph_structure(
         self,
         relation,
