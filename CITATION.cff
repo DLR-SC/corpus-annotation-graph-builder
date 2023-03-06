@@ -9,7 +9,7 @@ authors:
     affiliation: "German Aerospace Center (DLR)"
     orcid: "https://orcid.org/0000-0001-6661-8661"
 version: 1.4.0
-date-released: "2023-05-02"
+date-released: "2023-06-03"
 license: MIT
 repository-code: "https://github.com/DLR-SC/corpus-annotation-graph-builder"
 references:
