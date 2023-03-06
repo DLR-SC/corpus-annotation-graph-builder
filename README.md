@@ -3,29 +3,31 @@
 <h1 align="center">Welcome to the Corpus Annotation Graph Builder <code>(CAG)</code> </h1>
 
 <p align="center">
-  <a href="https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/master/LICENSE">
-    <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-yellow.svg" target="_blank" />
-  </a>
+ <a href="https://pypi.org/project/cag/"><img src="https://badge.fury.io/py/cag.svg" alt="Badge: PyPI version" height="18"></a>
   <a href="https://img.shields.io/badge/Made%20with-Python-1f425f.svg">
     <img src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg" alt="Badge: Made with Python"/>
   </a>
-  <a href="https://pypi.org/project/cag/"><img src="https://badge.fury.io/py/cag.svg" alt="Badge: PyPI version" height="18"></a>
-  <a href="https://twitter.com/dlr_software">
-    <img alt="Twitter: DLR Software" src="https://img.shields.io/twitter/follow/dlr_software.svg?style=social" target="_blank" />
-  </a>
+  
+
   <a href="https://open.vscode.dev/DLR-SC/corpus-annotation-graph-builder">
     <img alt="Badge: Open in VSCode" src="https://img.shields.io/static/v1?logo=visualstudiocode&label=&message=open%20in%20visual%20studio%20code&labelColor=2c2c32&color=007acc&logoColor=007acc" target="_blank" />
   </a>
-  <a href="https://citation-file-format.github.io/">
-    <img alt="Badge: Citation File Format Inside" src="https://img.shields.io/badge/-citable%20software-green" target="_blank" />
-  </a>
      <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Badge: Black" height="18"></a>
+<a href="https://zenodo.org/badge/latestdoi/572124344"><img src="https://zenodo.org/badge/572124344.svg" alt="DOI"></a>
+ <a href="https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/master/LICENSE">
+    <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-yellow.svg" target="_blank" />
+  </a>
+    <a href="https://twitter.com/dlr_software">
+    <img alt="Twitter: DLR Software" src="https://img.shields.io/twitter/follow/dlr_software.svg?style=social" target="_blank" />
+  </a>
 </p>
 
 
 > `cag` is a Python Library offering an architectural framework to employ the build-annotate pattern when building Graphs.
 
 ---
+
+
 
 [Paper video](https://drive.google.com/drive/folders/1KE4NT2NQyfj4VYsAdQAE8WoBpGWA33O0?usp=sharing).
 
@@ -75,4 +77,6 @@ Please cite us in case you use CAG
         }
 
 
+## Zenodo refs
+v1.4.0 [![DOI](https://zenodo.org/badge/572124344.svg)](https://zenodo.org/badge/latestdoi/572124344)
 
