@@ -31,8 +31,8 @@ references:
       affiliation: "German Aerospace Center (DLR)"
       orcid: "https://orcid.org/0000-0002-5559-8842"
      - family-names: Bartsch 
-      given-names: Sabine
-      affiliation: "Technical University of Darmstadt"
+       given-names: Sabine
+       affiliation: "Technical University of Darmstadt"
     title: "Corpus Annotation Graph Builder (CAG): An Architectural Framework to Build and Annotate a Multi-source Graph"
     conference: "The 17th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2023): : System Demonstrations"
     year: 2023
