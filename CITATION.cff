@@ -8,7 +8,6 @@ authors:
     given-names: Roxanne
     affiliation: "German Aerospace Center (DLR)"
     orcid: "https://orcid.org/0000-0001-6661-8661"
- 
 version: 1.4.0
 date-released: "2023-05-02"
 license: MIT
@@ -34,11 +33,8 @@ references:
      - family-names: Bartsch 
       given-names: Sabine
       affiliation: "Technical University of Darmstadt"
-      
     title: "Corpus Annotation Graph Builder (CAG): An Architectural Framework to Build and Annotate a Multi-source Graph"
-    type: demo-paper
     conference: The 17th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2023): : System Demonstrations
-    #  name: """
     year: 2023
     month: 5
 keywords: 
