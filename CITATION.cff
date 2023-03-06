@@ -34,7 +34,7 @@ references:
       given-names: Sabine
       affiliation: "Technical University of Darmstadt"
     title: "Corpus Annotation Graph Builder (CAG): An Architectural Framework to Build and Annotate a Multi-source Graph"
-    conference: The 17th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2023): : System Demonstrations
+    conference: "The 17th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2023): : System Demonstrations"
     year: 2023
     month: 5
 keywords: 
