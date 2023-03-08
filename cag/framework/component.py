@@ -2,12 +2,14 @@ from datetime import datetime
 
 from pyArango.theExceptions import DocumentNotFoundError, SimpleQueryError
 
+from cag.graph_elements.nodes import GenericOOSNode
+from cag.graph_elements.relations import GenericEdge
 from cag.utils.config import Config, configuration
 
 from cag.graph_elements.base_graph import *
-from pyArango.collection import Document, Collection
+from pyArango.collection import Document, Collection, Collection_metaclass
 import re
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from cag import logger
 
@@ -39,7 +41,6 @@ class Component(object):
         self.graph_name = conf.graph
         if self.database.hasGraph(self.graph_name):
             self.graph: BaseGraph = self.database.graphs[self.graph_name]
-
         else:
             edge_def_arr = []
             for ed in edges:
@@ -48,14 +49,24 @@ class Component(object):
                     + ed["from_collections"]
                     + ed["to_collections"]
                 ):
-                    if not self.database.hasCollection(col):
-                        self.database.createCollection(col)
 
+                    if not self.database.hasCollection(
+                        self.__get_collection_name(col)
+                    ):
+                        self.database.createCollection(
+                            self.__get_collection_name(col)
+                        )
                 edge_def_arr.append(
                     EdgeDefinition(
-                        ed["relation"],
-                        fromCollections=ed["from_collections"],
-                        toCollections=ed["to_collections"],
+                        self.__get_collection_name(ed["relation"]),
+                        fromCollections=[
+                            self.__get_collection_name(col)
+                            for col in ed["from_collections"]
+                        ],
+                        toCollections=[
+                            self.__get_collection_name(col)
+                            for col in ed["to_collections"]
+                        ],
                     )
                 )
             if len(edge_def_arr) == 0:
@@ -75,11 +86,52 @@ class Component(object):
         # Setup graph structure
         for ed in edges:
             self.graph.update_graph_structure(
-                ed["relation"],
-                ed["from_collections"],
-                ed["to_collections"],
+                self.__get_collection_name(ed["relation"]),
+                [
+                    self.__get_collection_name(col)
+                    for col in ed["from_collections"]
+                ],
+                [
+                    self.__get_collection_name(col)
+                    for col in ed["to_collections"]
+                ],
                 create_collections=True,
             )
+
+    def __get_collection_name(
+        self, collection: Union[str, Collection_metaclass]
+    ) -> str:
+        """
+        Returns the name of a collection based on the input collection. If the collection is a string,
+        it returns the same string. If the collection is an instance of Collection_metaclass, it tries
+        to return the '_name' attribute of the class. If '_name' is not available, it returns the class
+        name. Raises ValueError if the input collection is not a string or an instance of
+        Collection_metaclass.
+
+        Args:
+            collection (Union[str, Collection_metaclass]): The input collection, which can be a string
+                or an instance of Collection_metaclass.
+
+        Returns:
+            str: The name of the collection.
+
+        Raises:
+            ValueError: If the input collection is not a string or an instance of Collection_metaclass.
+        """
+        if isinstance(collection, str):
+            # Backward compatibility, when strings are used in edge definition
+            return collection
+        if isinstance(collection, Collection_metaclass):
+            # When a class of GenericOOSNode gets passed, we take the _name if possible
+            if hasattr(collection, "_name"):
+                return collection._name  # noqa
+            else:
+                # Otherwise just take the name of the class
+                return collection.__name__
+        raise ValueError(
+            f"{collection} is of incompatible type {type(collection)}"
+            f"Make sure it's a str, GenericOOSNode or GenericEdge!"
+        )
 
     def get_document(
         self,
