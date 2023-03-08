@@ -34,7 +34,7 @@ class HasAnotherRelation(GenericEdge):
 
 class SampleGraphCreator(GraphCreatorBase):
     _name = "SampleGraphCreator"
-    _description = "Graph based on the DLR elib corpus"
+    _description = "Sample Graph"
 
     _edge_definitions = [
         {
