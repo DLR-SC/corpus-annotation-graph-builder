@@ -51,20 +51,20 @@ class Component(object):
                 ):
 
                     if not self.database.hasCollection(
-                        self.__get_collection_name(col)
+                        self.get_collection_name(col)
                     ):
                         self.database.createCollection(
-                            self.__get_collection_name(col)
+                            self.get_collection_name(col)
                         )
                 edge_def_arr.append(
                     EdgeDefinition(
-                        self.__get_collection_name(ed["relation"]),
+                        self.get_collection_name(ed["relation"]),
                         fromCollections=[
-                            self.__get_collection_name(col)
+                            self.get_collection_name(col)
                             for col in ed["from_collections"]
                         ],
                         toCollections=[
-                            self.__get_collection_name(col)
+                            self.get_collection_name(col)
                             for col in ed["to_collections"]
                         ],
                     )
@@ -86,20 +86,21 @@ class Component(object):
         # Setup graph structure
         for ed in edges:
             self.graph.update_graph_structure(
-                self.__get_collection_name(ed["relation"]),
+                self.get_collection_name(ed["relation"]),
                 [
-                    self.__get_collection_name(col)
+                    self.get_collection_name(col)
                     for col in ed["from_collections"]
                 ],
                 [
-                    self.__get_collection_name(col)
+                    self.get_collection_name(col)
                     for col in ed["to_collections"]
                 ],
                 create_collections=True,
             )
 
-    def __get_collection_name(
-        self, collection: Union[str, Collection_metaclass]
+    @staticmethod
+    def get_collection_name(
+            collection: Union[str, Collection_metaclass]
     ) -> str:
         """
         Returns the name of a collection based on the input collection. If the collection is a string,
