@@ -45,7 +45,7 @@ class SampleGraphCreator(GraphCreatorBase):
             "to_collections": [CollectionB],
         },
         {
-            "relation": "HasAnotherRelation",
+            "relation": HasAnotherRelation,
             "from_collections": [CollectionC],
             "to_collections": [CollectionC],
         },

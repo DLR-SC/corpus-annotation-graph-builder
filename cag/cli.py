@@ -10,6 +10,7 @@ from subprocess import PIPE, run
 import typer
 from slugify import slugify
 from rich import print
+from graphviz import Digraph
 
 from cag.framework import GraphCreatorBase
 
@@ -78,6 +79,9 @@ def visualize(python_file: Path):
     spec = importlib.util.spec_from_file_location(python_file.stem, python_file)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    dot = Digraph()
+    dot.attr('node', shape='record', style='rounded', fontsize='12')
+    dot.attr('edge', fontsize='12', color='gray')
 
     # Finde alle Klassen in der anderen Datei, die von GraphCreatorBase erben
     subclasses = []
@@ -90,7 +94,37 @@ def visualize(python_file: Path):
         raise typer.Abort()
 
     for subclass in subclasses:  # type: GraphCreatorBase
-        print(subclass._edge_definitions)
+        for ed_def in subclass._edge_definitions:
+            for collection in ed_def["from_collections"] + ed_def["to_collections"]:
+                collection_name = GraphCreatorBase.get_collection_name(collection)
+                dot.node(collection_name, collection_name + "\\n:" + "\\n:".join(collection._fields))
+
+            dot.edge(' '.join([m.__name__ for m in ed_def["from_collections"]]),
+                     ' '.join([m.__name__ for m in ed_def["to_collections"]]),
+                     label=ed_def["relation"].__name__ + "\\n:" + "\\n:".join(ed_def["relation"]._fields))
+        # Speichere das Diagramm in einer Datei und zeige es im Notebook an
+    dot.render('Klassendiagramm', outfile='render.png', format='png', view=False)
+
+
+@app.command()
+def viz():
+    from graphviz import Digraph
+
+    # Erstelle eine neue Instanz von Digraph
+    dot = Digraph()
+
+    # Füge Knoten hinzu und beschrifte sie mit Klassennamen und Attributen
+    dot.node('A', 'Klasse A\\nattr1: int\\nattr2: str')
+    dot.node('B', 'Klasse B\\nattr3: float\\nattr4: bool')
+    dot.node('C', 'Klasse C\\nattr5: list')
+
+    # Füge Kanten hinzu
+    dot.edge('A', 'B')
+    dot.edge('B', 'C')
+    dot.edge('C', 'A')
+
+    # Zeige das Diagramm an
+    dot.view()
 
 
 if __name__ == "__main__":
