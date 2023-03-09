@@ -95,13 +95,18 @@ def visualize(python_file: Path):
 
     for subclass in subclasses:  # type: GraphCreatorBase
         for ed_def in subclass._edge_definitions:
+            if any(isinstance(item, str) for item in
+                   ed_def["from_collections"] + ed_def["to_collections"] + [ed_def["relation"]]):
+                print(f"Edge definition contains elements which are defined via String and not as Class!")
+                raise typer.Abort()
             for collection in ed_def["from_collections"] + ed_def["to_collections"]:
                 collection_name = GraphCreatorBase.get_collection_name(collection)
                 dot.node(collection_name, collection_name + "\\n:" + "\\n:".join(collection._fields))
 
-            dot.edge(' '.join([m.__name__ for m in ed_def["from_collections"]]),
-                     ' '.join([m.__name__ for m in ed_def["to_collections"]]),
-                     label=ed_def["relation"].__name__ + "\\n:" + "\\n:".join(ed_def["relation"]._fields))
+            dot.edge(' '.join([GraphCreatorBase.get_collection_name(m) for m in ed_def["from_collections"]]),
+                     ' '.join([GraphCreatorBase.get_collection_name(m) for m in ed_def["to_collections"]]),
+                     label=GraphCreatorBase.get_collection_name(ed_def["relation"]) + "\\n:" + "\\n:".join(
+                         ed_def["relation"]._fields))
         # Speichere das Diagramm in einer Datei und zeige es im Notebook an
     dot.render('Klassendiagramm', outfile='render.png', format='png', view=False)
 
