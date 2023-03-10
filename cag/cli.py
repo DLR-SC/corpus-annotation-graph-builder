@@ -1,4 +1,3 @@
-import ast
 import importlib
 import inspect
 import os
@@ -8,12 +7,14 @@ from pathlib import Path
 from subprocess import PIPE, run
 
 import typer
-from slugify import slugify
+from pyvis.network import Network
 from rich import print
-from graphviz import Digraph
+from rich.console import Console
+from slugify import slugify
 
 from cag.framework import GraphCreatorBase
 
+console = Console()
 app = typer.Typer()
 
 
@@ -28,8 +29,8 @@ def setup_project_dir(project_name: str):
         print(f"Aborting. {project_dir} already existent!")
         raise typer.Abort()
     if not typer.confirm(
-            f"Set {project_dir} as the project directory. Is this correct?",
-            default=True,
+        f"Set {project_dir} as the project directory. Is this correct?",
+        default=True,
     ):
         print("Aborting...")
         raise typer.Abort()
@@ -61,75 +62,93 @@ def start_project():
     project_dir = setup_project_dir(name)
     path = Path(os.path.dirname(__file__))  # get path where the module is
     with zipfile.ZipFile(
-            f"{path.joinpath('cag_sample_project.zip')}", "r"
+        f"{path.joinpath('cag_sample_project.zip')}", "r"
     ) as zip_ref:
         zip_ref.extractall(project_dir)
     print(f"[green] Creating scaffold in {project_dir}[/green]")
 
 
 @app.command()
-def visualize(python_file: Path):
+def visualize(python_file: Path) -> Path:
+    """
+    Visualize the graph of the collections and relations defined in a Python file.
+
+    Parameters:
+    -----------
+    python_file : Path
+        The path of the Python file containing a GraphCreatorBase class that define the collections
+        and relations to be visualized.
+
+    Raises:
+    -------
+    typer.Abort:
+        If the specified `python_file` does not exist or is not a file.
+
+   Returns:
+    --------
+    Path
+        The path of the HTML file containing the generated graph.
+        The function saves the generated graph to an HTML file and prints the path of the file.
+    """
     if not python_file.exists():
         print(f"{python_file} not found!")
         raise typer.Abort()
     if not python_file.is_file():
         print(f"{python_file} is not a file")
         raise typer.Abort()
-    # Lade die andere Datei als Modul
-    spec = importlib.util.spec_from_file_location(python_file.stem, python_file)
+    spec = importlib.util.spec_from_file_location(
+        python_file.stem, python_file
+    )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    dot = Digraph()
-    dot.attr('node', shape='record', style='rounded', fontsize='12')
-    dot.attr('edge', fontsize='12', color='gray')
+    net = Network(height="750px", width="100%")
+    net.barnes_hut()
 
-    # Finde alle Klassen in der anderen Datei, die von GraphCreatorBase erben
     subclasses = []
     for name, obj in inspect.getmembers(module, inspect.isclass):
-        if issubclass(obj, module.GraphCreatorBase) and obj != module.GraphCreatorBase:
+        if (
+            issubclass(obj, module.GraphCreatorBase)
+            and obj != module.GraphCreatorBase
+        ):
             subclasses.append(obj)
 
     if len(subclasses) == 0:
         print("No suitable classes found!")
         raise typer.Abort()
+    with console.status("[bold green]Working...") as status:
+        for subclass in subclasses:  # type: GraphCreatorBase
+            for ed_def in subclass._edge_definitions:
+                for collection in set(
+                    ed_def["from_collections"] + ed_def["to_collections"]
+                ):
+                    collection_name = GraphCreatorBase.get_collection_name(
+                        collection
+                    )
+                    net.add_node(collection_name, label=collection_name)
+                    console.log(f"Process {collection}")
 
-    for subclass in subclasses:  # type: GraphCreatorBase
-        for ed_def in subclass._edge_definitions:
-            if any(isinstance(item, str) for item in
-                   ed_def["from_collections"] + ed_def["to_collections"] + [ed_def["relation"]]):
-                print(f"Edge definition contains elements which are defined via String and not as Class!")
-                raise typer.Abort()
-            for collection in ed_def["from_collections"] + ed_def["to_collections"]:
-                collection_name = GraphCreatorBase.get_collection_name(collection)
-                dot.node(collection_name, collection_name + "\\n:" + "\\n:".join(collection._fields))
+                from_collections = [
+                    GraphCreatorBase.get_collection_name(m)
+                    for m in ed_def["from_collections"]
+                ]
+                to_collections = [
+                    GraphCreatorBase.get_collection_name(m)
+                    for m in ed_def["to_collections"]
+                ]
+                relation_name = GraphCreatorBase.get_collection_name(
+                    ed_def["relation"]
+                )
+                net.add_edge(
+                    *from_collections, *to_collections, label=relation_name
+                )
 
-            dot.edge(' '.join([GraphCreatorBase.get_collection_name(m) for m in ed_def["from_collections"]]),
-                     ' '.join([GraphCreatorBase.get_collection_name(m) for m in ed_def["to_collections"]]),
-                     label=GraphCreatorBase.get_collection_name(ed_def["relation"]) + "\\n:" + "\\n:".join(
-                         ed_def["relation"]._fields))
-        # Speichere das Diagramm in einer Datei und zeige es im Notebook an
-    dot.render('Klassendiagramm', outfile='render.png', format='png', view=False)
-
-
-@app.command()
-def viz():
-    from graphviz import Digraph
-
-    # Erstelle eine neue Instanz von Digraph
-    dot = Digraph()
-
-    # Füge Knoten hinzu und beschrifte sie mit Klassennamen und Attributen
-    dot.node('A', 'Klasse A\\nattr1: int\\nattr2: str')
-    dot.node('B', 'Klasse B\\nattr3: float\\nattr4: bool')
-    dot.node('C', 'Klasse C\\nattr5: list')
-
-    # Füge Kanten hinzu
-    dot.edge('A', 'B')
-    dot.edge('B', 'C')
-    dot.edge('C', 'A')
-
-    # Zeige das Diagramm an
-    dot.view()
+        diagram_file = python_file.parent.joinpath(
+            python_file.stem + "_diagram.html"
+        )
+        status.update("Save file")
+        net.save_graph(str(diagram_file))
+    print(f"File saved to {diagram_file}")
+    return diagram_file
 
 
 if __name__ == "__main__":
