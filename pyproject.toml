@@ -35,7 +35,7 @@ dependencies = ['dataclasses>=0.6',
                     'pyArango>=2.0.1',
                     'tomli>=2.0.1',
                     'transformers>=4.26.1',
-                    'python-slugify~=6.1.2',
+                    'python-slugify',
                     'rich>=13.3.2',
                     'beautifulsoup4>=4.11.2'
                       ]
