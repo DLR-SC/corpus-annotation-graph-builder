@@ -1,0 +1,147 @@
+[
+  {
+    "title": "Pulp Fiction",
+    "year": 1994,
+    "genre": "crime",
+    "actors": [
+      {
+        "name": "John Travolta",
+        "birthdate": "February 18, 1954",
+        "rating": 8
+      },
+      {
+        "name": "Uma Thurman",
+        "birthdate": "April 29, 1970",
+        "rating": 9
+      }
+    ],
+    "directors": [
+      {
+        "name": "Quentin Tarantino",
+        "birthdate": "March 27, 1963"
+      }
+    ],
+    "description": "A stylish crime film with intersecting storylines, violence, and dark humor."
+  },
+  {
+    "title": "The Silence of the Lambs",
+    "year": 1991,
+    "genre": "thriller",
+    "actors": [
+      {
+        "name": "Jodie Foster",
+        "birthdate": "November 19, 1962",
+        "rating": 9
+      },
+      {
+        "name": "Anthony Hopkins",
+        "birthdate": "December 31, 1937",
+        "rating": 10
+      }
+    ],
+    "directors": [
+      {
+        "name": "Jonathan Demme",
+        "birthdate": "February 22, 1944"
+      }
+    ],
+    "description": "A tense thriller about an FBI trainee who seeks the help of a cannibalistic serial killer to catch another killer."
+  },
+  {
+    "title": "The Shawshank Redemption",
+    "year": 1994,
+    "genre": "drama",
+    "actors": [
+      {
+        "name": "Tim Robbins",
+        "birthdate": "October 16, 1958",
+        "rating": 9
+      },
+      {
+        "name": "Morgan Freeman",
+        "birthdate": "June 1, 1937",
+        "rating": 10
+      }
+    ],
+    "directors": [
+      {
+        "name": "Frank Darabont",
+        "birthdate": "January 28, 1959"
+      }
+    ],
+    "description": "A poignant drama about a man who befriends a fellow inmate in prison and finds hope and redemption."
+  },
+  {
+    "title": "The Dark Knight",
+    "year": 2008,
+    "genre": "action",
+    "actors": [
+      {
+        "name": "Christian Bale",
+        "birthdate": "January 30, 1974",
+        "rating": 9
+      },
+      {
+        "name": "Heath Ledger",
+        "birthdate": "April 4, 1979",
+        "rating": 10
+      }
+    ],
+    "directors": [
+      {
+        "name": "Christopher Nolan",
+        "birthdate": "July 30, 1970"
+      }
+    ],
+    "description": "A gripping action film with a standout performance by Heath Ledger as the Joker."
+  },
+  {
+    "title": "Inception",
+    "year": 2010,
+    "genre": "sci-fi",
+    "actors": [
+      {
+        "name": "Leonardo DiCaprio",
+        "birthdate": "November 11, 1974",
+        "rating": 9
+      },
+      {
+        "name": "Joseph Gordon-Levitt",
+        "birthdate": "February 17, 1981",
+        "rating": 8
+      }
+    ],
+    "directors": [
+      {
+        "name": "Christopher Nolan",
+        "birthdate": "July 30, 1970"
+      }
+    ],
+    "description": "A mind-bending sci-fi film about a team of extractors who enter people's dreams to steal their ideas."
+  },
+  {
+    "title": "The Lord of the Rings: The Return of the King",
+    "year": 2003,
+    "genre": "fantasy",
+    "actors": [
+      {
+        "name": "Elijah Wood",
+        "birthdate": "January 28, 1981",
+        "rating": 9
+      },
+      {
+        "name": "Viggo Mortensen",
+        "birthdate": "October 20, 1958",
+        "rating": 8
+      }
+    ],
+    "directors": [
+      {
+        "name": "Peter Jackson",
+        "birthdate": "October 31, 1961"
+      }
+    ],
+    "description": "An epic fantasy film about a hobbit who must destroy a powerful ring to save Middle-earth."
+  }
+]
+
