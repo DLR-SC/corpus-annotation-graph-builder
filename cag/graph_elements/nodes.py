@@ -24,12 +24,14 @@ class Corpus(GenericOOSNode):
         "type": Field(),
         "description": Field(),
         "created_on": Field(),
+        "lang": Field(),
+        "copyright": Field(),
         **GenericOOSNode._fields,
     }
 
 
 class ImageNode(GenericOOSNode):
-    _fields = {"url": Field(), **GenericOOSNode._fields}
+    _fields = {"url": Field(), "copyright": Field(), **GenericOOSNode._fields}
 
 
 class DataNode(GenericOOSNode):
@@ -53,4 +55,24 @@ class AbstractNode(GenericOOSNode):
 
 
 class WebResource(GenericOOSNode):
-    _fields = {"url": Field(), **GenericOOSNode._fields}
+    _fields = {"url": Field(), "copyright": Field(), **GenericOOSNode._fields}
+
+
+class VideoNode(GenericOOSNode):
+    _fields = {
+        "title": Field(),
+        "name": Field(),
+        "uri": Field(),
+        "copyright": Field(),
+        **GenericOOSNode._fields,
+    }
+
+
+class IFrameNode(GenericOOSNode):
+    _fields = {
+        "name": Field(),
+        "uri": Field(),
+        "description": Field(),
+        "copyright": Field(),
+        **GenericOOSNode._fields,
+    }
