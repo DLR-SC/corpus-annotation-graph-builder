@@ -15,6 +15,8 @@ from cag.graph_elements.nodes import (
     DataNode,
     KeyTerm,
     AbstractNode,
+    IFrameNode,
+    VideoNode
 )
 from cag.graph_elements.relations import (
     BelongsTo,
@@ -102,7 +104,15 @@ class GraphCreatorBase(ABC, Component):
     ######### Generic func to create vertices ##########################################
 
     def create_corpus_node(
-        self, key, name, type, desc, created_on, timestamp=None
+        self,
+        key,
+        name,
+        type,
+        desc,
+        created_on,
+        timestamp=None,
+        lang=None,
+        copyright=None,
     ):
         dict_ = {
             "_key": key,
@@ -111,6 +121,8 @@ class GraphCreatorBase(ABC, Component):
             "description": desc,
             "created_on": created_on,
             "timestamp": timestamp,
+            "lang": lang,
+            "copyright": copyright,
         }
         corpus = self.upsert_node(GraphCreatorBase._CORPUS_NODE_NAME, dict_)
         return corpus
@@ -123,13 +135,45 @@ class GraphCreatorBase(ABC, Component):
         )
         return txt
 
-    def create_image_node(self, url, timestamp=None):
-        dict_ = {"url": url, "timestamp": timestamp}
+    def create_image_node(self, url, copyright=None, timestamp=None):
+        dict_ = {"url": url, "timestamp": timestamp, "copyright": copyright}
 
         img = self.upsert_node(
             GraphCreatorBase._IMAGE_NODE_NAME, dict_, alt_key="url"
         )
         return img
+
+    def create_video_node(
+        self, uri, title=None, name=None, copyright=None, timestamp=None
+    ):
+        dict_ = {
+            "url": uri,
+            "title": title,
+            "name": name,
+            "timestamp": timestamp,
+            "copyright": copyright,
+        }
+
+        video = self.upsert_node(
+            VideoNode.__name__, dict_, alt_key="url"
+        )
+        return video
+
+    def create_iframe_node(
+        self, uri, description=None, name=None, copyright=None, timestamp=None
+    ):
+        dict_ = {
+            "uri": uri,
+            "description": description,
+            "name": name,
+            "timestamp": timestamp,
+            "copyright": copyright,
+        }
+
+        video = self.upsert_node(
+            IFrameNode.__name__, dict_, alt_key="url"
+        )
+        return video
 
     def create_author_node(self, author_name, timestamp=None):
         dict_ = {"name": author_name, "timestamp": timestamp}
@@ -140,8 +184,8 @@ class GraphCreatorBase(ABC, Component):
 
         return author
 
-    def create_web_resource_node(self, url, timestamp=None):
-        dict_ = {"url": url, "timestamp": timestamp}
+    def create_web_resource_node(self, url, copyright=None, timestamp=None):
+        dict_ = {"url": url, "timestamp": timestamp, "copyright": copyright}
 
         web_resource = self.upsert_node(
             GraphCreatorBase._WEB_RESOURCE_NODE_NAME, dict_, alt_key="url"
