@@ -15,6 +15,8 @@ from cag.graph_elements.nodes import (
     DataNode,
     KeyTerm,
     AbstractNode,
+    IFrameNode,
+    VideoNode
 )
 from cag.graph_elements.relations import (
     BelongsTo,
@@ -153,7 +155,7 @@ class GraphCreatorBase(ABC, Component):
         }
 
         video = self.upsert_node(
-            GraphCreatorBase._IMAGE_NODE_NAME, dict_, alt_key="url"
+            VideoNode.__name__, dict_, alt_key="url"
         )
         return video
 
@@ -169,7 +171,7 @@ class GraphCreatorBase(ABC, Component):
         }
 
         video = self.upsert_node(
-            GraphCreatorBase._IMAGE_NODE_NAME, dict_, alt_key="url"
+            IFrameNode.__name__, dict_, alt_key="url"
         )
         return video
 
