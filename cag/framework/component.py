@@ -10,8 +10,11 @@ from cag.graph_elements.base_graph import *
 from pyArango.collection import Document, Collection, Collection_metaclass
 import re
 from typing import Any, Optional, Union
-
+from tenacity import retry
+from tenacity.stop import stop_after_delay, stop_after_attempt
+from tenacity.wait import wait_random
 from cag import logger
+from pyArango import pyArangoException
 
 
 class Component(object):
@@ -198,6 +201,8 @@ class Component(object):
             )
         return node
 
+    @retry(stop=(stop_after_delay(120) | stop_after_attempt(10)),
+           wait=wait_random(min=1, max=5))
     def upsert_node(
         self,
         collectionName: str,
@@ -233,12 +238,20 @@ class Component(object):
                 node.save()
                 node = coll[node._key]
 
+        except pyArangoException as pyae:
+            logger.error(
+                f"An exception of type {str(type(pyae))} was thrown "
+                f"for data {collectionName} and node {str(data)} -"
+                f" message: {str(pyae)}"
+            )
+            raise pyae
         except Exception as e:
             logger.error(
-                "An unknown error was thrown for data {} and node {} - message: {}".format(
-                    collectionName, str(data), str(e)
-                )
+                f"An unknown exception of type {str(type(e))} was thrown for "
+                f"data {collectionName} and node {str(data)} -"
+                f" message: {str(e)}"
             )
+
         return node
 
     def get_edge_attributes(
@@ -280,6 +293,8 @@ class Component(object):
         }
         return edge_dic
 
+    @retry(stop=(stop_after_delay(120) | stop_after_attempt(10)),
+           wait=wait_random(min=1, max=5))
     def upsert_edge(
         self,
         relationName: str,
