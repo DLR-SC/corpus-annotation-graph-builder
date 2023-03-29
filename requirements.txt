@@ -1,3 +1,4 @@
+pandas
 dataclasses>=0.6
 spacy_arguing_lexicon>=0.0.3
 empath>=0.89

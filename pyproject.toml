@@ -7,7 +7,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "cag"
-version = "1.5.0"
+version = "1.5.8"
 description='This is a general framework to create arango db graphs and annotate them.'
 readme = "README.md"
 authors = [{ name = "Roxanne El Baff", email = "roxanne.elbaff@dlr.de" },
@@ -35,7 +35,8 @@ dependencies = ['dataclasses>=0.6',
                     'pyArango>=2.0.1',
                     'tomli>=2.0.1',
                     'transformers>=4.26.1',
-                    'tenacity>=8.2.2'
+                    'tenacity>=8.2.2',
+                    'pandas'
                       ]
 requires-python = ">=3.8"
 

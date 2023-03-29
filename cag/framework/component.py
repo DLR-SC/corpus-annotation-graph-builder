@@ -11,10 +11,10 @@ from pyArango.collection import Document, Collection, Collection_metaclass
 import re
 from typing import Any, Optional, Union
 from tenacity import retry
-from tenacity.stop import stop_after_delay, stop_after_attempt
+from tenacity.stop import stop_after_delay
+from tenacity.retry import retry_if_not_exception_type
 from tenacity.wait import wait_random
 from cag import logger
-from pyArango import pyArangoException
 
 
 class Component(object):
@@ -137,6 +137,7 @@ class Component(object):
             f"Make sure it's a str, GenericOOSNode or GenericEdge!"
         )
 
+    @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180))
     def get_document(
         self,
         collectionName: str,
@@ -195,14 +196,14 @@ class Component(object):
             )
         except Exception as unknown_e:
             logger.error(
-                "An unknown error was thrown for data {} and node {} - message: {}".format(
+                "get_document - An unknown error was thrown for data {} and node {} - message: {}".format(
                     collectionName, str(data), str(unknown_e)
                 )
             )
+            raise Exception("raising get_document")
         return node
 
-    @retry(stop=(stop_after_delay(120) | stop_after_attempt(10)),
-           wait=wait_random(min=1, max=5))
+    @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180))
     def upsert_node(
         self,
         collectionName: str,
@@ -237,23 +238,19 @@ class Component(object):
                     node[key] = d
                 node.save()
                 node = coll[node._key]
-
-        except pyArangoException as pyae:
-            logger.error(
-                f"An exception of type {str(type(pyae))} was thrown "
-                f"for data {collectionName} and node {str(data)} -"
-                f" message: {str(pyae)}"
-            )
-            raise pyae
+            if node is None:
+                raise Exception('the node is None')
         except Exception as e:
-            logger.error(
-                f"An unknown exception of type {str(type(e))} was thrown for "
+            logger.info(
+                f"UPSERT_NODE - An unknown exception of type {str(type(e))} was thrown for "
                 f"data {collectionName} and node {str(data)} -"
                 f" message: {str(e)}"
             )
+            raise Exception(f"UPSERT_NODE {str(e)}")
 
         return node
 
+    @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180))
     def get_edge_attributes(
         self,
         relationName: str,
@@ -282,8 +279,12 @@ class Component(object):
         add_id = re.sub("/", "-", add_id)
         add_id = f"-{add_id}" if len(add_id) > 0 else ""
         edge_key = f"{from_key}-{to_key}{add_id}"
-        self.database[relationName].validatePrivate("_from", from_doc._id)
-        self.database[relationName].validatePrivate("_to", to_doc._id)
+        try:
+            self.database[relationName].validatePrivate("_from", from_doc._id)
+            self.database[relationName].validatePrivate("_to", to_doc._id)
+
+        except Exception as e:
+            raise Exception(f"get_edge_attributes {str(e)}")
 
         edge_dic = {
             "_key": edge_key,
@@ -293,8 +294,7 @@ class Component(object):
         }
         return edge_dic
 
-    @retry(stop=(stop_after_delay(120) | stop_after_attempt(10)),
-           wait=wait_random(min=1, max=5))
+    @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180)), retry=retry_if_not_exception_type(ValueError))
     def upsert_edge(
         self,
         relationName: str,
@@ -318,6 +318,8 @@ class Component(object):
         :return: the upserted edge document
         :rtype: Document
         """
+        if from_doc is None or to_doc is None:
+            raise ValueError('upsert_edge - from or to has a None Value')
 
         data = self.get_edge_attributes(
             relationName, from_doc, to_doc, edge_attrs, add_id
@@ -341,12 +343,14 @@ class Component(object):
                     edge[key] = d
                 edge.save()
                 edge = coll[edge._key]
-
+            if edge is None:
+                raise Exception('the edge is None')
         except Exception as e:
-            logger.error(
-                "An unknown error was thrown for data {} and node {} - message: {}".format(
-                    relationName, str(data), str(e)
-                )
+            logger.info(
+                f"UPSERT_EDGE - An unknown exception of type {str(type(e))} was thrown for "
+                f"data {relationName} and node {str(data)} -"
+                f" message: {str(e)}"
             )
+            raise Exception(f"get_edge_attributes {str(e)}")
 
         return edge
