@@ -183,7 +183,8 @@ class Component(object):
             raise unknown_e
         return node
 
-    @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180))
+    @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180),
+        retry=retry_if_not_exception_type(KeyError))
     def upsert_node(
         self,
         collectionName: str,
