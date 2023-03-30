@@ -16,7 +16,7 @@ from cag.graph_elements.nodes import (
     KeyTerm,
     AbstractNode,
     IFrameNode,
-    VideoNode
+    VideoNode,
 )
 from cag.graph_elements.relations import (
     BelongsTo,
@@ -154,9 +154,7 @@ class GraphCreatorBase(ABC, Component):
             "copyright": copyright,
         }
 
-        video = self.upsert_node(
-            VideoNode.__name__, dict_, alt_key="url"
-        )
+        video = self.upsert_node(VideoNode.__name__, dict_, alt_key="url")
         return video
 
     def create_iframe_node(
@@ -170,9 +168,7 @@ class GraphCreatorBase(ABC, Component):
             "copyright": copyright,
         }
 
-        video = self.upsert_node(
-            IFrameNode.__name__, dict_, alt_key="url"
-        )
+        video = self.upsert_node(IFrameNode.__name__, dict_, alt_key="url")
         return video
 
     def create_author_node(self, author_name, timestamp=None):

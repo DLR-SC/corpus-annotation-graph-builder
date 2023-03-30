@@ -39,7 +39,7 @@ class DataNode(GenericOOSNode):
 
 
 class TextNode(GenericOOSNode):
-    _fields = {"text": Field(), **GenericOOSNode._fields}
+    _fields = {"text": Field(), "lang": Field(), **GenericOOSNode._fields}
 
 
 class Author(GenericOOSNode):

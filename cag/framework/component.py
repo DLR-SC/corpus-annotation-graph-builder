@@ -48,11 +48,16 @@ class Component(object):
             edge_def_arr = []
             for ed in edges:
                 for col in (
-                    [ed["relation"]] + ed["from_collections"] + ed["to_collections"]
+                    [ed["relation"]]
+                    + ed["from_collections"]
+                    + ed["to_collections"]
                 ):
-
-                    if not self.database.hasCollection(self.get_collection_name(col)):
-                        self.database.createCollection(self.get_collection_name(col))
+                    if not self.database.hasCollection(
+                        self.get_collection_name(col)
+                    ):
+                        self.database.createCollection(
+                            self.get_collection_name(col)
+                        )
                 edge_def_arr.append(
                     EdgeDefinition(
                         self.get_collection_name(ed["relation"]),
@@ -84,13 +89,21 @@ class Component(object):
         for ed in edges:
             self.graph.update_graph_structure(
                 self.get_collection_name(ed["relation"]),
-                [self.get_collection_name(col) for col in ed["from_collections"]],
-                [self.get_collection_name(col) for col in ed["to_collections"]],
+                [
+                    self.get_collection_name(col)
+                    for col in ed["from_collections"]
+                ],
+                [
+                    self.get_collection_name(col)
+                    for col in ed["to_collections"]
+                ],
                 create_collections=True,
             )
 
     @staticmethod
-    def get_collection_name(collection: Union[str, Collection_metaclass]) -> str:
+    def get_collection_name(
+        collection: Union[str, Collection_metaclass]
+    ) -> str:
         """
         Returns the name of a collection based on the input collection. If the collection is a string,
         it returns the same string. If the collection is an instance of Collection_metaclass, it tries
@@ -153,9 +166,15 @@ class Component(object):
             if type(alt_key) == str:
                 alt_key = [alt_key]
 
-            if alt_key is None and "_key" in data.keys() and data["_key"] in coll:
+            if (
+                alt_key is None
+                and "_key" in data.keys()
+                and data["_key"] in coll
+            ):
                 node: Document = coll.fetchDocument(data["_key"])
-            elif alt_key is not None and all(x in data.keys() for x in alt_key):
+            elif alt_key is not None and all(
+                x in data.keys() for x in alt_key
+            ):
                 coll.ensureHashIndex(alt_key, unique=True)
 
                 query = {k: v for k, v in data.items() if k in alt_key}
@@ -183,8 +202,11 @@ class Component(object):
             raise unknown_e
         return node
 
-    @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180),
-        retry=retry_if_not_exception_type(KeyError))
+    @retry(
+        wait=wait_random(min=1, max=3),
+        stop=stop_after_delay(180),
+        retry=retry_if_not_exception_type(KeyError),
+    )
     def upsert_node(
         self,
         collectionName: str,
