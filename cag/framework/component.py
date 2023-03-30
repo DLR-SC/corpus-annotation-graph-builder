@@ -294,7 +294,8 @@ class Component(object):
         }
         return edge_dic
 
-    @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180)), retry=retry_if_not_exception_type(ValueError))
+    @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180),
+           retry=retry_if_not_exception_type(ValueError))
     def upsert_edge(
         self,
         relationName: str,
