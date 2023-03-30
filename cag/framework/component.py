@@ -48,17 +48,11 @@ class Component(object):
             edge_def_arr = []
             for ed in edges:
                 for col in (
-                    [ed["relation"]]
-                    + ed["from_collections"]
-                    + ed["to_collections"]
+                    [ed["relation"]] + ed["from_collections"] + ed["to_collections"]
                 ):
 
-                    if not self.database.hasCollection(
-                        self.get_collection_name(col)
-                    ):
-                        self.database.createCollection(
-                            self.get_collection_name(col)
-                        )
+                    if not self.database.hasCollection(self.get_collection_name(col)):
+                        self.database.createCollection(self.get_collection_name(col))
                 edge_def_arr.append(
                     EdgeDefinition(
                         self.get_collection_name(ed["relation"]),
@@ -90,21 +84,13 @@ class Component(object):
         for ed in edges:
             self.graph.update_graph_structure(
                 self.get_collection_name(ed["relation"]),
-                [
-                    self.get_collection_name(col)
-                    for col in ed["from_collections"]
-                ],
-                [
-                    self.get_collection_name(col)
-                    for col in ed["to_collections"]
-                ],
+                [self.get_collection_name(col) for col in ed["from_collections"]],
+                [self.get_collection_name(col) for col in ed["to_collections"]],
                 create_collections=True,
             )
 
     @staticmethod
-    def get_collection_name(
-            collection: Union[str, Collection_metaclass]
-    ) -> str:
+    def get_collection_name(collection: Union[str, Collection_metaclass]) -> str:
         """
         Returns the name of a collection based on the input collection. If the collection is a string,
         it returns the same string. If the collection is an instance of Collection_metaclass, it tries
@@ -167,15 +153,9 @@ class Component(object):
             if type(alt_key) == str:
                 alt_key = [alt_key]
 
-            if (
-                alt_key is None
-                and "_key" in data.keys()
-                and data["_key"] in coll
-            ):
+            if alt_key is None and "_key" in data.keys() and data["_key"] in coll:
                 node: Document = coll.fetchDocument(data["_key"])
-            elif alt_key is not None and all(
-                x in data.keys() for x in alt_key
-            ):
+            elif alt_key is not None and all(x in data.keys() for x in alt_key):
                 coll.ensureHashIndex(alt_key, unique=True)
 
                 query = {k: v for k, v in data.items() if k in alt_key}
@@ -200,7 +180,7 @@ class Component(object):
                     collectionName, str(data), str(unknown_e)
                 )
             )
-            raise Exception("raising get_document")
+            raise unknown_e
         return node
 
     @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180))
@@ -239,14 +219,14 @@ class Component(object):
                 node.save()
                 node = coll[node._key]
             if node is None:
-                raise Exception('the node is None')
+                raise Exception("the node is None")
         except Exception as e:
             logger.info(
                 f"UPSERT_NODE - An unknown exception of type {str(type(e))} was thrown for "
                 f"data {collectionName} and node {str(data)} -"
                 f" message: {str(e)}"
             )
-            raise Exception(f"UPSERT_NODE {str(e)}")
+            raise e
 
         return node
 
@@ -284,7 +264,7 @@ class Component(object):
             self.database[relationName].validatePrivate("_to", to_doc._id)
 
         except Exception as e:
-            raise Exception(f"get_edge_attributes {str(e)}")
+            raise e
 
         edge_dic = {
             "_key": edge_key,
@@ -294,8 +274,11 @@ class Component(object):
         }
         return edge_dic
 
-    @retry(wait=wait_random(min=1, max=3), stop=stop_after_delay(180),
-           retry=retry_if_not_exception_type(ValueError))
+    @retry(
+        wait=wait_random(min=1, max=3),
+        stop=stop_after_delay(180),
+        retry=retry_if_not_exception_type(ValueError),
+    )
     def upsert_edge(
         self,
         relationName: str,
@@ -320,7 +303,7 @@ class Component(object):
         :rtype: Document
         """
         if from_doc is None or to_doc is None:
-            raise ValueError('upsert_edge - from or to has a None Value')
+            raise ValueError("upsert_edge - from or to has a None Value")
 
         data = self.get_edge_attributes(
             relationName, from_doc, to_doc, edge_attrs, add_id
@@ -345,13 +328,13 @@ class Component(object):
                 edge.save()
                 edge = coll[edge._key]
             if edge is None:
-                raise Exception('the edge is None')
+                raise Exception("the edge is None")
         except Exception as e:
             logger.info(
                 f"UPSERT_EDGE - An unknown exception of type {str(type(e))} was thrown for "
                 f"data {relationName} and node {str(data)} -"
                 f" message: {str(e)}"
             )
-            raise Exception(f"get_edge_attributes {str(e)}")
+            raise e
 
         return edge
