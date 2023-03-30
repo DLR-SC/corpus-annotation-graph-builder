@@ -78,5 +78,8 @@ Please cite us in case you use CAG
 
 
 ## Zenodo refs
-v1.4.0 [![DOI](https://zenodo.org/badge/572124344.svg)](https://zenodo.org/badge/latestdoi/572124344)
+
+* v1.5.0 [![DOI](https://zenodo.org/badge/572124344.svg)](https://zenodo.org/badge/latestdoi/572124344)
+* v1.4.0 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7701921.svg)](https://doi.org/10.5281/zenodo.7701921)
+
 
