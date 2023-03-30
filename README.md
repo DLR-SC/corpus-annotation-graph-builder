@@ -58,7 +58,7 @@ Clone the repository, go to the root folder and then run:
 pip install -e .
 ```
 ## Usage
-
+* After the installation, a project scaffold can be created with the command `cag start-project`
 * Graph Creation [[jupyter notebook](https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/main/examples/1_create_graph.ipynb)]
 * Graph Annotation [[jupyter notebook](https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/main/examples/2_annotate_graph.ipynb)]
 

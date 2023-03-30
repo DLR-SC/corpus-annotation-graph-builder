@@ -1,0 +1,12 @@
+version: '3.3'
+
+services:
+  arangodb:
+    image: arangodb
+    environment:
+      ARANGO_ROOT_PASSWORD: root
+    ports:
+      - "40100:8529"
+    # Uncomment if you want to persist the data
+    #volumes:
+    #  - ./data:/var/lib/arangodb3

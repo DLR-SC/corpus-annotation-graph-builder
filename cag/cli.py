@@ -1,5 +1,8 @@
 import os
 import platform
+import subprocess
+import sys
+import venv
 import zipfile
 from pathlib import Path
 from subprocess import PIPE, run
@@ -22,8 +25,8 @@ def setup_project_dir(project_name: str):
         print(f"Aborting. {project_dir} already existent!")
         raise typer.Abort()
     if not typer.confirm(
-        f"Set {project_dir} as the project directory. Is this correct?",
-        default=True,
+            f"Set {project_dir} as the project directory. Is this correct?",
+            default=True,
     ):
         print("Aborting...")
         raise typer.Abort()
@@ -51,15 +54,14 @@ def start_project():
     """
     Creates project scaffold to get you started
     """
-    name = setup_project_name()
-    project_dir = setup_project_dir(name)
-    path = Path(os.path.dirname(__file__))  # get path where the module is
-    with zipfile.ZipFile(
-        f"{path.joinpath('cag_sample_project.zip')}", "r"
-    ) as zip_ref:
-        zip_ref.extractall(project_dir)
-    print(f"[green] Creating scaffold in {project_dir}[/green]")
-
+    from cookiecutter.main import cookiecutter
+    cwd = Path.cwd()
+    cag_install_dir = str(Path(__file__).parent) + "/"
+    project_dir = Path(cookiecutter(cag_install_dir, output_dir=cwd))
+    if typer.confirm(f"Create new virtual environment under {project_dir.joinpath('venv')}", default=True):
+        requirements_file = project_dir.joinpath('requirements.txt')
+        venv.create(project_dir.joinpath('venv'), with_pip=True)
+        subprocess.check_call([project_dir.joinpath('venv/bin/python'), '-m', 'pip', 'install', '-r', requirements_file])
 
 if __name__ == "__main__":
     app()
