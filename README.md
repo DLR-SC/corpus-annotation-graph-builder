@@ -57,11 +57,6 @@ Clone the repository, go to the root folder and then run:
 ```
 pip install -e .
 ```
-## Usage
-* After the installation, a project scaffold can be created with the command `cag start-project`
-* Graph Creation [[jupyter notebook](https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/main/examples/1_create_graph.ipynb)]
-* Graph Annotation [[jupyter notebook](https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/main/examples/2_annotate_graph.ipynb)]
-
 
 ## Citation
 Please cite us in case you use CAG
@@ -71,10 +66,16 @@ Please cite us in case you use CAG
         title     = {Corpus {A}nnotation {G}raph Builder ({CAG}):  An Architectural Framework to Create and Annotate a Multi-source Graph},
         booktitle = {The 17th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2023): : System Demonstrations },
         month = "may",
-        year = "2023"
+        year = "2023",
         address = "Dubrovnik, Croatia",
         publisher = "Association for Computational Linguistics",
         }
+
+## Usage
+* After the installation, a project scaffold can be created with the command `cag start-project`
+* Graph Creation [[jupyter notebook](https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/main/examples/1_create_graph.ipynb)]
+* Graph Annotation [[jupyter notebook](https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/main/examples/2_annotate_graph.ipynb)]
+
 
 
 ## Zenodo refs
