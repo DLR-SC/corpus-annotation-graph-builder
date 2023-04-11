@@ -168,7 +168,7 @@ class GraphCreatorBase(ABC, Component):
             "copyright": copyright,
         }
 
-        video = self.upsert_node(IFrameNode.__name__, dict_, alt_key="url")
+        video = self.upsert_node(IFrameNode.__name__, dict_, alt_key="uri")
         return video
 
     def create_author_node(self, author_name, timestamp=None):
