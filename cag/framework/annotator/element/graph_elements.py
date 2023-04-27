@@ -64,6 +64,18 @@ class HedgeAnnotationNode(GenericAnnotationNode):
     _fields = GenericAnnotationNode._fields
 
 
+class KeyphraseAnnotationNode(parent_nodes.GenericNode):
+    """A class to define a Keyphrase node in arangodb - This is used by pyarango to create the Collection"""
+
+    _fields = {
+        "name": parent_nodes.Field(),
+    }
+
+    def __init__(self, database, jsonData):
+        super().__init__(database, jsonData)
+        self.ensureFulltextIndex(["name"], name="fti_annotator_keyphrase")
+
+
 ##############
 #    EDGES   #
 ##############

@@ -96,6 +96,17 @@ _dict["ToxicityPipeOrchestrator"] = {
     PipeConfigKeys._edge_class: "cag.framework.annotator.element.graph_elements.HasToxicityAnnotation",
 }
 
+_dict["KeyphrasePipeOrchestrator"] = {
+    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.keyphrase_orchestrator.KeyphrasePipeOrchestrator",
+    PipeConfigKeys._pipe_id_or_func: "keyphrase_component",  # id in case of space, function name otherwise
+    PipeConfigKeys._pipe_path: "cag.framework.annotator.pipe.linguistic.keyphrase",  # leave empty if the pipe is a spacy native pipe, otherwise provide the path of where the pipe_id_or_func exists
+    PipeConfigKeys._level: "node",  # node or set
+    PipeConfigKeys._data_type: "text",  # for now we support text - later url, image
+    PipeConfigKeys._annotated_node_name: "TextNode",
+    PipeConfigKeys._node_class: "cag.framework.annotator.element.graph_elements.KeyphraseAnnotationNode",
+    PipeConfigKeys._edge_class: "cag.framework.annotator.element.graph_elements.HasAnnotation",
+}
+
 _dict["DummyPipeOrchestrator"] = {
     PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.dummy.DummyPipeOrchestrator",
     PipeConfigKeys._pipe_id_or_func: "customized_pipe_func",  # id in case of space, function name otherwise
