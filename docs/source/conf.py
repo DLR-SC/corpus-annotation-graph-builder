@@ -9,8 +9,7 @@
 project = 'Corpus Annotation Graph (CAG)'
 copyright = '2023, Roxanne El Baff. Tobias Hecking'
 author = 'Roxanne El Baff, Tobias Hecking'
-release = '1.3.0'
-
+release = '1.5.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -25,11 +24,22 @@ autoclass_content = "both"
 todo_include_todos = False
 templates_path = ["_templates"]
 exclude_patterns = []
-
+numfig = True
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'classic'
+html_theme = 'alabaster'
 html_static_path = ['_static']
-html_theme_options = {}
+html_style = ['css/custom.css']
+
+html_theme_options = {
+    'description': 'An architectural framework for graph management',
+    'github_user': 'DLR-SC',
+    'github_repo': 'corpus-annotation-graph-builder',
+    'github_type': 'star',
+    'github_button': True,
+    'github_banner': True,
+    'github_count ': True
+    }
+#pygments_style = "xcode"

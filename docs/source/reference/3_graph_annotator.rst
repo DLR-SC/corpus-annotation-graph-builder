@@ -2,8 +2,8 @@
    :language: python
 
 
-annotator
-==========
+Graph-Annotator
+===============
 
 Textmining annotator
 --------------------

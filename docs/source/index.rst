@@ -3,37 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Corpus Analytics Graph's documentation!
-==================================================
-Corpus Analytics Graph (CAG) serves as a base framework for creating graphs, extending them, and analyzing them. You can read our :doc:`get started guide </reference/1_get_started>` to see some core concepts directly applied. If you want to read up on those concept, you should go to the :doc:`concept writeup </reference/0_concept>` 
+CAG's Documentation
+====================
+Corpus Analytics Graph (CAG) serves as an architectural framework for creating graphs, extending them, and analyzing them. 
+
+You can get started :doc:`here </reference/1_get_started>` to see a quick sample on how to *create* a graph from raw data and or extend your graph using our *annotation* framework.
+
+For more details about general CAG concept please visit :doc:`CAG Concept </reference/0_concept>` .
+
+For more details about the CAG' components: :doc:`Graph Creator</reference/2_graph_creator>` and :doc:`Graph Annotator</reference/3_graph_annotator>` .
+
+
+
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-Reference
-=========
-
-.. toctree::
-   :maxdepth: 2
+   :maxdepth: 5
    :glob:
 
    reference/*
 
-Modules
-=======
-
-.. toctree::
-   :maxdepth: 3
-   :glob:
-
-   modules/*

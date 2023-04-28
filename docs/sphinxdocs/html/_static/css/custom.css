@@ -1,0 +1,15 @@
+@import '../alabaster.css';
+
+div.sphinxsidebar a {
+    color: #004B6B;
+    text-decoration: none;
+
+}
+
+h1 {
+    color: #004B6B;
+}
+
+h2 {
+    color: #B6A33B
+}

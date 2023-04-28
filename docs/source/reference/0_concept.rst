@@ -1,46 +1,49 @@
-CAG Concepts
+CAG Concept
 ============
 
+Corpus Annotation Graph builder (**CAG**) is an *architectural framework* that employs the *build-and-annotate pattern* for creating a graph. CAG is built on top of `ArangoDB`_  and its Python drivers (PyArango). For mor details about CAG, you can check ou paper `here`_.
 
+.. _ArangoDB: https://www.arangodb.com/
+.. _here: https://elib.dlr.de/193701/1/eacl2023_demo_final_version%20%281%29.pdf 
 
-The graph is, both, object of analysis as well as result container. This means that annotation runs evaluate the graph and enrich it with annoations. 
-
-In the example below object of study (OOS) nodes are depicted as white and blue boxes and annoation nodes as grey boxes. OOS nodes are created by :ref:`Graph Creators <graph-creators>` that read raw corpus data and map it to the OOS graph. Graph builders also create some basic self-evident annotations (e.g. methods, provided keywords, categories, etc.). The OOS nodes are analysed by automatic :ref:`annotator <annotator>`, which add or update annoations to the graph. 
+The CAG architectural framework aims to offer researchers a flexible but unified way of organizing and maintaining their interlinked document collections in a reproducible way.
 
 .. image:: /imgs/cag.png
 
+The build-and-annotate pattern consists of two phases, as shown in the Figure above: (1) data is collected from different sources (e.g., publication databases, online encyclopedias, news feeds, web portals, electronic libraries, repositories, media platforms) and preprocessed to build the core nodes, which we call Objects of Interest (OOI). The component responsible for this phase is the :ref:`Graph-Creator <graph-creator>`. (2) Annotations are extracted from the OOIs, and corresponding annotation nodes are created and linked to the core nodes. The component dealing with this phase is the :ref:`Graph-Annotator <graph-annotator>`.
 
-The enriched graph can be further analysed or queried by :ref:`Analyzers <analyzer>` for producing results to be presented to the end-users.
 
-.. _graph-creators:
+.. image:: /imgs/blocks.png
 
-Graph Creators
---------------
+.. _graph-creator:
 
-The Graph Creators has the tools and infrastructure to allow the user to build and maintain a graph with its defined nodes. This framework defines some generic nodes and relations (a.k.a edges): :py:mod:`cag.graph_elements.nodes`  and :py:mod:`cag.graph_elements.relations` which should apply to most knowledge corpus.
+Graph-Creator (GC)
+------------------
 
-Graph creator components evaluate raw corpus data and map it to the graph by creating OOS nodes and corresponding relations.
+GC offers a unified layout, structuring the creation process of a graph from one or many datasources. :py:mod:`GraphCreatorBase`, CAG's primary GC class, manages one datasource within a graph. It is an abstract class that inherits all the functionalities of the "Main Component".
+
+A graph creator should be designated for one corpus or datasource where the data is mapped to the graph elements (nodes and edges) by creating OOI nodes and corresponding relations (a.k.a edges). 
 
 **Input:** Raw corpus data
 
-**Output:** Object of study (OOS) nodes, self-evident annotations and relations in ArangoDB
+**Output:** A graph, in ArangoDB, where the nodes and edges contains raw corpus data.
 
-**Metadata stored in nodes and edges:**
-
-- Timestamp
 
 You can learn about how to create one in the :doc:`get started guide <1_get_started>`
 
-.. _annotator:
+.. _graph-annotator:
 
-annotator
-----------
+Graph-Annotator
+----------------
 
-Annotator components enrich the graph by analysing OOS nodes and edge them to newly created annotation nodes. Annotations can be on different levels. For example, corpus level (e.g. corpus statistics, topics), text nodes (e.g. named entities, keyphrases), image nodes (e.g. generated caption), etc.
+Annotator components enrich the graph by analyzing nodes and edge them to newly created annotation nodes. Annotations can be on different levels. For example, corpus level (e.g. corpus statistics, topics), text nodes (e.g. named entities, keyphrases), image nodes (e.g. generated caption), etc.
 
-**Input:** Knowledge Graph, Subgraph selection query
+**Input:** Set of nodes/edges
 
-**Output:** Annotation nodes and relations in ArangoDB
+**Output:** New annotation nodes and relations in ArangoDB.
+
+You can learn about how to create one in the :doc:`get started guide <1_get_started>`
+
 
 **Metadata stored in annotation nodes and annotated edges:**
 
@@ -50,7 +53,7 @@ Annotator components enrich the graph by analysing OOS nodes and edge them to ne
 
 The annotator is responsible for adding levels of abstractions to create a edgeable graph. More precisely, this component is responsible for taking a set of nodes (e.g., TextNodes) and applying a pipeline (e.g., text mining pipeline) to extract features on the level of a single node or a collection. These extracted features are then saved in an *annotation node* or directly on the annotated node.
 
-As a start, we support the creation of a text-mining pipeline that the user can customize. The package contains some samples of features extractions :py:mod:`cag.framework.annotator.textmining_pipes`.  Alternatively, we provide some functionality in a low-level extensible class, similar to the graph creator. You can read about how to use it in the :doc:`annotator guide <2_annotator>`
+As a start, we support the creation of a text-mining pipeline that the user can customize. The package contains some samples of features extractions :py:mod:`cag.framework.annotator.textmining_pipes`.  Alternatively, we provide some functionality in a low-level extensible class, similar to the graph creator. You can read about how to use it in the :doc:`annotator guide <3_graph_annotator>`
 
 
 
@@ -68,16 +71,3 @@ Two options for annotation updates *(open issue)*:
 1. Compute new delete old (Pro: No legacy information, Con: Graph is not fully reversible to a prior state).
 2. Compute new flag old as outdated (Pro: Graph is fully reversible to any prior state, Con: Graph may contain much useless information, e.g. results from trial runs)
 
-These are open to change, so please open an issue to discuss how this system should handle these updates in the future!
-
-.. _analyzer:
-
-Analyzers
----------
-The analyzer component is responsible for extracting insights from the graph. These insights can be in the form of visualization or a curated list of items ranked and processed based on user queries. Some analysers may simply read out information from the graph (e.g. corpus topics) and create a representation for the end user. Others can perform analyses based on specific queries (e.g. determining collocates of a given query term).
-
-**Input:** Updated Knowledge Graph, Subgraph selection query
-
-**Output:** Analysis results and visualisations
- 
-You can read more on how to use them in the :doc:`analyzer guide <3_analyzer>`

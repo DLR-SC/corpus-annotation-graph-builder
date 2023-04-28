@@ -2,28 +2,40 @@
    :language: python
 
 
-Get Started
+Quick Start
 ===========
 
-This package is based on the concept of using 3 stages for graph management:
+In the quick guide here, we show how to install CAG, create a sample graph from a datasource and extend the graph with annotation nodes.
 
+0. Installation 
 1. Graph creation: :python:`GraphCreatorBase`: creates or updates a graph from a  datasource
 2. Graph annotation: :python:`AnnotatorBase`: annotate (extend) graphs by running various algorithms over them
 
 
+.. _qs-installation:
+
 Installation
 ------------
 
-Using pip:
+You can download `CAG using Pypi`_.
+
+.. _CAG using Pypi: https://pypi.org/project/cag/
 
 
 .. code-block:: bash
 
     pip install cag
 
+Or, to install the latest fixes, you can install CAG from GitHub:
 
-First steps
------------
+.. code-block:: bash
+    
+    pip install git+https://github.com/DLR-SC/corpus-annotation-graph-builder.git
+
+.. _qs-build:
+
+Build your First Graph
+----------------------
 
 Make sure you have an up-to-date ArangoDB instance running and can connect to it. You can connect to it using the :py:class:`cag.utils.config.Config` utilities:
 
@@ -33,10 +45,6 @@ Make sure you have an up-to-date ArangoDB instance running and can connect to it
     from cag.utils.config import Config 
     conf = Config(database="YourDB", graph="KnowledgeGraph")
 
-In order to connect, you have to have the graph created and imported somewhere (note: the relations defined here are not relevant, you have to define them in the Graph Creator):
-
-
-The next step is to create the graph creator and the graph definition. This basically defines your data model and how the nodes should be able to be connected, similar to an ER-model:
 
 .. code-block:: python
 
@@ -79,3 +87,8 @@ Now you can instantiate your GraphCreator and run it:
 
 
 
+.. _qs-annotate:
+
+
+Annotate your First Graph
+--------------------------

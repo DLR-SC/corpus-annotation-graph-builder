@@ -6,64 +6,58 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Get Started &#8212; Corpus Annotation Graph (CAG) 1.3.0 documentation</title>
+    <title>Quick Start &#8212; Corpus Annotation Graph (CAG) 1.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css" />
-    
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
-    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="annotator" href="2_annotator.html" />
-    <link rel="prev" title="CAG Concepts" href="0_concept.html" /> 
+    <link rel="next" title="Graph-Creator" href="2_graph_creator.html" />
+    <link rel="prev" title="CAG Concept" href="0_concept.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="2_annotator.html" title="annotator"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="0_concept.html" title="CAG Concepts"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Corpus Annotation Graph (CAG) 1.3.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Get Started</a></li> 
-      </ul>
-    </div>  
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <section id="get-started">
-<h1>Get Started<a class="headerlink" href="#get-started" title="Permalink to this heading">¶</a></h1>
-<p>This package is based on the concept of using 3 stages for graph management:</p>
-<ol class="arabic simple">
+  <section id="quick-start">
+<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading">¶</a></h1>
+<p>In the quick guide here, we show how to install CAG, create a sample graph from a datasource and extend the graph with annotation nodes.</p>
+<ol class="arabic simple" start="0">
+<li><p>Installation</p></li>
 <li><p>Graph creation: <code class="code highlight python docutils literal highlight-python"><span class="n">GraphCreatorBase</span></code>: creates or updates a graph from a  datasource</p></li>
 <li><p>Graph annotation: <code class="code highlight python docutils literal highlight-python"><span class="n">AnnotatorBase</span></code>: annotate (extend) graphs by running various algorithms over them</p></li>
 </ol>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
-<p>Using pip:</p>
+<span id="qs-installation"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
+<p>You can download <a class="reference external" href="https://pypi.org/project/cag/">CAG using Pypi</a>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cag
 </pre></div>
 </div>
+<p>Or, to install the latest fixes, you can install CAG from GitHub:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/DLR-SC/corpus-annotation-graph-builder.git
+</pre></div>
+</div>
 </section>
-<section id="first-steps">
-<h2>First steps<a class="headerlink" href="#first-steps" title="Permalink to this heading">¶</a></h2>
+<section id="build-your-first-graph">
+<span id="qs-build"></span><h2>Build your First Graph<a class="headerlink" href="#build-your-first-graph" title="Permalink to this heading">¶</a></h2>
 <p>Make sure you have an up-to-date ArangoDB instance running and can connect to it. You can connect to it using the <code class="xref py py-class docutils literal notranslate"><span class="pre">cag.utils.config.Config</span></code> utilities:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cag.utils.config</span> <span class="kn">import</span> <span class="n">Config</span>
 <span class="n">conf</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="s2">&quot;YourDB&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="s2">&quot;KnowledgeGraph&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In order to connect, you have to have the graph created and imported somewhere (note: the relations defined here are not relevant, you have to define them in the Graph Creator):</p>
-<p>The next step is to create the graph creator and the graph definition. This basically defines your data model and how the nodes should be able to be connected, similar to an ER-model:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cag.utils</span> <span class="k">as</span> <span class="nn">utils</span>
 <span class="kn">from</span> <span class="nn">cag.framework</span> <span class="kn">import</span> <span class="n">GraphCreatorBase</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
@@ -99,43 +93,60 @@
 </pre></div>
 </div>
 </section>
+<section id="annotate-your-first-graph">
+<span id="qs-annotate"></span><h2>Annotate your First Graph<a class="headerlink" href="#annotate-your-first-graph" title="Permalink to this heading">¶</a></h2>
+</section>
 </section>
 
 
-            <div class="clearer"></div>
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <div>
-    <h3><a href="../index.html">Table of Contents</a></h3>
-    <ul>
-<li><a class="reference internal" href="#">Get Started</a><ul>
-<li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#first-steps">First steps</a></li>
+<h1 class="logo"><a href="../index.html">Corpus Annotation Graph (CAG)</a></h1>
+
+
+
+<p class="blurb">An architectural framework for graph management</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=DLR-SC&repo=corpus-annotation-graph-builder&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="0_concept.html">CAG Concept</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-your-first-graph">Build your First Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#annotate-your-first-graph">Annotate your First Graph</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="2_graph_creator.html">Graph-Creator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_graph_annotator.html">Graph-Annotator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_graph_analyzer.html">Analyzers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_view_management.html">Arango Views</a></li>
 </ul>
 
-  </div>
-  <div>
-    <h4>Previous topic</h4>
-    <p class="topless"><a href="0_concept.html"
-                          title="previous chapter">CAG Concepts</a></p>
-  </div>
-  <div>
-    <h4>Next topic</h4>
-    <p class="topless"><a href="2_annotator.html"
-                          title="next chapter">annotator</a></p>
-  </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/reference/1_get_started.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="0_concept.html" title="previous chapter">CAG Concept</a></li>
+      <li>Next: <a href="2_graph_creator.html" title="next chapter">Graph-Creator</a></li>
+  </ul></li>
+</ul>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
@@ -146,29 +157,36 @@
     </div>
 </div>
 <script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="2_annotator.html" title="annotator"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="0_concept.html" title="CAG Concepts"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Corpus Annotation Graph (CAG) 1.3.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Get Started</a></li> 
-      </ul>
+    <div class="footer">
+      &copy;2023, Roxanne El Baff. Tobias Hecking.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/reference/1_get_started.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Roxanne El Baff. Tobias Hecking.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
-    </div>
+
+    
+    <a href="https://github.com/DLR-SC/corpus-annotation-graph-builder" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
   </body>
 </html>
