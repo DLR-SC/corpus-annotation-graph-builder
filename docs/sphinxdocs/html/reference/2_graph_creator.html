@@ -34,6 +34,183 @@
             
   <section id="graph-creator">
 <h1>Graph-Creator<a class="headerlink" href="#graph-creator" title="Permalink to this heading">¶</a></h1>
+<p>In order to build your first Graph using CAG, you have to follow the following steps:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Define your Graph Ontology.</p></li>
+<li><p>Define which nodes and edges are already defined by CAG (as a Python Class).</p></li>
+<li><p>Create the nodes and edges specific to your datasource(s) that are not defined by CAG.</p></li>
+<li><dl class="simple">
+<dt>Create your <strong>GraphCreator</strong>:</dt><dd><ul class="simple">
+<li><p>Define the relations between the nodes.</p></li>
+<li><p>Implement the init_graph and update_graph.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+</div></blockquote>
+<section id="define-your-ontology">
+<h2>1. Define your Ontology<a class="headerlink" href="#define-your-ontology" title="Permalink to this heading">¶</a></h2>
+<p>We assume we have a set of Wikipedia Article Revisions where the data’s dataframe looks as follows:</p>
+<img alt="../_images/sample_graph.png" src="../_images/sample_graph.png" />
+</section>
+<section id="define-graph-elements">
+<h2>2. Define Graph Elements<a class="headerlink" href="#define-graph-elements" title="Permalink to this heading">¶</a></h2>
+<p>CAG has predefined Nodes and Edges. You can access them via: <code class="xref py py-class docutils literal notranslate"><span class="pre">cag.graph_elements.nodes</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">cag.graph_elements.relations</span></code>.</p>
+<p>Based on the Ontology defined above, CAG has already the <cite>TextNode</cite>, <cite>WebResesource</cite> node, and <cite>ImageNode</cite>. But it is missing the Wikipedia-specific nodes and edges: WikipediaArticle and WikipediaRevision.</p>
+</section>
+<section id="create-graph-elements">
+<h2>3. Create Graph Elements<a class="headerlink" href="#create-graph-elements" title="Permalink to this heading">¶</a></h2>
+<p>We create these nodes as Python Classes (as required by PyArango):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cag.graph_elements.nodes</span> <span class="kn">import</span> <span class="n">GenericOOSNode</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="k">class</span> <span class="nc">WikipediaArticle</span><span class="p">(</span><span class="n">GenericOOSNode</span><span class="p">):</span>
+    <span class="n">_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">Field</span><span class="p">(),</span> <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="n">Field</span><span class="p">(),</span> <span class="o">**</span><span class="n">GenericOOSNode</span><span class="o">.</span><span class="n">_fields</span><span class="p">}</span>
+
+
+<span class="k">class</span> <span class="nc">WikipediaRevision</span><span class="p">(</span><span class="n">GenericOOSNode</span><span class="p">):</span>
+    <span class="n">_fields</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;revision_id&quot;</span><span class="p">:</span> <span class="n">Field</span><span class="p">(),</span>
+        <span class="s2">&quot;revision_timestamp&quot;</span><span class="p">:</span> <span class="n">Field</span><span class="p">(),</span>
+        <span class="o">**</span><span class="n">GenericOOSNode</span><span class="o">.</span><span class="n">_fields</span><span class="p">,</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="create-graph-creator">
+<h2>4. Create Graph Creator<a class="headerlink" href="#create-graph-creator" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyGraphCreator</span><span class="p">(</span><span class="n">GraphCreatorBase</span><span class="p">):</span>
+    <span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;WikipediaRev&quot;</span>
+    <span class="n">_description</span> <span class="o">=</span> <span class="s2">&quot;Wikipedia revisions&quot;</span>
+
+    <span class="c1">### your code here: Add __init__ Here ##</span>
+    <span class="n">_WIKIPEDIA_ARTICLE_NODE</span> <span class="o">=</span> <span class="n">WikipediaArticle</span>
+    <span class="n">_WIKIPEDIA_REVISION_NODE</span> <span class="o">=</span> <span class="n">WikipediaRevision</span>
+
+    <span class="n">_HAS_A_RELATION</span> <span class="o">=</span> <span class="n">HasA</span>
+
+    <span class="c1"># DEFINE RELATIONS</span>
+    <span class="n">_edge_definitions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;relation&quot;</span><span class="p">:</span> <span class="n">_HAS_A_RELATION</span><span class="p">,</span>
+            <span class="s2">&quot;from_collections&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">GraphCreatorBase</span><span class="o">.</span><span class="n">_CORPUS_NODE_NAME</span><span class="p">,</span>
+                <span class="n">_WIKIPEDIA_ARTICLE_NODE</span><span class="p">,</span>
+                <span class="n">_WIKIPEDIA_REVISION_NODE</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;to_collections&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">GraphCreatorBase</span><span class="o">.</span><span class="n">_TEXT_NODE_NAME</span><span class="p">,</span>
+                <span class="n">GraphCreatorBase</span><span class="o">.</span><span class="n">_CORPUS_NODE_NAME</span><span class="p">,</span>
+                <span class="n">_WIKIPEDIA_ARTICLE_NODE</span><span class="p">,</span>
+                <span class="n">_WIKIPEDIA_REVISION_NODE</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+
+
+    <span class="c1">### your code here: Add init_graph(self) here ##</span>
+    <span class="k">def</span> <span class="nf">init_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corpus_file_or_dir</span><span class="p">)</span>
+        <span class="n">wiki_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corpus_file_or_dir</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;there are </span><span class="si">{}</span><span class="s2"> wiki titles&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wiki_files</span><span class="p">)))</span>
+        <span class="n">node_corpus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_corpus_node</span><span class="p">(</span>
+            <span class="n">key</span><span class="o">=</span><span class="s2">&quot;WikipediaRev&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">MyGraphCreator</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;social_media&quot;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="n">MyGraphCreator</span><span class="o">.</span><span class="n">_description</span><span class="p">,</span>
+            <span class="n">created_on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">now</span><span class="p">,</span>
+            <span class="n">timestamp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">now</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">wiki_file</span> <span class="ow">in</span> <span class="n">wiki_files</span><span class="p">:</span>
+            <span class="n">page_revs_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">wiki_file</span><span class="p">)</span>
+
+            <span class="n">page_revs_df</span><span class="p">[</span><span class="s2">&quot;timestamp_str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">page_revs_df</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span>
+            <span class="n">page_revs_df</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+                <span class="n">page_revs_df</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">],</span> <span class="n">infer_datetime_format</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">page_revs_df</span> <span class="o">=</span> <span class="n">page_revs_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">])</span>
+
+            <span class="c1">## create wikipedia page</span>
+            <span class="n">page_name</span> <span class="o">=</span> <span class="n">page_revs_df</span><span class="p">[</span><span class="s2">&quot;page&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">language</span> <span class="o">=</span> <span class="n">page_revs_df</span><span class="p">[</span><span class="s2">&quot;lang&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+
+            <span class="c1"># upsert_node generic to add nodes</span>
+            <span class="n">node_wikiarticle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">upsert_node</span><span class="p">(</span>
+                <span class="n">MyGraphCreator</span><span class="o">.</span><span class="n">_WIKIPEDIA_ARTICLE_NODE</span><span class="p">,</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">page_name</span><span class="p">,</span>
+                    <span class="s2">&quot;lang&quot;</span><span class="p">:</span> <span class="n">language</span><span class="p">,</span>
+                    <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">page_revs_df</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+                <span class="p">},</span>
+                <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+
+            <span class="c1">## create wikipedia link using upsert_edge</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">upsert_edge</span><span class="p">(</span>
+                <span class="n">MyGraphCreator</span><span class="o">.</span><span class="n">_HAS_A_RELATION</span><span class="p">,</span>  <span class="c1"># relation name</span>
+                <span class="n">node_corpus</span><span class="p">,</span>  <span class="c1"># from</span>
+                <span class="n">node_wikiarticle</span><span class="p">,</span>  <span class="c1"># to</span>
+                <span class="p">{</span><span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">page_revs_df</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()},</span>
+            <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">revision</span> <span class="ow">in</span> <span class="n">page_revs_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="c1"># WikipediaRevision</span>
+                <span class="n">revision_timestamp</span> <span class="o">=</span> <span class="n">revision</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span>
+                <span class="n">revision_id</span> <span class="o">=</span> <span class="n">revision</span><span class="p">[</span><span class="s2">&quot;page&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">revision</span><span class="p">[</span><span class="s2">&quot;timestamp_str&quot;</span><span class="p">]</span>
+
+                <span class="n">node_revision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">upsert_node</span><span class="p">(</span>
+                    <span class="n">MyGraphCreator</span><span class="o">.</span><span class="n">_WIKIPEDIA_REVISION_NODE</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;rev_id&quot;</span><span class="p">:</span> <span class="n">revision_id</span><span class="p">,</span>
+                        <span class="s2">&quot;rev_timestamp&quot;</span><span class="p">:</span> <span class="n">revision_timestamp</span><span class="p">,</span>
+                        <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">revision_timestamp</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="n">alt_key</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;rev_id&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">upsert_edge</span><span class="p">(</span>
+                    <span class="n">MyGraphCreator</span><span class="o">.</span><span class="n">_HAS_A_RELATION</span><span class="p">,</span>  <span class="c1"># relation name</span>
+                    <span class="n">node_wikiarticle</span><span class="p">,</span>  <span class="c1"># from</span>
+                    <span class="n">node_revision</span><span class="p">,</span>  <span class="c1"># to</span>
+                    <span class="p">{</span><span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">revision_timestamp</span><span class="p">},</span>
+                <span class="p">)</span>
+
+                <span class="c1"># TextNode</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="n">revision</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+                <span class="n">node_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_text_node</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">upsert_edge</span><span class="p">(</span>
+                    <span class="n">MyGraphCreator</span><span class="o">.</span><span class="n">_HAS_A_RELATION</span><span class="p">,</span>
+                    <span class="n">node_revision</span><span class="p">,</span>
+                    <span class="n">node_text</span><span class="p">,</span>
+                    <span class="p">{</span><span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">revision</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]},</span>
+                <span class="p">)</span>
+
+
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
+
+    <span class="c1"># -------------------------------------------</span>
+
+    <span class="c1">### add update_graph here ##</span>
+    <span class="k">def</span> <span class="nf">update_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_graph</span><span class="p">()</span>
+
+    <span class="c1"># -------------------------------------------</span>
+</pre></div>
+</div>
+<p>You can then run your GC as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MyGraphCreator</span><span class="p">(</span>
+    <span class="s2">&quot;path/to/your/data&quot;</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">,</span>
+    <span class="n">initialize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">load_generic_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="c1"># do not create all CAG&#39;s graph elements - just the ones defined in my GC</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -65,10 +242,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="0_concept.html">CAG Concept</a></li>
 <li class="toctree-l1"><a class="reference internal" href="1_get_started.html">Quick Start</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Graph-Creator</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Graph-Creator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#define-your-ontology">1. Define your Ontology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#define-graph-elements">2. Define Graph Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-graph-elements">3. Create Graph Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-graph-creator">4. Create Graph Creator</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="3_graph_annotator.html">Graph-Annotator</a></li>
-<li class="toctree-l1"><a class="reference internal" href="4_graph_analyzer.html">Analyzers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="5_view_management.html">Arango Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_view_management.html">Extra Feature: The Arango View Wrapper</a></li>
 </ul>
 
 <div class="relations">

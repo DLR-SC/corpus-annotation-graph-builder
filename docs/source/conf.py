@@ -40,6 +40,5 @@ html_theme_options = {
     'github_type': 'star',
     'github_button': True,
     'github_banner': True,
-    'github_count ': True
     }
 #pygments_style = "xcode"

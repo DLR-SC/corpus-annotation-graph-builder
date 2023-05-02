@@ -42,7 +42,7 @@
 </ol>
 <section id="installation">
 <span id="qs-installation"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
-<p>You can download <a class="reference external" href="https://pypi.org/project/cag/">CAG using Pypi</a>.</p>
+<p>You can download  the <strong>latest stable</strong> version of CAG from <a class="reference external" href="https://pypi.org/project/cag/">Pypi</a>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cag
 </pre></div>
 </div>
@@ -51,50 +51,61 @@
 </pre></div>
 </div>
 </section>
+<section id="requirement">
+<span id="qs-requiremnent"></span><h2>Requirement<a class="headerlink" href="#requirement" title="Permalink to this heading">¶</a></h2>
+<p>Make sure you have an ArangoDB instance up and running. You can connect to it using the <code class="xref py py-class docutils literal notranslate"><span class="pre">cag.utils.config.Config</span></code> utilities as shown in the code block below. your <cite>config</cite> instance will be used later on when you initiated you <cite>Graph Creator</cite>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cag.utils.config</span> <span class="k">as</span> <span class="nn">config</span>
+
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">Config</span><span class="p">(</span>
+    <span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:8529&quot;</span><span class="p">,</span> <span class="c1"># URL to your ArangoDB instance</span>
+    <span class="n">user</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span> <span class="c1"># ArangoDB username</span>
+    <span class="n">password</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span> <span class="c1"># ArangoDB password</span>
+    <span class="n">database</span><span class="o">=</span><span class="s2">&quot;_system&quot;</span><span class="p">,</span> <span class="c1"># The database name - DB will be created if it does not already exist</span>
+    <span class="n">graph</span><span class="o">=</span><span class="s2">&quot;MyCagGraph&quot;</span><span class="p">,</span> <span class="c1"># Ypur graph name - A new graph will be created if it does not already exist</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="build-your-first-graph">
 <span id="qs-build"></span><h2>Build your First Graph<a class="headerlink" href="#build-your-first-graph" title="Permalink to this heading">¶</a></h2>
-<p>Make sure you have an up-to-date ArangoDB instance running and can connect to it. You can connect to it using the <code class="xref py py-class docutils literal notranslate"><span class="pre">cag.utils.config.Config</span></code> utilities:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cag.utils.config</span> <span class="kn">import</span> <span class="n">Config</span>
-<span class="n">conf</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="s2">&quot;YourDB&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="s2">&quot;KnowledgeGraph&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cag.utils</span> <span class="k">as</span> <span class="nn">utils</span>
-<span class="kn">from</span> <span class="nn">cag.framework</span> <span class="kn">import</span> <span class="n">GraphCreatorBase</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
-<span class="k">class</span> <span class="nc">AnyGraphCreator</span><span class="p">(</span><span class="n">GraphCreatorBase</span><span class="p">):</span>
-    <span class="n">_ANY_DATASET_NODE_NAME</span> <span class="o">=</span> <span class="s2">&quot;AnyDataset&quot;</span>
-    <span class="n">_ANY_EDGE_PUB_CORPUS</span> <span class="o">=</span> <span class="s2">&quot;AnyEdgeDSCorpus&quot;</span>
-    <span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Any Graph Creator&quot;</span>
-    <span class="n">_description</span> <span class="o">=</span> <span class="s2">&quot;Creates a graph based on any corpus&quot;</span>
-    <span class="n">_edge_definitions</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="n">_ANY_EDGE_PUB_CORPUS</span><span class="p">,</span>
-            <span class="s1">&#39;from_collections&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">_ANY_DATASET_NODE_NAME</span><span class="p">],</span>
-            <span class="s1">&#39;to_collections&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">GraphCreatorBase</span><span class="o">.</span><span class="n">_CORPUS_NODE_NAME</span><span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">]</span>
+<p>In this section we show a quick example on how to create your graph from a datasource using CAG. For a more deailed guide, refer to the <cite>Graph-Creator Section</cite>.</p>
+<p>Your <cite>GraphCreator</cite> inherits from the class <code class="xref py py-class docutils literal notranslate"><span class="pre">cag.framework.creator.base_creator.GraphCreatorBase</span></code> which is an abstract class; it enforces the implementation of two functions: one for initializing (<cite>init_graph()</cite>) the graph from a datasource and one for updating it (<cite>init_graph()</cite>). In jupyter notebook <a class="reference external" href="https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/main/examples/1_create_graph.ipynb">here</a>, we create a sample graph.</p>
+<p>Each GraphCreator would look as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cag.framework.creator.base_creator</span> <span class="kn">import</span> <span class="n">GraphCreatorBase</span>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corpus_dir</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">initialize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">corpus_dir</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">initialize</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">MyDatasourceXGraphCreator</span><span class="p">(</span><span class="n">GraphCreatorBase</span><span class="p">):</span>
+
+    <span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;DatasourceX&quot;</span>
+    <span class="n">_description</span> <span class="o">=</span> <span class="s2">&quot;This is the description of my DatasourceX&quot;</span>
+
+    <span class="c1"># Here you define a sub-ontology of your graph</span>
+    <span class="c1"># - only the ontology related to your DatasourceX</span>
+
+    <span class="c1"># 1. Define Nodes not created in CAG</span>
+        <span class="c1"># TODO</span>
+    <span class="c1"># 2. Define relations</span>
+        <span class="c1"># TODO</span>
+
     <span class="k">def</span> <span class="nf">init_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">corpus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_corpus_node</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;AnyCorpus&quot;</span><span class="p">,</span>
-                                        <span class="n">name</span><span class="o">=</span><span class="n">AnyGraphCreator</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
-                                        <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;journal&quot;</span><span class="p">,</span>
-                                        <span class="n">desc</span><span class="o">=</span><span class="n">AnyGraphCreator</span><span class="o">.</span><span class="n">_description</span><span class="p">,</span>
-                                        <span class="n">created_on</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
-        <span class="c1"># fetch your data, load it, etc,</span>
-        <span class="c1"># self.corpus_file_or_dir can be used to tell your creator where your files or data is</span>
-</pre></div>
-</div>
-<p>Similar to the connection above, you need to have your collections present as a class due to the underlying connector system (pyArango). Furthermore, the only collections that will be created are the ones present in at least one edge definition.</p>
-<p>Now you can instantiate your GraphCreator and run it:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gc</span> <span class="o">=</span> <span class="n">AnyGraphCreator</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">conf</span><span class="p">,</span><span class="n">initialize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Loop over each entry of your dataset and an load it to the graph</span>
+        <span class="c1"># use the following to insert a node or edge (respectively):</span>
+            <span class="c1">#      GENERIC functions: `self.upsert_node(name, attrs_dict, alt_key)`,</span>
+            <span class="c1">#                         `self.upsert_edge(relation_name,</span>
+            <span class="c1">#                                           from_node, to_node, attrs_dict)`</span>
+            <span class="c1">#      Specific functions: `self.create_author_node()`, `self.create_author_node()`</span>
+
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">update_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_graph</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
 <section id="annotate-your-first-graph">
 <span id="qs-annotate"></span><h2>Annotate your First Graph<a class="headerlink" href="#annotate-your-first-graph" title="Permalink to this heading">¶</a></h2>
+<p>In <a class="reference external" href="https://github.com/DLR-SC/corpus-annotation-graph-builder/blob/main/examples/2_annotate_graph.ipynb">*annotation* jupyter notebook</a>, we create an annotation pipeline and .</p>
 </section>
 </section>
 
@@ -128,14 +139,14 @@
 <li class="toctree-l1"><a class="reference internal" href="0_concept.html">CAG Concept</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requirement">Requirement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#build-your-first-graph">Build your First Graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#annotate-your-first-graph">Annotate your First Graph</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="2_graph_creator.html">Graph-Creator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="3_graph_annotator.html">Graph-Annotator</a></li>
-<li class="toctree-l1"><a class="reference internal" href="4_graph_analyzer.html">Analyzers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="5_view_management.html">Arango Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_view_management.html">Extra Feature: The Arango View Wrapper</a></li>
 </ul>
 
 <div class="relations">

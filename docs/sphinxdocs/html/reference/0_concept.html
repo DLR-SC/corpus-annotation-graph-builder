@@ -34,11 +34,49 @@
             
   <section id="cag-concept">
 <h1>CAG Concept<a class="headerlink" href="#cag-concept" title="Permalink to this heading">¶</a></h1>
-<p>Corpus Annotation Graph builder (<strong>CAG</strong>) is an <em>architectural framework</em> that employs the <em>build-and-annotate pattern</em> for creating a graph. CAG is built on top of <a class="reference external" href="https://www.arangodb.com/">ArangoDB</a>  and its Python drivers (PyArango). Please check our paper <a class="reference external" href="https://elib.dlr.de/193701/1/eacl2023_demo_final_version%20%281%29.pdf">here</a>.</p>
+<p>Corpus Annotation Graph builder (<strong>CAG</strong>) is an <em>architectural framework</em> that employs the <em>build-and-annotate pattern</em> for creating a graph. CAG is built on top of <a class="reference external" href="https://www.arangodb.com/">ArangoDB</a>  and its Python drivers (PyArango). For mor details about CAG, you can check ou paper <a class="reference external" href="https://elib.dlr.de/193701/1/eacl2023_demo_final_version%20%281%29.pdf">here</a>.</p>
 <p>The CAG architectural framework aims to offer researchers a flexible but unified way of organizing and maintaining their interlinked document collections in a reproducible way.</p>
 <img alt="../_images/cag.png" src="../_images/cag.png" />
 <p>The build-and-annotate pattern consists of two phases, as shown in the Figure above: (1) data is collected from different sources (e.g., publication databases, online encyclopedias, news feeds, web portals, electronic libraries, repositories, media platforms) and preprocessed to build the core nodes, which we call Objects of Interest (OOI). The component responsible for this phase is the <a class="reference internal" href="#graph-creator"><span class="std std-ref">Graph-Creator</span></a>. (2) Annotations are extracted from the OOIs, and corresponding annotation nodes are created and linked to the core nodes. The component dealing with this phase is the <a class="reference internal" href="#graph-annotator"><span class="std std-ref">Graph-Annotator</span></a>.</p>
 <img alt="../_images/blocks.png" src="../_images/blocks.png" />
+<dl class="simple">
+<dt>Building Blocks - From bottom up:</dt><dd><ul class="simple">
+<li><p>CAG uses ArangoDB as a graph database.</p></li>
+<li><p>CAG uses PyArango library to communicate with the DB.</p></li>
+<li><p>The Config establishes the connection to the database.</p></li>
+<li><p>The Main component modifies the graph elements.</p></li>
+<li><dl class="simple">
+<dt>The top building blocks are Graph-Creator and Graph-Annotator:</dt><dd><ul>
+<li><p>Graph-Creator responsible for creating a graph from raw data.</p></li>
+<li><p>Graph-Annotator responsible for extending a graph by adding annotations.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<section id="the-main-component">
+<span id="main-comp"></span><h2>The Main Component:<a class="headerlink" href="#the-main-component" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p><strong>Main Component</strong> ` cag.framework.component.py`  is the base component responsible for creating/updating the graph ontology, nodes, and edges.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>Constructor</cite>. Creates the graph ontology if it does not exist, or updates it.</p></li>
+<li><p><cite>get_document</cite>. Gets a node or an edge based on a key or set of attributes.</p></li>
+<li><p><cite>upsert_node</cite>. Updates or creates a new node instance. It uses the get_document function to fetch existing nodes.</p></li>
+<li><p>In Arango, each node has a <cite>_key</cite> however this key is not always useful for a user-friendly unique definition of a node. We add a new capability:</p></li>
+<li><p>As an example, for the <cite>TextNode</cite>, the uniqueness of a node is define by the text content.</p></li>
+<li><p>When inserting a TextNode,
+<cite>self.upsert_node( GraphCreatorBase._TEXT_NODE_NAME, {“text”:*content*}, alt_key=”text”)</cite></p></li>
+<li><p><cite>alt_key=”text”</cite> means: if a TextNode with the same text exists, update it (do not create a new one)</p></li>
+<li><p>if <cite>alt_key</cite> is not provided, then the uniqueness of a node is defined by the ArangoDB <cite>_key</cite></p></li>
+<li><p><cite>get_edge_attributes</cite>. Gets the edge attributes based on Edge type and from and to nodes.</p></li>
+<li><p><cite>upsert_edge</cite>. Update or create a new edge instance.</p></li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</section>
 <section id="graph-creator-gc">
 <span id="graph-creator"></span><h2>Graph-Creator (GC)<a class="headerlink" href="#graph-creator-gc" title="Permalink to this heading">¶</a></h2>
 <p>GC offers a unified layout, structuring the creation process of a graph from one or many datasources. <code class="xref py py-mod docutils literal notranslate"><span class="pre">GraphCreatorBase</span></code>, CAG’s primary GC class, manages one datasource within a graph. It is an abstract class that inherits all the functionalities of the “Main Component”.</p>
@@ -101,6 +139,7 @@
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">CAG Concept</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-main-component">The Main Component:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graph-creator-gc">Graph-Creator (GC)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graph-annotator">Graph-Annotator</a></li>
 </ul>
@@ -108,8 +147,7 @@
 <li class="toctree-l1"><a class="reference internal" href="1_get_started.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="2_graph_creator.html">Graph-Creator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="3_graph_annotator.html">Graph-Annotator</a></li>
-<li class="toctree-l1"><a class="reference internal" href="4_graph_analyzer.html">Analyzers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="5_view_management.html">Arango Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_view_management.html">Extra Feature: The Arango View Wrapper</a></li>
 </ul>
 
 <div class="relations">

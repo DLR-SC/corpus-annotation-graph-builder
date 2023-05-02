@@ -15,6 +15,39 @@ The build-and-annotate pattern consists of two phases, as shown in the Figure ab
 
 .. image:: /imgs/blocks.png
 
+Building Blocks - From bottom up: 
+ - CAG uses ArangoDB as a graph database.
+ - CAG uses PyArango library to communicate with the DB. 
+ - The Config establishes the connection to the database. 
+ - The Main component modifies the graph elements.
+ - The top building blocks are Graph-Creator and Graph-Annotator:
+    - Graph-Creator responsible for creating a graph from raw data.
+    - Graph-Annotator responsible for extending a graph by adding annotations.
+
+
+
+.. _main_comp:
+
+The Main Component:
+-------------------
+
+
+  **Main Component** ` cag.framework.component.py`  is the base component responsible for creating/updating the graph ontology, nodes, and edges. 
+
+    
+    - `Constructor`. Creates the graph ontology if it does not exist, or updates it.                     
+    - `get_document`. Gets a node or an edge based on a key or set of attributes.        
+    - `upsert_node`. Updates or creates a new node instance. It uses the get\_document function to fetch existing nodes.
+    - In Arango, each node has a `_key` however this key is not always useful for a user-friendly unique definition of a node. We add a new capability:
+    - As an example, for the `TextNode`, the uniqueness of a node is define by the text content.
+    - When inserting a TextNode,
+      `self.upsert_node( GraphCreatorBase._TEXT_NODE_NAME, {"text":*content*}, alt_key="text")`         
+    - `alt_key="text"` means: if a TextNode with the same text exists, update it (do not create a new one)
+    -  if `alt_key` is not provided, then the uniqueness of a node is defined by the ArangoDB `_key`
+    - `get_edge_attributes`. Gets the edge attributes based on Edge type and from and to nodes.                                                                                              
+    - `upsert_edge`. Update or create a new edge instance.    
+
+
 .. _graph-creator:
 
 Graph-Creator (GC)

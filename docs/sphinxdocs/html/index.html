@@ -34,33 +34,49 @@
   <section id="cag-s-documentation">
 <h1>CAG’s Documentation<a class="headerlink" href="#cag-s-documentation" title="Permalink to this heading">¶</a></h1>
 <p>Corpus Analytics Graph (CAG) serves as an architectural framework for creating graphs, extending them, and analyzing them.</p>
+<p><strong>CAG…</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>is a Python library.</p></li>
+<li><p>sets an _infrastructure for your project to load your data into a graph <strong>but you still have to do the main work</strong>.</p></li>
+<li><p>provides and annotation framework to extend your nodes.</p></li>
+<li><p>provides and annotation framework to extend your nodes.</p></li>
+</ul>
+</div></blockquote>
 <p>You can get started <a class="reference internal" href="reference/1_get_started.html"><span class="doc">here</span></a> to see a quick sample on how to <em>create</em> a graph from raw data and or extend your graph using our <em>annotation</em> framework.</p>
 <p>For more details about general CAG concept please visit <a class="reference internal" href="reference/0_concept.html"><span class="doc">CAG Concept</span></a> .</p>
 <p>For more details about the CAG’ components: <a class="reference internal" href="reference/2_graph_creator.html"><span class="doc">Graph Creator</span></a> and <a class="reference internal" href="reference/3_graph_annotator.html"><span class="doc">Graph Annotator</span></a> .</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="reference/0_concept.html">CAG Concept</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/0_concept.html#the-main-component">The Main Component:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/0_concept.html#graph-creator-gc">Graph-Creator (GC)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/0_concept.html#graph-annotator">Graph-Annotator</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reference/1_get_started.html">Quick Start</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference/1_get_started.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/1_get_started.html#requirement">Requirement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/1_get_started.html#build-your-first-graph">Build your First Graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/1_get_started.html#annotate-your-first-graph">Annotate your First Graph</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="reference/2_graph_creator.html">Graph-Creator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/2_graph_creator.html">Graph-Creator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/2_graph_creator.html#define-your-ontology">1. Define your Ontology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/2_graph_creator.html#define-graph-elements">2. Define Graph Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/2_graph_creator.html#create-graph-elements">3. Create Graph Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/2_graph_creator.html#create-graph-creator">4. Create Graph Creator</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="reference/3_graph_annotator.html">Graph-Annotator</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference/3_graph_annotator.html#textmining-annotator">Textmining annotator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/3_graph_annotator.html#general-annotator">General annotator</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="reference/4_graph_analyzer.html">Analyzers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/5_view_management.html">Arango Views</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="reference/5_view_management.html#create-an-arango-analyzer">Create an arango analyzer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/5_view_management.html#create-a-link-with-fields">Create a <em>link</em> with <em>fields</em></a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/5_view_management.html#create-the-view">Create the <em>View</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/4_view_management.html">Extra Feature: The Arango View Wrapper</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/4_view_management.html#create-an-arango-analyzer">Create an arango analyzer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/4_view_management.html#create-a-link-with-fields">Create a <em>link</em> with <em>fields</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/4_view_management.html#create-the-view">Create the <em>View</em></a></li>
 </ul>
 </li>
 </ul>
@@ -98,8 +114,7 @@
 <li class="toctree-l1"><a class="reference internal" href="reference/1_get_started.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/2_graph_creator.html">Graph-Creator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/3_graph_annotator.html">Graph-Annotator</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/4_graph_analyzer.html">Analyzers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/5_view_management.html">Arango Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/4_view_management.html">Extra Feature: The Arango View Wrapper</a></li>
 </ul>
 
 <div class="relations">

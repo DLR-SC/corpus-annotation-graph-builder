@@ -1,6 +1,6 @@
 
-Arango Views
-============
+Extra Feature: The Arango View Wrapper
+======================================
 
 
 
