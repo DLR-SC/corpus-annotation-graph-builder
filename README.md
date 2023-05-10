@@ -61,15 +61,22 @@ pip install -e .
 ## Citation
 Please cite us in case you use CAG
 
-      @InProceedings{elbaffdemo:2023,
-        author =  {Roxanne {El Baff} and Tobias Hecking and Andreas Hamm and Jasper W. Korte and Sabine Bartsch},
-        title     = {Corpus {A}nnotation {G}raph Builder ({CAG}):  An Architectural Framework to Create and Annotate a Multi-source Graph},
-        booktitle = {The 17th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2023): : System Demonstrations },
-        month = "may",
-        year = "2023",
-        address = "Dubrovnik, Croatia",
-        publisher = "Association for Computational Linguistics",
-        }
+    @inproceedings{el-baff-etal-2023-corpus,
+      title = "Corpus Annotation Graph Builder ({CAG}): An Architectural Framework to Create and Annotate a Multi-source Graph",
+      author = "El Baff, Roxanne  and
+        Hecking, Tobias  and
+        Hamm, Andreas  and
+        Korte, Jasper W.  and
+        Bartsch, Sabine",
+      booktitle = "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
+      month = may,
+      year = "2023",
+      address = "Dubrovnik, Croatia",
+      publisher = "Association for Computational Linguistics",
+      url = "https://aclanthology.org/2023.eacl-demo.28",
+      pages = "248--255"
+    }
+
 
 ## Usage
 * After the installation, a project scaffold can be created with the command `cag start-project`
