@@ -10,6 +10,7 @@ class Movie(GenericOOSNode):
         _fields (dict): A dictionary containing the fields and their respective types for the movie node.
 
     """
+
     _name = "Movie"
     _fields = {
         "name": Field(),
@@ -28,6 +29,7 @@ class Person(GenericOOSNode):
         _fields (dict): A dictionary containing the fields and their respective types for the person node.
 
     """
+
     _fields = {"name": Field(), "birthdate": Field(), **GenericOOSNode._fields}
 
 
@@ -37,6 +39,7 @@ class Actor(Person):
 
     Inherits from Person class.
     """
+
     ...
 
 
@@ -46,4 +49,5 @@ class Director(Person):
 
     Inherits from Person class.
     """
+
     ...

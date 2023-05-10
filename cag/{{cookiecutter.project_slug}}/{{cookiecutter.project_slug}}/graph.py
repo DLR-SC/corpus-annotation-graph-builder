@@ -63,7 +63,8 @@ class FilmActorGraph(GraphCreatorBase):
             )
             for actor in entry["actors"]:
                 actor_node = self.upsert_node(
-                    "Actor", {"name": actor["name"], "birthdate": actor["birthdate"]}
+                    "Actor",
+                    {"name": actor["name"], "birthdate": actor["birthdate"]},
                 )
                 self.upsert_edge(
                     "PlayedIn",
@@ -74,7 +75,10 @@ class FilmActorGraph(GraphCreatorBase):
             for director in entry["directors"]:
                 director_node = self.upsert_node(
                     "Director",
-                    {"name": director["name"], "birthdate": director["birthdate"]},
+                    {
+                        "name": director["name"],
+                        "birthdate": director["birthdate"],
+                    },
                 )
                 self.upsert_edge("Directed", director_node, movie_node)
 
@@ -109,7 +113,8 @@ class FilmActorGraph(GraphCreatorBase):
             "title", AnalyzerList(["fuzzy_search_bigram", "en_tokenizer"])
         )
         description_field = ViewField(
-            "description", AnalyzerList(["fuzzy_search_bigram", "en_tokenizer"])
+            "description",
+            AnalyzerList(["fuzzy_search_bigram", "en_tokenizer"]),
         )
 
         title_emb_field = ViewField("title_emb")

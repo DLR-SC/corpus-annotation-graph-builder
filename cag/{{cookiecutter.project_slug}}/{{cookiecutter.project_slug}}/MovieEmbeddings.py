@@ -84,9 +84,9 @@ class MovieEmbeddingsCreator(GenericAnnotator):
 
             datasets_df_batch.loc[:, "title_emb"] = list(title_embs)
             datasets_df_batch.loc[:, "description_emb"] = list(ab_embs)
-            datasets_df_batch["title_emb"] = datasets_df_batch["title_emb"].apply(
-                lambda x: x.squeeze().tolist()
-            )
+            datasets_df_batch["title_emb"] = datasets_df_batch[
+                "title_emb"
+            ].apply(lambda x: x.squeeze().tolist())
             datasets_df_batch["description_emb"] = datasets_df_batch[
                 "description_emb"
             ].apply(lambda x: x.squeeze().tolist())

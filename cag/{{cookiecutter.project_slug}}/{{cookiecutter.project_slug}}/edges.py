@@ -11,6 +11,7 @@ class PlayedIn(GenericEdge):
     Attributes:
         _fields (dict): A dictionary containing the fields and their respective types for the 'played in' edge.
     """
+
     _fields = {"rating": Field(), **GenericEdge._fields}
 
 
@@ -20,4 +21,5 @@ class Directed(GenericEdge):
 
     Inherits from GenericEdge class.
     """
+
     ...

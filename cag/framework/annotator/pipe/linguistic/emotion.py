@@ -76,7 +76,7 @@ class EmotionHartmannFactory:
 
                 sentence._.set(f"emotion_{label}", score)
             dominant_lbl = res_df.iloc[res_df["score"].argmax()]["label"]
-            sentence._.set(f"emotion_dominant {dominant_lbl}")
+            sentence._.set("emotion_dominant", dominant_lbl)
             logger.debug("appending")
             sentence_lbls.append(dominant_lbl)
 
