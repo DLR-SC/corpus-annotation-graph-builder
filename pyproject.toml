@@ -7,7 +7,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "cag"
-version = "1.5.0"
+version = "1.5.1"
 description='This is a general framework to create arango db graphs and annotate them.'
 readme = "README.md"
 authors = [{ name = "Roxanne El Baff", email = "roxanne.elbaff@dlr.de" },

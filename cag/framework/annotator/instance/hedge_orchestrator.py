@@ -5,7 +5,7 @@ import pandas as pd
 from cag.framework.annotator.pipe.linguistic.hedge import HedgeFactory
 
 
-class HedgeOrchestrator(PipeOrchestrator):
+class HedgePipeOrchestrator(PipeOrchestrator):
     def create_node(self, hedge_label: str) -> Document:
         data = {"label": hedge_label}
         return self.upsert_node(self.node_name, data, alt_key=["label"])
