@@ -96,6 +96,31 @@ _dict["ToxicityPipeOrchestrator"] = {
     PipeConfigKeys._edge_class: "cag.framework.annotator.element.graph_elements.HasToxicityAnnotation",
 }
 
+_dict["OpenAlexConcept"] = {
+    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.openalex_concept.OAConceptPipeOrchestrator",
+    PipeConfigKeys._pipe_id_or_func: "openalex_concept_component",  # id in case of space, function name otherwise
+    PipeConfigKeys._pipe_path: "cag.framework.annotator.pipe.linguistic.oaconcept",  # leave empty if the pipe is a spacy native pipe, otherwise provide the path of where the pipe_id_or_func exists
+    PipeConfigKeys._level: "node",  # node or set
+    PipeConfigKeys._data_type: "text",  # for now we support text - later url, image
+    PipeConfigKeys._annotated_node_name: "TextNode",
+    PipeConfigKeys._node_class: "cag.framework.annotator.element.graph_elements.OAConceptAnnotationNode",
+    PipeConfigKeys._edge_class: "cag.framework.annotator.element.graph_elements.HasOAConceptAnnotation",
+}
+
+
+_dict["IPTCMediaTopic"] = {
+    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.iptcmedia_topic.MediaTopicPipeOrchestrator",
+    PipeConfigKeys._pipe_id_or_func: "iptc_media_topic_component",  # id in case of space, function name otherwise
+    PipeConfigKeys._pipe_path: "cag.framework.annotator.pipe.linguistic.iptcmedia_topic",  # leave empty if the pipe is a spacy native pipe, otherwise provide the path of where the pipe_id_or_func exists
+    PipeConfigKeys._level: "node",  # node or set
+    PipeConfigKeys._data_type: "text",  # for now we support text - later url, image
+    PipeConfigKeys._annotated_node_name: "TextNode",
+    PipeConfigKeys._node_class: "cag.framework.annotator.element.graph_elements.MediaTopicAnnotationNode",
+    PipeConfigKeys._edge_class: "cag.framework.annotator.element.graph_elements.HasMediaTopicAnnotation",
+}
+
+
+
 _dict["DummyPipeOrchestrator"] = {
     PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.dummy.DummyPipeOrchestrator",
     PipeConfigKeys._pipe_id_or_func: "customized_pipe_func",  # id in case of space, function name otherwise

@@ -64,6 +64,32 @@ class HedgeAnnotationNode(GenericAnnotationNode):
     _fields = GenericAnnotationNode._fields
 
 
+class OAConceptAnnotationNode(parent_nodes.GenericNode):
+    """A class to define a Named Entity node in arangodb - This is used by pyarango to create the Collection"""
+
+    _fields = {
+        "oa_id": parent_nodes.Field(),
+        "name": parent_nodes.Field(),
+    }
+
+    def __init__(self, database, jsonData):
+        super().__init__(database, jsonData)
+        self.ensureFulltextIndex(["oa_id", "name"], name="fti_annotator_oaconcept")
+        self.ensurePersistentIndex(["oa_id", "name"], unique=True)
+
+class MediaTopicAnnotationNode(parent_nodes.GenericNode):
+    """A class to define a Named Entity node in arangodb - This is used by pyarango to create the Collection"""
+
+    _fields = {
+        "mediatopic_id": parent_nodes.Field(),
+        "name": parent_nodes.Field(),
+    }
+
+    def __init__(self, database, jsonData):
+        super().__init__(database, jsonData)
+        self.ensureFulltextIndex(["mediatopic_id", "name"], name="fti_annotator_mediatopic")
+        self.ensurePersistentIndex(["mediatopic_id", "name"], unique=True)
+
 ##############
 #    EDGES   #
 ##############
@@ -147,3 +173,17 @@ class HasToxicityAnnotation(GenericAnnotationEdge):
 
 class HasMpqaAnnotation(GenericAnnotationEdge):
     _fields = GenericAnnotationEdge._fields
+
+
+class HasOAConceptAnnotation(GenericEdge):
+    _fields = {
+        **GenericEdge._fields,
+        "level": Field(),
+    }
+
+
+class HasMediaTopicAnnotation(GenericEdge):
+    _fields = {
+        **GenericEdge._fields,
+        "level": Field(),
+    }
