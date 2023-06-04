@@ -97,7 +97,7 @@ _dict["ToxicityPipeOrchestrator"] = {
 }
 
 _dict["OpenAlexConcept"] = {
-    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.openalex_concept.OAConceptPipeOrchestrator",
+    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.openalex_concept_orchestrator.OAConceptPipeOrchestrator",
     PipeConfigKeys._pipe_id_or_func: "openalex_concept_component",  # id in case of space, function name otherwise
     PipeConfigKeys._pipe_path: "cag.framework.annotator.pipe.linguistic.oaconcept",  # leave empty if the pipe is a spacy native pipe, otherwise provide the path of where the pipe_id_or_func exists
     PipeConfigKeys._level: "node",  # node or set
@@ -109,7 +109,7 @@ _dict["OpenAlexConcept"] = {
 
 
 _dict["IPTCMediaTopic"] = {
-    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.iptcmedia_topic.MediaTopicPipeOrchestrator",
+    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.iptcmedia_topic_orchestrator.MediaTopicPipeOrchestrator",
     PipeConfigKeys._pipe_id_or_func: "iptc_media_topic_component",  # id in case of space, function name otherwise
     PipeConfigKeys._pipe_path: "cag.framework.annotator.pipe.linguistic.iptcmedia_topic",  # leave empty if the pipe is a spacy native pipe, otherwise provide the path of where the pipe_id_or_func exists
     PipeConfigKeys._level: "node",  # node or set
@@ -117,6 +117,17 @@ _dict["IPTCMediaTopic"] = {
     PipeConfigKeys._annotated_node_name: "TextNode",
     PipeConfigKeys._node_class: "cag.framework.annotator.element.graph_elements.MediaTopicAnnotationNode",
     PipeConfigKeys._edge_class: "cag.framework.annotator.element.graph_elements.HasMediaTopicAnnotation",
+}
+
+_dict["Keyterms"] = {
+    PipeConfigKeys._orchestrator_class: "cag.framework.annotator.instance.keyterms_orchestrator.KeyTermsPipeOrchestrator",
+    PipeConfigKeys._pipe_id_or_func: "keyterms_component",  # id in case of space, function name otherwise
+    PipeConfigKeys._pipe_path: "cag.framework.annotator.pipe.linguistic.keyterms",  # leave empty if the pipe is a spacy native pipe, otherwise provide the path of where the pipe_id_or_func exists
+    PipeConfigKeys._level: "node",  # node or set
+    PipeConfigKeys._data_type: "text",  # for now we support text - later url, image
+    PipeConfigKeys._annotated_node_name: "TextNode",
+    PipeConfigKeys._node_class: "cag.framework.annotator.element.graph_elements.KeyTermAnnotationNode",
+    PipeConfigKeys._edge_class: "cag.framework.annotator.element.graph_elements.HasKeyTermAnnotation",
 }
 
 

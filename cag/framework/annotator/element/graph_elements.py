@@ -90,6 +90,19 @@ class MediaTopicAnnotationNode(parent_nodes.GenericNode):
         self.ensureFulltextIndex(["mediatopic_id", "name"], name="fti_annotator_mediatopic")
         self.ensurePersistentIndex(["mediatopic_id", "name"], unique=True)
 
+
+class KeyTermAnnotationNode(parent_nodes.GenericNode):
+    """A class to define a Named Entity node in arangodb - This is used by pyarango to create the Collection"""
+
+    _fields = {
+        "name": parent_nodes.Field(),
+    }
+
+    def __init__(self, database, jsonData):
+        super().__init__(database, jsonData)
+        self.ensureFulltextIndex(["name"], name="fti_annotator_keyterm")
+        self.ensurePersistentIndex(["name"], unique=True)
+
 ##############
 #    EDGES   #
 ##############
@@ -179,6 +192,7 @@ class HasOAConceptAnnotation(GenericEdge):
     _fields = {
         **GenericEdge._fields,
         "level": Field(),
+        "metadata": Field()
     }
 
 
@@ -186,4 +200,15 @@ class HasMediaTopicAnnotation(GenericEdge):
     _fields = {
         **GenericEdge._fields,
         "level": Field(),
+        "metadata": Field()
+    }
+
+
+class HasKeyTermAnnotation(GenericEdge):
+    _fields = {
+        **GenericEdge._fields,
+        "rank": Field(),
+        "score": Field(),
+        "metadata": Field()
+
     }
