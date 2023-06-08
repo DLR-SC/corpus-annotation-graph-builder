@@ -84,7 +84,7 @@ class EmotionHartmannFactory:
             [
                 {
                     "label": x,
-                    "score_mean": mean(y) if len(y) > 0 else 0.0,
+                    "mean_score": mean(y) if len(y) > 0 else 0.0,
                     "highest_score": max(y),
                     "sentence_index_w_highest_score": np.asarray(y).argmax()
                     if max(y) > 0.0

@@ -5,6 +5,7 @@ import pkgutil
 import urllib
 from re import sub
 
+from pathlib import Path
 
 def get_hash_from_str(str: str) -> str:
     """generate a sha256-16 byte int from your string to use as a key
@@ -95,3 +96,6 @@ def load_sub_packages(package):
         # print(f"Found submodule {modname} (is a package: {ispkg})" )
         _ = load_module(modname)
         # print (f"Imported {module}")
+
+def create_folder(path):
+    Path(path).mkdir(parents=True, exist_ok=True)

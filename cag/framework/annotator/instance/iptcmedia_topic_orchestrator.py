@@ -2,6 +2,8 @@ from pyArango.document import Document
 from cag.framework.annotator.element.orchestrator import PipeOrchestrator
 import pandas as pd
 
+from cag.framework.annotator.pipe.linguistic.iptcmedia_topic import IPTCMediaTopic
+
 
 class MediaTopicPipeOrchestrator(PipeOrchestrator):
     def create_node(self, mediatopic_id, name) -> Document:
@@ -29,6 +31,7 @@ class MediaTopicPipeOrchestrator(PipeOrchestrator):
 
                 entry = {
                     "level": level,
+                    "metadata": IPTCMediaTopic.__METADATA__
                 }
 
                 _: Document = self.create_edge(

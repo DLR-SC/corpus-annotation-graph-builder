@@ -77,7 +77,7 @@ def get_oaconcepts(text_string, text_lng="en"):
 
 @Language.factory("openalex_concept_component")
 class OpenAlexConcept:
-    __METADATA__: ClassVar = "OpenAlexConcept"
+    __METADATA__: ClassVar = "OpenAlexConcept from Metodio"
 
     def __init__(self, nlp: Language, name: str):
         self.nlp = nlp

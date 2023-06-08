@@ -169,20 +169,24 @@ class Pipeline(ABC):
                             right_on="text_key",
                         )
         if self.out_path is not None and self.out_path != "":
-            name_format= self.out_path.split('.')
-            format = "csv"
-            if len(name_format) > 1:
-                format = name_format[-1]
-            else: self.out_path = self.out_path + ".csv"
-            
-            if format == "parquet":
-                logger.info(f"Saving to parquet: {self.out_path}")
-                self.out_df.to_parquet(self.out_path)
-            elif format ==  "csv":
-                logger.info(f"Saving to csv: {self.out_path}")
-                self.out_df.to_csv(self.out_path)
-            else:
-                logger.info("your out_path should end with .parquet or .csv")
+            try:
+                utils.create_folder(self.out_path)
+                name_format= self.out_path.split('.')
+                format = "csv"
+                if len(name_format) > 1:
+                    format = name_format[-1]
+                else: self.out_path = self.out_path + ".csv"
+                
+                if format == "parquet":
+                    logger.info(f"Saving to parquet: {self.out_path}")
+                    self.out_df.to_parquet(self.out_path)
+                elif format ==  "csv":
+                    logger.info(f"Saving to csv: {self.out_path}")
+                    self.out_df.to_csv(self.out_path)
+                else:
+                    logger.info("your out_path should end with .parquet or .csv")
+            except:
+                logger.warning(f"Failed to save file {self.out_path}")
         logger.debug("saved annotations")
 
     ####################################

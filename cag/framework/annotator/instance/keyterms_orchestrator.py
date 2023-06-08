@@ -1,5 +1,6 @@
 from pyArango.document import Document
 from cag.framework.annotator.element.orchestrator import PipeOrchestrator
+from cag.framework.annotator.pipe.linguistic.keyterms import KeyTerms
 import pandas as pd
 
 
@@ -18,7 +19,7 @@ class KeyTermsPipeOrchestrator(PipeOrchestrator):
         for doc, context in annotated_texts:
             text_key = context["_key"]
 
-            for rank, (term, score) in doc._.keyterms:
+            for rank, (term, score) in enumerate(doc._.keyterms):
                 
                 keyterm_node: Document = self.create_node(term)
                 text_node: Document = self.get_document(
@@ -27,7 +28,8 @@ class KeyTermsPipeOrchestrator(PipeOrchestrator):
 
                 entry = {
                     "rank": rank,
-                    "score": score
+                    "score": score,
+                    "metadata": KeyTerms.__METADATA__
                 }
 
                 _: Document = self.create_edge(

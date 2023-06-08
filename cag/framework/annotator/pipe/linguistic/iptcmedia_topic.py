@@ -76,7 +76,7 @@ def get_media_topics(text_string, text_lng="en"):
 
 @Language.factory("iptc_media_topic_component")
 class IPTCMediaTopic:
-    __METADATA__: ClassVar = "IPTCMediaTopic"
+    __METADATA__: ClassVar = "IPTCMediaTopic from Metodio"
 
     def __init__(self, nlp: Language, name: str):
         self.nlp = nlp

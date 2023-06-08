@@ -52,7 +52,7 @@ def get_keyterms(text_string, max_num=10):
 
 @Language.factory("keyterms_component")
 class KeyTerms:
-    __METADATA__: ClassVar = "KeyTermsComponent"
+    __METADATA__: ClassVar = "KeyTermsComponent from Metodio"
 
     def __init__(self, nlp: Language, name: str):
         self.nlp = nlp
@@ -63,6 +63,7 @@ class KeyTerms:
     def __call__(self, doc):
 
         text: str = doc.text
-        doc._.set("keyterms", get_keyterms(text))
+        keyterms = get_keyterms(text)
+        doc._.set("keyterms", keyterms)
 
         return doc
