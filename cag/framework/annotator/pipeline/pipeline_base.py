@@ -313,6 +313,7 @@ class Pipeline(ABC):
                 ],
             )
         )
+        nlp.max_length=1500000
         for pipe in subpipeline:
             if not nlp.has_pipe(pipe.pipe_id_or_func):
                 if pipe.pipe_id_or_func in nlp.disabled:
