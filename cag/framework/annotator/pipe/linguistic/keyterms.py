@@ -9,10 +9,18 @@ from transformers.utils import logging
 import requests
 import json
 from dotenv import load_dotenv
-
+from tenacity import retry
+from tenacity.stop import stop_after_delay
+from tenacity.retry import retry_if_exception_type
+from tenacity.wait import wait_random
 import os
+from  requests.exceptions import JSONDecodeError
 
-
+@retry(
+        wait=wait_random(min=10, max=15),
+        stop=stop_after_delay(180),
+        retry=retry_if_exception_type(JSONDecodeError),
+    )
 def get_keyterms(text_string, max_num=10):
     load_dotenv()
     data = json.dumps({
@@ -47,7 +55,9 @@ def get_keyterms(text_string, max_num=10):
         data=data,
         verify=False
     )
-    return res.json()
+
+    result = res.json()
+    return result
 
 
 @Language.factory("keyterms_component")
@@ -62,8 +72,10 @@ class KeyTerms:
 
     def __call__(self, doc):
 
-        text: str = doc.text
-        keyterms = get_keyterms(text)
-        doc._.set("keyterms", keyterms)
-
+        try:
+            text: str = doc.text
+            keyterms = get_keyterms(text)
+            doc._.set("keyterms", keyterms)
+        except:
+            doc._.set("keyterms", [])
         return doc

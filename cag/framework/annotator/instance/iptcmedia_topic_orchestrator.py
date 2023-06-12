@@ -22,27 +22,27 @@ class MediaTopicPipeOrchestrator(PipeOrchestrator):
             text_key = context["_key"]
 
             for level, media_topics in doc._.media_topic.items():
-                
-                media_topic_node: Document = self.create_node(media_topics[0],
-                                                              media_topics[1])
-                text_node: Document = self.get_document(
-                    self.annotated_node, {"_key": text_key}
-                )
+                for name, id in media_topics:
 
-                entry = {
-                    "level": level,
-                    "metadata": IPTCMediaTopic.__METADATA__
-                }
+                    media_topic_node: Document = self.create_node(id,name)
+                    text_node: Document = self.get_document(
+                        self.annotated_node, {"_key": text_key}
+                    )
 
-                _: Document = self.create_edge(
-                    text_node, media_topic_node, entry
-                )
+                    entry = {
+                        "level": level,
+                        "metadata": IPTCMediaTopic.__METADATA__
+                    }
 
-                record = {f"mediatopic_{x}": y for x, y in entry.items()}
-                record["mediatopic_id"] = media_topic_node[0]
-                record["mediatopic_name"] = media_topic_node[1]
-                record["text_key"] = text_key
-                out_arr.append(record)
+                    _: Document = self.create_edge(
+                        text_node, media_topic_node, entry
+                    )
+
+                    record = {f"mediatopic_{x}": y for x, y in entry.items()}
+                    record["mediatopic_id"] = media_topic_node[0]
+                    record["mediatopic_name"] = media_topic_node[1]
+                    record["text_key"] = text_key
+                    out_arr.append(record)
         out_df: pd.DataFrame = pd.DataFrame(out_arr)
 
         return out_df
