@@ -74,7 +74,7 @@ class OAConceptAnnotationNode(parent_nodes.GenericNode):
 
     def __init__(self, database, jsonData):
         super().__init__(database, jsonData)
-        self.ensureFulltextIndex(["oa_id", "name"], name="fti_annotator_oaconcept")
+        self.ensureFulltextIndex([ "name"], name="fti_annotator_oaconcept")
         self.ensurePersistentIndex(["oa_id", "name"], unique=True)
 
 class MediaTopicAnnotationNode(parent_nodes.GenericNode):
@@ -87,7 +87,7 @@ class MediaTopicAnnotationNode(parent_nodes.GenericNode):
 
     def __init__(self, database, jsonData):
         super().__init__(database, jsonData)
-        self.ensureFulltextIndex(["mediatopic_id", "name"], name="fti_annotator_mediatopic")
+        self.ensureFulltextIndex([ "name"], name="fti_annotator_mediatopic")
         self.ensurePersistentIndex(["mediatopic_id", "name"], unique=True)
 
 

@@ -2,6 +2,8 @@ from pyArango.document import Document
 from cag.framework.annotator.element.orchestrator import PipeOrchestrator
 import pandas as pd
 
+from cag.framework.annotator.pipe.linguistic.oaconcept import OpenAlexConcept
+
 
 class OAConceptPipeOrchestrator(PipeOrchestrator):
     def create_node(self, oa_id, name) -> Document:
@@ -29,6 +31,7 @@ class OAConceptPipeOrchestrator(PipeOrchestrator):
 
                 entry = {
                     "level": level,
+                    "metadata": OpenAlexConcept.__METADATA__
                 }
 
                 _: Document = self.create_edge(
