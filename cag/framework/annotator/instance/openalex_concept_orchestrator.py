@@ -22,27 +22,27 @@ class OAConceptPipeOrchestrator(PipeOrchestrator):
             text_key = context["_key"]
 
             for level, oa_concepts in doc._.oa_concepts.items():
-                
-                oaconcept_node: Document = self.create_node(oa_concepts[0],
-                                                            oa_concepts[1])
-                text_node: Document = self.get_document(
-                    self.annotated_node, {"_key": text_key}
-                )
+                for oa_concept_name, oa_concept_id in oa_concepts:
+                    oaconcept_node: Document = self.create_node(oa_concept_id,
+                                                                oa_concept_name)
+                    text_node: Document = self.get_document(
+                        self.annotated_node, {"_key": text_key}
+                    )
 
-                entry = {
-                    "level": level,
-                    "metadata": OpenAlexConcept.__METADATA__
-                }
+                    entry = {
+                        "level": level,
+                        "metadata": OpenAlexConcept.__METADATA__
+                    }
 
-                _: Document = self.create_edge(
-                    text_node, oaconcept_node, entry
-                )
+                    _: Document = self.create_edge(
+                        text_node, oaconcept_node, entry
+                    )
 
-                record = {f"oaconcept_{x}": y for x, y in entry.items()}
-                record["oaconcept_id"] = oa_concepts[0]
-                record["oaconcept_name"] = oa_concepts[1]
-                record["text_key"] = text_key
-                out_arr.append(record)
+                    record = {f"oaconcept_{x}": y for x, y in entry.items()}
+                    record["oaconcept_id"] = oa_concept_id
+                    record["oaconcept_name"] = oa_concept_name
+                    record["text_key"] = text_key
+                    out_arr.append(record)
         out_df: pd.DataFrame = pd.DataFrame(out_arr)
 
         return out_df
