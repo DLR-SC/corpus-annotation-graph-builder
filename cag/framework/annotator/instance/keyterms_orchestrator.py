@@ -38,6 +38,7 @@ class KeyTermsPipeOrchestrator(PipeOrchestrator):
 
                     record = {f"metodeo_keyterm_{x}": y for x, y in entry.items()}
                     record["metodeo_keyterm"] = term
+                    record['text_key'] = text_key
                     out_arr.append(record)
             out_df: pd.DataFrame = pd.DataFrame(out_arr)
 
