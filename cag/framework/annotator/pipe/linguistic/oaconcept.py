@@ -8,13 +8,17 @@ from transformers.utils import logging
 
 import requests
 import json
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 import os
 
 
 def get_oaconcepts(text_string, text_lng="en"):
-    load_dotenv()
+    load_success = load_dotenv()
+    if not load_success:
+        # try loading '.env' file from current working dir
+        load_dotenv(find_dotenv(usecwd=True))
+
     taxo_parms_dict = {
         "enScience": {
             "taxonomy": "OpenAlex",
