@@ -18,7 +18,7 @@ from cag import logger
 
 
 class Component(object):
-    """The class from witch all more specialized components must derive."""
+    """The class from which all more specialized components must derive."""
 
     """
     Structure of the subgraph produced by this component, to be specified in subclass.
@@ -35,13 +35,14 @@ class Component(object):
     _name = "Component"
 
     def __init__(self, conf: Config = None):
+        print("Inside Component")
         edges = self._base_edge_definitions + self._edge_definitions
-
         if conf is None:
             conf = configuration(use_global_conf=True)
         self.conf = conf
         self.database = conf.db
         self.graph_name = conf.graph
+        self.test = "TEST"
         if self.database.hasGraph(self.graph_name):
             self.graph: BaseGraph = self.database.graphs[self.graph_name]
         else:

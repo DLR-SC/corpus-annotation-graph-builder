@@ -3,6 +3,8 @@ import importlib
 import json
 import pkgutil
 import urllib
+import random
+import string
 from re import sub
 
 from pathlib import Path
@@ -99,3 +101,8 @@ def load_sub_packages(package):
 
 def create_folder(path):
     Path(path).mkdir(parents=True, exist_ok=True)
+
+def generate_random_string(length:int) -> str:
+    letters = string.ascii_letters + string.digits
+    result_str = ''.join(random.choice(letters) for _ in range(length))
+    return result_str
