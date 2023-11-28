@@ -805,69 +805,69 @@ class QueryBuilder(Component):
         return cursor
 
 
-### Sample Usage:
+### Sample Usage below:
 
-# Load database config from json file
-import json
-path_to_config = 'C:/Users/opit_do/Desktop/config.json'
-with open(path_to_config, "r") as f:
-    config = json.load(f)
-my_config = Config(
-    url=f'{config["DB_HOST"]}:{config["DB_PORT"]}',
-    user=config["DB_USER"],
-    password=config["DB_PASSWORD"],
-    database=config["DB_NAME"],
-    graph=config["DB_GRAPH"],
-)
+# # Load database config from json file
+# import json
+# path_to_config = 'C:/Users/opit_do/Desktop/config.json'
+# with open(path_to_config, "r") as f:
+#     config = json.load(f)
+# my_config = Config(
+#     url=f'{config["DB_HOST"]}:{config["DB_PORT"]}',
+#     user=config["DB_USER"],
+#     password=config["DB_PASSWORD"],
+#     database=config["DB_NAME"],
+#     graph=config["DB_GRAPH"],
+# )
 
-sample_node_1 = {
-    "id":"0",
-    "collection":"Corpus",
-    "userData":[
-        {
-            "attribute":"name",
-            "attributeType":"text",
-            "operator": "alphabetic_contains",
-            "value":"Wikipedia",
-        }
-    ]
-}
+# sample_node_1 = {
+#     "id":"0",
+#     "collection":"Corpus",
+#     "userData":[
+#         {
+#             "attribute":"name",
+#             "attributeType":"text",
+#             "operator": "alphabetic_contains",
+#             "value":"Wikipedia",
+#         }
+#     ]
+# }
 
-sample_node_2 = {
-    "id":"1",
-    "collection":"WikiArticle",
-    "userData":[
-        {
-            "attribute":"name",
-            "attributeType":"text",
-            "operator": "alphabetic_contains",
-            "value":"Climate Change",
-        }
-    ]
-}
+# sample_node_2 = {
+#     "id":"1",
+#     "collection":"WikiArticle",
+#     "userData":[
+#         {
+#             "attribute":"name",
+#             "attributeType":"text",
+#             "operator": "alphabetic_contains",
+#             "value":"Climate Change",
+#         }
+#     ]
+# }
 
-sample_edge = {
-    "id":"reactflow__edge-0-1",
-    "source":"0",
-    "target":"1",
-    "name":"BelongsTo",
-    "userData": [
-        {
-            "attribute":"timestamp",
-            "attributeType":"datetime",
-            "operator": "date_smaller_than",
-            "value":"2023-11-24T23:00:00.000Z",
-        }
-    ]
-}
-graph_data = {'nodes': [sample_node_1, sample_node_2], 'edges': [sample_edge]}
+# sample_edge = {
+#     "id":"reactflow__edge-0-1",
+#     "source":"0",
+#     "target":"1",
+#     "name":"BelongsTo",
+#     "userData": [
+#         {
+#             "attribute":"timestamp",
+#             "attributeType":"datetime",
+#             "operator": "date_smaller_than",
+#             "value":"2023-11-24T23:00:00.000Z",
+#         }
+#     ]
+# }
+# graph_data = {'nodes': [sample_node_1, sample_node_2], 'edges': [sample_edge]}
 
-query_builder = QueryBuilder(my_config)
-aql_query, bind_vars = query_builder.generate_aql_graph_query(graph_data)
-print("Graph Traversal Query: ", aql_query)
-query_result = query_builder.execute_aql_query(aql_query, bind_vars)
-print("Query Result: ", query_result)
+# query_builder = QueryBuilder(my_config)
+# aql_query, bind_vars = query_builder.generate_aql_graph_query(graph_data)
+# print("Graph Traversal Query: ", aql_query)
+# query_result = query_builder.execute_aql_query(aql_query, bind_vars)
+# print("Query Result: ", query_result)
 
 
 
-### Debug Code End
+# ### Debug Code End
